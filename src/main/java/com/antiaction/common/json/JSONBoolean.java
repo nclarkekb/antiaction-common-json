@@ -60,23 +60,23 @@ public class JSONBoolean extends JSONValue {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        if ( obj == null || !(obj instanceof JSONBoolean) ) {
-            return false;
-        }
-        JSONBoolean json_booleanObj = (JSONBoolean)obj;
-        if ( b != json_booleanObj.b ) {
-            return false;
-        }
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if ( obj == null || !(obj instanceof JSONBoolean) ) {
+			return false;
+		}
+		JSONBoolean json_booleanObj = (JSONBoolean)obj;
+		if ( b != json_booleanObj.b ) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
-    public int hashCode() {
-    	if ( b ) {
-    		return true_hashCode;
-    	}
-        return false_hashCode;
-    }
+	public int hashCode() {
+		if ( b ) {
+			return true_hashCode;
+		}
+		return false_hashCode;
+	}
 
 }

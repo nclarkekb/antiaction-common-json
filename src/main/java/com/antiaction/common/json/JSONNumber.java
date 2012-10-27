@@ -92,20 +92,20 @@ public class JSONNumber extends JSONValue {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        if ( obj == null || !(obj instanceof JSONNumber) ) {
-            return false;
-        }
-        JSONNumber json_numberObj = (JSONNumber)obj;
-        if ( !Arrays.equals( numberBytes, json_numberObj.numberBytes ) ) {
-            return false;
-        }
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if ( obj == null || !(obj instanceof JSONNumber) ) {
+			return false;
+		}
+		JSONNumber json_numberObj = (JSONNumber)obj;
+		if ( !Arrays.equals( numberBytes, json_numberObj.numberBytes ) ) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode( new Object[] { numberBytes } );
-    }
+	@Override
+	public int hashCode() {
+		return Arrays.deepHashCode( new Object[] { numberBytes } );
+	}
 
 }

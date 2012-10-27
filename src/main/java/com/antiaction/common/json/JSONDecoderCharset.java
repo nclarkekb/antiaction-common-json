@@ -31,8 +31,8 @@ public class JSONDecoderCharset implements JSONDecoder {
 
 	public JSONDecoderCharset(Charset charset) {
 		decoder = charset.newDecoder();
-        decoder.onMalformedInput( CodingErrorAction.REPORT );
-        decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
+		decoder.onMalformedInput( CodingErrorAction.REPORT );
+		decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 		byteArray = new byte[ 1024 ];
 		byteBuffer = ByteBuffer.wrap( byteArray );
 	}
@@ -58,22 +58,22 @@ public class JSONDecoderCharset implements JSONDecoder {
 				}
 			}
 			byteBuffer.flip();
-            try {
-                boolean bDecodeLoop = true;
-                while ( bDecodeLoop ) {
-                    CoderResult result = decoder.decode( byteBuffer, charBuffer, true );
-                    if ( result == CoderResult.UNDERFLOW ) {
-                           bDecodeLoop = false;
-                    } else if ( result.isError() ) {
-                        byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
-                        //sb.append('?');
-                        //ew.bConversionError = true;
-                    }
-                }
-            } catch (CoderMalfunctionError e) {
-            }
-            byteBuffer.compact();
-            charBuffer.flip();
+			try {
+				boolean bDecodeLoop = true;
+				while ( bDecodeLoop ) {
+					CoderResult result = decoder.decode( byteBuffer, charBuffer, true );
+					if ( result == CoderResult.UNDERFLOW ) {
+						   bDecodeLoop = false;
+					} else if ( result.isError() ) {
+						byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
+						//sb.append('?');
+						//ew.bConversionError = true;
+					}
+				}
+			} catch (CoderMalfunctionError e) {
+			}
+			byteBuffer.compact();
+			charBuffer.flip();
 		}
 	}
 

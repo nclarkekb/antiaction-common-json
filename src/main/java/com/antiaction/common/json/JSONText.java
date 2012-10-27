@@ -757,24 +757,24 @@ public class JSONText {
 		return current;
 	}
 
-    /** Hex char to integer conversion table. */
-    public static int[] asciiHexTab = new int[256];
+	/** Hex char to integer conversion table. */
+	public static int[] asciiHexTab = new int[256];
 
-    /** Integer to hex char conversion table. */
-    public static char[] hexTab = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	/** Integer to hex char conversion table. */
+	public static char[] hexTab = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-    /*
-     * Initialize ASCII hex table.
-     */
-    static {
-        String hex = "0123456789abcdef";
-        for (int i=0; i<asciiHexTab.length; ++i) {
-            asciiHexTab[i] = hex.indexOf(i);
-        }
-        hex = hex.toUpperCase();
-        for (int i=0; i<hex.length(); ++i) {
-            asciiHexTab[hex.charAt(i)] = i;
-        }
-    }
+	/*
+	 * Initialize ASCII hex table.
+	 */
+	static {
+		String hex = "0123456789abcdef";
+		for (int i=0; i<asciiHexTab.length; ++i) {
+			asciiHexTab[i] = hex.indexOf(i);
+		}
+		hex = hex.toUpperCase();
+		for (int i=0; i<hex.length(); ++i) {
+			asciiHexTab[hex.charAt(i)] = i;
+		}
+	}
 
 }

@@ -32,8 +32,8 @@ public class JSONEncoderCharset implements JSONEncoder {
 
 	public JSONEncoderCharset(Charset charset) {
 		encoder = charset.newEncoder();
-        encoder.onMalformedInput( CodingErrorAction.REPORT );
-        encoder.onUnmappableCharacter( CodingErrorAction.REPORT );
+		encoder.onMalformedInput( CodingErrorAction.REPORT );
+		encoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 		charArray = new char[ 1024 ];
 		charBuffer = CharBuffer.wrap( charArray );
 		byteArray = new byte[ 1024 ];

@@ -210,57 +210,57 @@ public class JSONEncoding {
 		return encoding;
 	}
 
-    private static final ThreadLocal<JSONEncoding> JSONEncodingTL =
-        new ThreadLocal<JSONEncoding>() {
-        @Override
-        public JSONEncoding initialValue() {
-            return new JSONEncoding();
-        }
-    };
+	private static final ThreadLocal<JSONEncoding> JSONEncodingTL =
+		new ThreadLocal<JSONEncoding>() {
+		@Override
+		public JSONEncoding initialValue() {
+			return new JSONEncoding();
+		}
+	};
 
-    private JSONEncoding() {
-    }
+	public static JSONEncoding getJSONEncoding() {
+		return JSONEncodingTL.get();
+	}
 
-    public static JSONEncoding getJSONEncoding() {
-        return JSONEncodingTL.get();
-    }
+	private JSONDecoder utf8_decoder;
+	private JSONDecoder utf16be_decoder;
+	private JSONDecoder utf16le_decoder;
 
-    private JSONDecoder utf8_decoder;
-    private JSONDecoder utf16be_decoder;
-    private JSONDecoder utf16le_decoder;
+	private JSONEncoding() {
+	}
 
-    public JSONDecoder getJSONDecoder(int encoding) {
-    	JSONDecoder jsondecoder = null;
-    	Charset charset;
-    	switch ( encoding ) {
-    	case E_UTF8:
-    		if (utf8_decoder == null) {
-    			charset = Charset.forName( "UTF-8" );
-                utf8_decoder = new JSONDecoderCharset( charset );
-    		}
-    		jsondecoder = utf8_decoder;
-    		break;
-    	case E_UTF16BE:
-    	    if ( utf16be_decoder == null ) {
-    	    	charset = Charset.forName( "UTF-16BE" );
-                utf16be_decoder = new JSONDecoderCharset( charset );
-    	    }
-    	    jsondecoder = utf16be_decoder;
-    		break;
-    	case E_UTF16LE:
-    	    if ( utf16le_decoder == null ) {
-    	    	charset = Charset.forName( "UTF-16LE" );
-                utf16le_decoder = new JSONDecoderCharset( charset );
-    	    }
-    	    jsondecoder = utf16le_decoder;
-    		break;
-    	case E_UTF32BE:
-    	case E_UTF32LE:
-    	case E_UNKNOWN:
-    	default:
-    		throw new IllegalArgumentException( "Unsupported encoding!" );
-    	}
-        return jsondecoder;
-    }
+	public JSONDecoder getJSONDecoder(int encoding) {
+		JSONDecoder jsondecoder = null;
+		Charset charset;
+		switch ( encoding ) {
+		case E_UTF8:
+			if (utf8_decoder == null) {
+				charset = Charset.forName( "UTF-8" );
+				utf8_decoder = new JSONDecoderCharset( charset );
+			}
+			jsondecoder = utf8_decoder;
+			break;
+		case E_UTF16BE:
+			if ( utf16be_decoder == null ) {
+				charset = Charset.forName( "UTF-16BE" );
+				utf16be_decoder = new JSONDecoderCharset( charset );
+			}
+			jsondecoder = utf16be_decoder;
+			break;
+		case E_UTF16LE:
+			if ( utf16le_decoder == null ) {
+				charset = Charset.forName( "UTF-16LE" );
+				utf16le_decoder = new JSONDecoderCharset( charset );
+			}
+			jsondecoder = utf16le_decoder;
+			break;
+		case E_UTF32BE:
+		case E_UTF32LE:
+		case E_UNKNOWN:
+		default:
+			throw new IllegalArgumentException( "Unsupported encoding!" );
+		}
+		return jsondecoder;
+	}
 
 }

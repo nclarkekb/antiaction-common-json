@@ -130,20 +130,20 @@ public class JSONString extends JSONValue {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        if ( obj == null || !(obj instanceof JSONString) ) {
-            return false;
-        }
-        JSONString json_stringObj = (JSONString)obj;
-        if ( !str.equals( json_stringObj.str ) ) {
-            return false;
-        }
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if ( obj == null || !(obj instanceof JSONString) ) {
+			return false;
+		}
+		JSONString json_stringObj = (JSONString)obj;
+		if ( !str.equals( json_stringObj.str ) ) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return str.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return str.hashCode();
+	}
 
 }

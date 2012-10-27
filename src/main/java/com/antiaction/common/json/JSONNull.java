@@ -33,16 +33,16 @@ public class JSONNull extends JSONValue {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        if ( obj == null || !(obj instanceof JSONNull) ) {
-            return false;
-        }
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if ( obj == null || !(obj instanceof JSONNull) ) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
-    public int hashCode() {
-        return hashCode;
-    }
+	public int hashCode() {
+		return hashCode;
+	}
 
 }

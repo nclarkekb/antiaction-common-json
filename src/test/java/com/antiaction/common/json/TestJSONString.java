@@ -50,7 +50,7 @@ public class TestJSONString {
 			JSONText json = new JSONText();
 
 			Charset charset = Charset.forName("UTF-8");
-	        JSONEncoder json_encoder = new JSONEncoderCharset( charset );
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_string );
@@ -61,7 +61,7 @@ public class TestJSONString {
 			//System.out.println( new String( out.toByteArray() )  );
 
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
-	        JSONDecoder json_decoder = new JSONDecoderCharset( charset );
+			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
 
 			JSONStructure json_structure = json.decodeJSONtext( in, json_decoder );
 

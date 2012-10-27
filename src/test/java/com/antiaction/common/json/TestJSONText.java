@@ -105,7 +105,7 @@ public class TestJSONText {
 			JSONText json = new JSONText();
 			JSONStructure json_structure = null;
 			Charset charset = Charset.forName( "UTF-8" );
-            JSONEncoder json_encoder = new JSONEncoderCharset( charset );
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			json.encodeJSONtext( json_structure, json_encoder, out );
 			Assert.fail( "Exception expected!" );
@@ -147,14 +147,14 @@ public class TestJSONText {
 
 			JSONText json = new JSONText();
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-            JSONEncoder json_encoder = new JSONEncoderCharset( charset );
-            JSONDecoder json_decoder;
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
+			JSONDecoder json_decoder;
 
-            /*
-             * []
-             */
+			/*
+			 * []
+			 */
 
-            json_array = new JSONArray();
+			json_array = new JSONArray();
 			out.reset();
 			json.encodeJSONtext( json_array, json_encoder, out );
 
@@ -212,11 +212,11 @@ public class TestJSONText {
 			 * [...]
 			 */
 
-            json_array = new JSONArray();
-            json_array.add( JSONNull.Null );
-            json_array.add( JSONBoolean.False );
-            json_array.add( JSONBoolean.True );
-            json_array.add( JSONString.String( "streng" ) );
+			json_array = new JSONArray();
+			json_array.add( JSONNull.Null );
+			json_array.add( JSONBoolean.False );
+			json_array.add( JSONBoolean.True );
+			json_array.add( JSONString.String( "streng" ) );
 			json_array.add( JSONNumber.Integer( 0 ) );
 			json_array.add( JSONNumber.Integer( -0 ) );
 			json_array.add( JSONNumber.Integer( -31415 ) );
@@ -267,9 +267,9 @@ public class TestJSONText {
 
 			json_object = new JSONObject();
 			json_object.put( JSONString.String( "0" ), JSONNull.Null );
-            json_object.put( JSONString.String( "1" ), JSONBoolean.False );
-            json_object.put( JSONString.String( "2" ), JSONBoolean.True );
-            json_object.put( JSONString.String( "3" ), JSONString.String( "streng" ) );
+			json_object.put( JSONString.String( "1" ), JSONBoolean.False );
+			json_object.put( JSONString.String( "2" ), JSONBoolean.True );
+			json_object.put( JSONString.String( "3" ), JSONString.String( "streng" ) );
 			json_object.put( JSONString.String( "4" ), JSONNumber.Integer( 0 ) );
 			json_object.put( JSONString.String( "5" ), JSONNumber.Integer( -0 ) );
 			json_object.put( JSONString.String( "6" ), JSONNumber.Integer( -31415 ) );
@@ -299,8 +299,8 @@ public class TestJSONText {
 
 			Assert.assertEquals( JSONNull.Null, json_struct.get( JSONString.String( "0" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( JSONString.String( "1" ) ) );
-            Assert.assertEquals( JSONBoolean.True, json_struct.get( JSONString.String( "2" ) ) );
-            Assert.assertEquals( JSONString.String( "streng" ), json_struct.get( JSONString.String( "3" ) ) );
+			Assert.assertEquals( JSONBoolean.True, json_struct.get( JSONString.String( "2" ) ) );
+			Assert.assertEquals( JSONString.String( "streng" ), json_struct.get( JSONString.String( "3" ) ) );
 			Assert.assertEquals( JSONNumber.Integer( 0 ), json_struct.get( JSONString.String( "4" ) ) );
 			Assert.assertEquals( JSONNumber.Integer( -0 ), json_struct.get( JSONString.String( "5" ) ) );
 			Assert.assertEquals( JSONNumber.Integer( -31415 ), json_struct.get( JSONString.String( "6" ) ) );
@@ -320,9 +320,9 @@ public class TestJSONText {
 
 			json_object = new JSONObject();
 			json_object.put( "0", JSONNull.Null );
-            json_object.put( "1", JSONBoolean.False );
-            json_object.put( "2", JSONBoolean.True );
-            json_object.put( "3", JSONString.String( "streng" ) );
+			json_object.put( "1", JSONBoolean.False );
+			json_object.put( "2", JSONBoolean.True );
+			json_object.put( "3", JSONString.String( "streng" ) );
 			json_object.put( "4", JSONNumber.Integer( 0 ) );
 			json_object.put( "5", JSONNumber.Integer( -0 ) );
 			json_object.put( "6", JSONNumber.Integer( -31415 ) );
@@ -352,8 +352,8 @@ public class TestJSONText {
 
 			Assert.assertEquals( JSONNull.Null, json_struct.get( JSONString.String( "0" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( JSONString.String( "1" ) ) );
-            Assert.assertEquals( JSONBoolean.True, json_struct.get( JSONString.String( "2" ) ) );
-            Assert.assertEquals( JSONString.String( "streng" ), json_struct.get( JSONString.String( "3" ) ) );
+			Assert.assertEquals( JSONBoolean.True, json_struct.get( JSONString.String( "2" ) ) );
+			Assert.assertEquals( JSONString.String( "streng" ), json_struct.get( JSONString.String( "3" ) ) );
 			Assert.assertEquals( JSONNumber.Integer( 0 ), json_struct.get( "4" ) );
 			Assert.assertEquals( JSONNumber.Integer( -0 ), json_struct.get( "5" ) );
 			Assert.assertEquals( JSONNumber.Integer( -31415 ), json_struct.get( "6" ) );
@@ -722,11 +722,11 @@ public class TestJSONText {
 		catch (IllegalCharsetNameException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
-        }
+		}
 		catch (UnsupportedCharsetException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
-        }
+		}
 	}
 
 	@Test
@@ -741,7 +741,7 @@ public class TestJSONText {
 			int encoding;
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-            JSONDecoder json_decoder;
+			JSONDecoder json_decoder;
 			JSONText json = new JSONText();
 
 			bytes = new byte[] {
@@ -829,7 +829,7 @@ public class TestJSONText {
 			int encoding;
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-            JSONDecoder json_decoder;
+			JSONDecoder json_decoder;
 			JSONText json = new JSONText();
 
 			text = "{\n"
@@ -929,15 +929,15 @@ public class TestJSONText {
 	}
 
 	public static String bytesToHex(byte[] bytes) {
-	    final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	    char[] hexChars = new char[bytes.length * 2];
-	    int v;
-	    for ( int j = 0; j < bytes.length; j++ ) {
-	        v = bytes[j] & 0xFF;
-	        hexChars[j * 2] = hexArray[v >>> 4];
-	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-	    }
-	    return new String(hexChars);
+		final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+		char[] hexChars = new char[bytes.length * 2];
+		int v;
+		for ( int j = 0; j < bytes.length; j++ ) {
+			v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
 	}
 
 }

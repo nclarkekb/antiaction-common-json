@@ -115,7 +115,7 @@ public class TestJSONNumber {
 			JSONNumber json_number_bigdec = JSONNumber.BigDecimal( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ) );
 
 			Charset charset = Charset.forName("UTF-8");
-	        JSONEncoder json_encoder = new JSONEncoderCharset( charset );
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JSONText json = new JSONText();
@@ -134,7 +134,7 @@ public class TestJSONNumber {
 			System.out.println( new String( out.toByteArray() )  );
 
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
-	        JSONDecoder json_decoder = new JSONDecoderCharset( charset );
+			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
 
 			JSONStructure json_structure = json.decodeJSONtext( in, json_decoder );
 
