@@ -14,7 +14,9 @@ public class JSONNull extends JSONValue {
 
 	public static final JSONNull Null = new JSONNull();
 
-	public static final byte[] nullBytes = "null".getBytes();
+	protected static final byte[] nullBytes = "null".getBytes();
+
+	protected static int hashCode = Arrays.deepHashCode( new Object[] { nullBytes } );
 
 	protected JSONNull() {
 		type = JSONConstants.VT_NULL;
@@ -37,8 +39,6 @@ public class JSONNull extends JSONValue {
         }
         return true;
     }
-
-	protected int hashCode = Arrays.deepHashCode( new Object[] { nullBytes } );
 
 	@Override
     public int hashCode() {

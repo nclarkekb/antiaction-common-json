@@ -13,11 +13,15 @@ import java.util.Arrays;
 public class JSONBoolean extends JSONValue {
 
 	public static final JSONBoolean False = new JSONBoolean( false );
-	public static final byte[] falseBytes = "false".getBytes();
+
+	protected static final byte[] falseBytes = "false".getBytes();
+
 	protected static int false_hashCode = Arrays.deepHashCode( new Object[] { falseBytes } );
 
 	public static final JSONBoolean True = new JSONBoolean( true );
-	public static final byte[] trueBytes = "true".getBytes();
+
+	protected static final byte[] trueBytes = "true".getBytes();
+
 	protected static int true_hashCode = Arrays.deepHashCode( new Object[] { trueBytes } );
 
 	public static final JSONBoolean Boolean(boolean b) {
