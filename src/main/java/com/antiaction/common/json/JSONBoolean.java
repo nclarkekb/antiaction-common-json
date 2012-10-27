@@ -8,20 +8,21 @@
 package com.antiaction.common.json;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class JSONBoolean extends JSONValue {
 
 	public static final JSONBoolean False = new JSONBoolean( false );
+	public static final byte[] falseBytes = "false".getBytes();
+	protected static int false_hashCode = Arrays.deepHashCode( new Object[] { falseBytes } );
 
 	public static final JSONBoolean True = new JSONBoolean( true );
+	public static final byte[] trueBytes = "true".getBytes();
+	protected static int true_hashCode = Arrays.deepHashCode( new Object[] { trueBytes } );
 
 	public static final JSONBoolean Boolean(boolean b) {
 		return new JSONBoolean( b );
 	}
-
-	public static final byte[] falseBytes = "false".getBytes();
-
-	public static final byte[] trueBytes = "true".getBytes();
 
 	protected boolean b;
 
@@ -66,12 +67,12 @@ public class JSONBoolean extends JSONValue {
         return true;
     }
 
-    @Override
+	@Override
     public int hashCode() {
     	if ( b ) {
-    		return trueBytes.hashCode();
+    		return true_hashCode;
     	}
-        return falseBytes.hashCode();
+        return false_hashCode;
     }
 
 }

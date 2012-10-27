@@ -8,6 +8,7 @@
 package com.antiaction.common.json;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class JSONNull extends JSONValue {
 
@@ -37,9 +38,11 @@ public class JSONNull extends JSONValue {
         return true;
     }
 
-    @Override
+	protected int hashCode = Arrays.deepHashCode( new Object[] { nullBytes } );
+
+	@Override
     public int hashCode() {
-        return nullBytes.hashCode();
+        return hashCode;
     }
 
 }

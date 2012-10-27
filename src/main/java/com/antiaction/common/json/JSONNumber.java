@@ -105,7 +105,7 @@ public class JSONNumber extends JSONValue {
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode( new Object[] {numberBytes} );
+        return Arrays.deepHashCode( new Object[] { numberBytes } );
     }
 
 }
