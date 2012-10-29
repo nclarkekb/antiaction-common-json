@@ -90,31 +90,32 @@ public class TestJSONBoolean {
 			Assert.assertEquals( 2, json_array.values.size() );
 			Assert.assertEquals( False, json_array.values.get( 0 ) );
 			Assert.assertEquals( True, json_array.values.get( 1 ) );
-
-			/*
-			 *
-			 */
-
-			Assert.assertFalse( False.equals( null ) );
-			Assert.assertFalse( True.equals( null ) );
-			Assert.assertFalse( False.equals( "false" ) );
-			Assert.assertFalse( True.equals( "true" ) );
-			Assert.assertFalse( False.equals( True ) );
-			Assert.assertFalse( True.equals( False ) );
-			Assert.assertFalse( False.equals( new JSONBoolean( true ) ) );
-			Assert.assertFalse( True.equals( new JSONBoolean( false ) ) );
-
-			Assert.assertTrue( False.equals( new JSONBoolean( false ) ) );
-			Assert.assertTrue( True.equals( new JSONBoolean( true ) ) );
-
-			Assert.assertEquals( False.hashCode(), new JSONBoolean( false ).hashCode() );
-			Assert.assertEquals( True.hashCode(), new JSONBoolean( true ).hashCode() );
-
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+	}
+
+	@Test
+	public void test_jsonboolean_equals_hashcode() {
+		JSONBoolean False = JSONBoolean.False;
+		JSONBoolean True = JSONBoolean.True;
+
+		Assert.assertFalse( False.equals( null ) );
+		Assert.assertFalse( True.equals( null ) );
+		Assert.assertFalse( False.equals( "false" ) );
+		Assert.assertFalse( True.equals( "true" ) );
+		Assert.assertFalse( False.equals( True ) );
+		Assert.assertFalse( True.equals( False ) );
+		Assert.assertFalse( False.equals( new JSONBoolean( true ) ) );
+		Assert.assertFalse( True.equals( new JSONBoolean( false ) ) );
+
+		Assert.assertTrue( False.equals( new JSONBoolean( false ) ) );
+		Assert.assertTrue( True.equals( new JSONBoolean( true ) ) );
+
+		Assert.assertEquals( False.hashCode(), new JSONBoolean( false ).hashCode() );
+		Assert.assertEquals( True.hashCode(), new JSONBoolean( true ).hashCode() );
 	}
 
 }

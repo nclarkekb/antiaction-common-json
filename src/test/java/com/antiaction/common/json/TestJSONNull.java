@@ -64,30 +64,26 @@ public class TestJSONNull {
 			json_array = (JSONArray)json_structure;
 			Assert.assertEquals( 1, json_array.values.size() );
 			Assert.assertEquals( json_null, json_array.values.get( 0 ) );
-
-			/*
-			 *
-			 */
-
-			Assert.assertFalse( json_null.equals( null ) );
-			Assert.assertFalse( json_null.equals( "null" ) );
-			Assert.assertTrue( json_null.equals( json_null ) );
-
-			JSONNull json_null2 = new JSONNull();
-			Assert.assertTrue( json_null.equals( json_null2 ) );
-			Assert.assertTrue( json_null2.equals( json_null ) );
-			Assert.assertTrue( json_null2.equals( json_null2 ) );
-			Assert.assertEquals( json_null.hashCode(), json_null2.hashCode() );
-
-			/*
-			 *
-			 */
-
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+	}
+
+	@Test
+	public void test_jsonnull_equals_hashcode() {
+		JSONNull json_null = JSONNull.Null;
+
+		Assert.assertFalse( json_null.equals( null ) );
+		Assert.assertFalse( json_null.equals( "null" ) );
+		Assert.assertTrue( json_null.equals( json_null ) );
+
+		JSONNull json_null2 = new JSONNull();
+		Assert.assertTrue( json_null.equals( json_null2 ) );
+		Assert.assertTrue( json_null2.equals( json_null ) );
+		Assert.assertTrue( json_null2.equals( json_null2 ) );
+		Assert.assertEquals( json_null.hashCode(), json_null2.hashCode() );
 	}
 
 }

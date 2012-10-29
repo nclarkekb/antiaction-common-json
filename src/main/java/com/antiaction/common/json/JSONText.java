@@ -160,7 +160,7 @@ public class JSONText {
 					json_name = json_string;
 					state = S_OBJECT_COLON;
 					// debug
-					System.out.println( json_value.toString() );
+					//System.out.println( json_value.toString() );
 				case S_OBJECT_COLON:
 					switch ( c ) {
 					case 0x20:
@@ -182,7 +182,7 @@ public class JSONText {
 					current.put( json_name, json_value );
 					state = S_OBJECT_VALUE_NEXT;
 					// debug
-					System.out.println( json_value.toString() );
+					//System.out.println( json_value.toString() );
 				case S_OBJECT_VALUE_NEXT:
 					switch ( c ) {
 					case 0x20:
@@ -329,7 +329,7 @@ public class JSONText {
 					current.add( json_value );
 					state = S_ARRAY_NEXT;
 					// debug
-					System.out.println( json_value.toString() );
+					//System.out.println( json_value.toString() );
 				case S_ARRAY_NEXT:
 					switch ( c ) {
 					case 0x20:

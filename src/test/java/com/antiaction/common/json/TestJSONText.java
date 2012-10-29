@@ -169,6 +169,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
+			Assert.assertEquals( json_array.toString(), json_struct.toString() );
+
 			bytes = new byte[] { 0x20, 0x09, 0x0A, 0x0D, '[', 0x20, 0x09, 0x0A, 0x0D, ']', 0x20, 0x09, 0x0A, 0x0D };
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( bytes ), 4 );
@@ -197,6 +199,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_decoder );
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
+
+			Assert.assertEquals( json_object.toString(), json_struct.toString() );
 
 			bytes = new byte[] { 0x20, 0x09, 0x0A, 0x0D, '{', 0x20, 0x09, 0x0A, 0x0D, '}', 0x20, 0x09, 0x0A, 0x0D };
 
@@ -243,6 +247,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
+
+			Assert.assertEquals( json_array.toString(), json_struct.toString() );
 
 			Assert.assertEquals( JSONNull.Null, json_struct.get( 0 ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( 1 ) );
@@ -297,6 +303,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
+			Assert.assertEquals( json_object.toString(), json_struct.toString() );
+
 			Assert.assertEquals( JSONNull.Null, json_struct.get( JSONString.String( "0" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( JSONString.String( "1" ) ) );
 			Assert.assertEquals( JSONBoolean.True, json_struct.get( JSONString.String( "2" ) ) );
@@ -349,6 +357,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
+
+			Assert.assertEquals( json_object.toString(), json_struct.toString() );
 
 			Assert.assertEquals( JSONNull.Null, json_struct.get( JSONString.String( "0" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( JSONString.String( "1" ) ) );
@@ -407,6 +417,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
+			Assert.assertEquals( json_array.toString(), json_struct.toString() );
+
 			Assert.assertEquals( JSONNull.Null, json_array.get( 0 ) );
 			Assert.assertEquals( JSONBoolean.False, json_array.get( 1 ) );
 			Assert.assertEquals( JSONBoolean.True, json_array.get( 2 ) );
@@ -459,6 +471,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
+
+			Assert.assertEquals( json_array.toString(), json_struct.toString() );
 
 			Assert.assertEquals( JSONNull.Null, json_array.get( 0 ) );
 			Assert.assertEquals( JSONBoolean.False, json_array.get( 1 ) );
@@ -514,6 +528,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
+			Assert.assertEquals( json_array.toString(), json_struct.toString() );
+
 			json_array2 = (JSONArray)json_array.get( 0 );
 			Assert.assertEquals( JSONNull.Null, json_array2.get( 0 ) );
 			Assert.assertEquals( JSONBoolean.False, json_array2.get( 1 ) );
@@ -563,6 +579,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
+			//Assert.assertEquals( json_array.toString(), json_struct.toString() );
+
 			Assert.assertEquals( JSONNull.Null, json_struct.get( 0 ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( 1 ) );
 			Assert.assertEquals( JSONBoolean.True, json_struct.get( 2 ) );
@@ -598,6 +616,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
+
+			//Assert.assertEquals( json_array.toString(), json_struct.toString() );
 
 			json_object2 = (JSONObject)json_struct.get( 0 );
 			Assert.assertEquals( JSONNull.Null, json_object2.get( new JSONString( "Null" ) ) );
@@ -636,6 +656,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
+			//Assert.assertEquals( json_object.toString(), json_struct.toString() );
+
 			Assert.assertEquals( json_object.get( new JSONString( "Null" ) ), JSONNull.Null );
 			Assert.assertEquals( json_object.get( new JSONString( "False" ) ), JSONBoolean.False );
 			Assert.assertEquals( json_object.get( new JSONString( "True" ) ), JSONBoolean.True );
@@ -672,6 +694,8 @@ public class TestJSONText {
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
+			//Assert.assertEquals( json_object.toString(), json_struct.toString() );
+
 			Assert.assertEquals( JSONNull.Null, json_struct.get( new JSONString( "Null" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( new JSONString( "False" ) ) );
 			Assert.assertEquals( JSONBoolean.True, json_struct.get( new JSONString( "True" ) ) );
@@ -706,6 +730,8 @@ public class TestJSONText {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
+
+			//Assert.assertEquals( json_object.toString(), json_struct.toString() );
 
 			Assert.assertEquals( JSONNull.Null, json_struct.get( new JSONString( "Null" ) ) );
 			Assert.assertEquals( JSONBoolean.False, json_struct.get( new JSONString( "False" ) ) );

@@ -27,7 +27,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 
 	protected InputStream in;
 
-	protected boolean eof;
+	protected boolean bEof;
 
 	public JSONDecoderCharset(Charset charset) {
 		decoder = charset.newDecoder();
@@ -40,12 +40,12 @@ public class JSONDecoderCharset implements JSONDecoder {
 	@Override
 	public void init(InputStream in) {
 		this.in = in;
-		eof = false;
+		bEof = false;
 		byteBuffer.clear();
 	}
 
 	@Override
-	public void fill(CharBuffer charBuffer) throws IOException {
+	public boolean fill(CharBuffer charBuffer) throws IOException {
 		int read;
 		if ( charBuffer.hasRemaining() ) {
 			if ( byteBuffer.hasRemaining() ) {
@@ -54,7 +54,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 					byteBuffer.position( byteBuffer.position() + read );
 				}
 				else {
-					eof = true;
+					bEof = true;
 				}
 			}
 			byteBuffer.flip();
@@ -62,19 +62,28 @@ public class JSONDecoderCharset implements JSONDecoder {
 				boolean bDecodeLoop = true;
 				while ( bDecodeLoop ) {
 					CoderResult result = decoder.decode( byteBuffer, charBuffer, true );
-					if ( result == CoderResult.UNDERFLOW ) {
+					if ( result == CoderResult.OVERFLOW || result == CoderResult.UNDERFLOW ) {
 						   bDecodeLoop = false;
-					} else if ( result.isError() ) {
+					}
+					else if ( result.isError() ) {
 						byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
 						//sb.append('?');
 						//ew.bConversionError = true;
 					}
 				}
-			} catch (CoderMalfunctionError e) {
+			}
+			catch (CoderMalfunctionError e) {
+				throw new IOException( "Colder malfunction!", e );
 			}
 			byteBuffer.compact();
 			charBuffer.flip();
 		}
+		return bEof;
+	}
+
+	@Override
+	public boolean eof() {
+		return bEof;
 	}
 
 }

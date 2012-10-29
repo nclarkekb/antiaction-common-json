@@ -117,7 +117,10 @@ public class TestJSONEncoding {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
+	}
 
+	@Test
+	public void test_jsonencoding_decoder() {
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoding json_encoding2 = JSONEncoding.getJSONEncoding();
 		Assert.assertEquals( json_encoding, json_encoding2 );
@@ -157,6 +160,53 @@ public class TestJSONEncoding {
 		}
 		try {
 			json_encoding.getJSONDecoder( 42 );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (IllegalArgumentException e) {
+		}
+	}
+
+	@Test
+	public void test_jsondecoding_encoder() {
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONEncoding json_encoding2 = JSONEncoding.getJSONEncoding();
+		Assert.assertEquals( json_encoding, json_encoding2 );
+
+		JSONEncoder json_encoder;
+		JSONEncoder json_encoder2;
+
+		json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+		json_encoder2 = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+		Assert.assertEquals( json_encoder, json_encoder2 );
+
+		json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF16BE );
+		json_encoder2 = json_encoding.getJSONEncoder( JSONEncoding.E_UTF16BE );
+		Assert.assertEquals( json_encoder, json_encoder2 );
+
+		json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF16LE );
+		json_encoder2 = json_encoding.getJSONEncoder( JSONEncoding.E_UTF16LE );
+		Assert.assertEquals( json_encoder, json_encoder2 );
+
+		try {
+			json_encoding.getJSONEncoder( JSONEncoding.E_UTF32BE );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (IllegalArgumentException e) {
+		}
+		try {
+			json_encoding.getJSONEncoder( JSONEncoding.E_UTF32LE );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (IllegalArgumentException e) {
+		}
+		try {
+			json_encoding.getJSONEncoder( JSONEncoding.E_UNKNOWN );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (IllegalArgumentException e) {
+		}
+		try {
+			json_encoding.getJSONEncoder( 42 );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (IllegalArgumentException e) {

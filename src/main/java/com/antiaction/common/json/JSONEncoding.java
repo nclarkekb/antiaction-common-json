@@ -263,4 +263,42 @@ public class JSONEncoding {
 		return jsondecoder;
 	}
 
+	private JSONEncoder utf8_encoder;
+	private JSONEncoder utf16be_encoder;
+	private JSONEncoder utf16le_encoder;
+
+	public JSONEncoder getJSONEncoder(int encoding) {
+		JSONEncoder jsonencoder = null;
+		Charset charset;
+		switch ( encoding ) {
+		case E_UTF8:
+			if (utf8_encoder == null) {
+				charset = Charset.forName( "UTF-8" );
+				utf8_encoder = new JSONEncoderCharset( charset );
+			}
+			jsonencoder = utf8_encoder;
+			break;
+		case E_UTF16BE:
+			if ( utf16be_encoder == null ) {
+				charset = Charset.forName( "UTF-16BE" );
+				utf16be_encoder = new JSONEncoderCharset( charset );
+			}
+			jsonencoder = utf16be_encoder;
+			break;
+		case E_UTF16LE:
+			if ( utf16le_encoder == null ) {
+				charset = Charset.forName( "UTF-16LE" );
+				utf16le_encoder = new JSONEncoderCharset( charset );
+			}
+			jsonencoder = utf16le_encoder;
+			break;
+		case E_UTF32BE:
+		case E_UTF32LE:
+		case E_UNKNOWN:
+		default:
+			throw new IllegalArgumentException( "Unsupported encoding!" );
+		}
+		return jsonencoder;
+	}
+
 }

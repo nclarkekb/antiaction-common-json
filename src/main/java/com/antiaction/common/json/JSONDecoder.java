@@ -15,6 +15,8 @@ public interface JSONDecoder {
 
 	public void init(InputStream in);
 
-	public void fill(CharBuffer charBuffer) throws IOException;
+	public boolean fill(CharBuffer charBuffer) throws IOException;
+
+	public boolean eof();
 
 }

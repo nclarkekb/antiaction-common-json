@@ -23,15 +23,24 @@ public class TestJSONString {
 
 	@Test
 	public void test_jsonstring() {
-		try {
-			String eightbit;
-			JSONString json_string;
-			JSONString json_string2;
+		StringBuilder sb = new StringBuilder();
+		for ( int i=0; i<256; ++i ) {
+			sb.append( (char)i );
+		}
+		test_jsonstring_params( sb );
+		sb.setLength( 0 );
+		for ( int i=0; i<32; ++i ) {
+			sb.append( (char)i );
+		}
+		test_jsonstring_params( sb );
+	}
 
-			StringBuilder sb = new StringBuilder();
-			for ( int i=0; i<256; ++i ) {
-				sb.append( (char)i );
-			}
+	public void test_jsonstring_params(StringBuilder sb) {
+		String eightbit;
+		JSONString json_string;
+		JSONString json_string2;
+
+		try {
 			eightbit = sb.toString();
 			json_string = JSONString.String( sb.toString() );
 			json_string2 = JSONString.String( sb.toString() );
@@ -70,51 +79,58 @@ public class TestJSONString {
 			json_array = (JSONArray)json_structure;
 			Assert.assertEquals( 1, json_array.values.size() );
 			Assert.assertEquals( json_string, json_array.values.get( 0 ) );
-
-			/*
-			 *
-			 */
-
-			Assert.assertTrue( json_string.equals( json_string2 ) );
-			Assert.assertTrue( json_string2.equals( json_string ) );
-			Assert.assertEquals( json_string.hashCode(), json_string2.hashCode() );
-			Assert.assertEquals( json_string2.hashCode(), json_string.hashCode() );
-
-			Assert.assertEquals( eightbit, json_string.getString() );
-			Assert.assertEquals( eightbit, json_string2.getString() );
-
-			Assert.assertFalse( json_string.equals( null ) );
-			Assert.assertFalse( json_string2.equals( null ) );
-			Assert.assertFalse( json_string.equals( "string" ) );
-			Assert.assertFalse( json_string2.equals( "string" ) );
-
-			json_string2 = JSONString.String( "test" );
-			Assert.assertFalse( json_string.equals( json_string2 ) );
-			Assert.assertFalse( json_string2.equals( json_string ) );
-
-			Assert.assertEquals( eightbit, json_string.getString() );
-			Assert.assertEquals( "test", json_string2.getString() );
-
-			json_string = JSONString.String( "test" );
-			Assert.assertTrue( json_string.equals( json_string2 ) );
-			Assert.assertTrue( json_string2.equals( json_string ) );
-			Assert.assertEquals( json_string.hashCode(), json_string2.hashCode() );
-			Assert.assertEquals( json_string2.hashCode(), json_string.hashCode() );
-
-			Assert.assertEquals( "test", json_string.getString() );
-			Assert.assertEquals( "test", json_string2.getString() );
-
-			json_string2 = JSONString.String( "Test" );
-			Assert.assertFalse( json_string.equals( json_string2 ) );
-			Assert.assertFalse( json_string2.equals( json_string ) );
-
-			Assert.assertEquals( "test", json_string.getString() );
-			Assert.assertEquals( "Test", json_string2.getString() );
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+	}
+
+	@Test
+	public void test_jsonnumber_equals_hashcode() {
+		StringBuilder sb = new StringBuilder();
+		for ( int i=0; i<256; ++i ) {
+			sb.append( (char)i );
+		}
+		String eightbit = sb.toString();
+		JSONString json_string = JSONString.String( sb.toString() );
+		JSONString json_string2 = JSONString.String( sb.toString() );
+
+		Assert.assertTrue( json_string.equals( json_string2 ) );
+		Assert.assertTrue( json_string2.equals( json_string ) );
+		Assert.assertEquals( json_string.hashCode(), json_string2.hashCode() );
+		Assert.assertEquals( json_string2.hashCode(), json_string.hashCode() );
+
+		Assert.assertEquals( eightbit, json_string.getString() );
+		Assert.assertEquals( eightbit, json_string2.getString() );
+
+		Assert.assertFalse( json_string.equals( null ) );
+		Assert.assertFalse( json_string2.equals( null ) );
+		Assert.assertFalse( json_string.equals( "string" ) );
+		Assert.assertFalse( json_string2.equals( "string" ) );
+
+		json_string2 = JSONString.String( "test" );
+		Assert.assertFalse( json_string.equals( json_string2 ) );
+		Assert.assertFalse( json_string2.equals( json_string ) );
+
+		Assert.assertEquals( eightbit, json_string.getString() );
+		Assert.assertEquals( "test", json_string2.getString() );
+
+		json_string = JSONString.String( "test" );
+		Assert.assertTrue( json_string.equals( json_string2 ) );
+		Assert.assertTrue( json_string2.equals( json_string ) );
+		Assert.assertEquals( json_string.hashCode(), json_string2.hashCode() );
+		Assert.assertEquals( json_string2.hashCode(), json_string.hashCode() );
+
+		Assert.assertEquals( "test", json_string.getString() );
+		Assert.assertEquals( "test", json_string2.getString() );
+
+		json_string2 = JSONString.String( "Test" );
+		Assert.assertFalse( json_string.equals( json_string2 ) );
+		Assert.assertFalse( json_string2.equals( json_string ) );
+
+		Assert.assertEquals( "test", json_string.getString() );
+		Assert.assertEquals( "Test", json_string2.getString() );
 	}
 
 }
