@@ -29,6 +29,10 @@ public class JSONDecoderCharset implements JSONDecoder {
 
 	protected boolean bEof;
 
+	protected int errorsPending;
+
+	protected boolean bConversionError;
+
 	public JSONDecoderCharset(Charset charset) {
 		decoder = charset.newDecoder();
 		decoder.onMalformedInput( CodingErrorAction.REPORT );
@@ -41,12 +45,22 @@ public class JSONDecoderCharset implements JSONDecoder {
 	public void init(InputStream in) {
 		this.in = in;
 		bEof = false;
+		errorsPending = 0;
+		bConversionError = false;
 		byteBuffer.clear();
 	}
 
+	/*
+	 * Assume charBuffer in write mode.
+	 * @see com.antiaction.common.json.JSONDecoder#fill(java.nio.CharBuffer)
+	 */
 	@Override
 	public boolean fill(CharBuffer charBuffer) throws IOException {
 		int read;
+		while ( errorsPending > 0 && charBuffer.hasRemaining() ) {
+			charBuffer.append( '?' );
+			--errorsPending;
+		}
 		if ( charBuffer.hasRemaining() ) {
 			if ( byteBuffer.hasRemaining() ) {
 				read = in.read( byteArray, byteBuffer.position(), byteBuffer.remaining() );
@@ -57,6 +71,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 					bEof = true;
 				}
 			}
+			// Switch buffer to read mode.
 			byteBuffer.flip();
 			try {
 				boolean bDecodeLoop = true;
@@ -66,24 +81,36 @@ public class JSONDecoderCharset implements JSONDecoder {
 						   bDecodeLoop = false;
 					}
 					else if ( result.isError() ) {
+						bConversionError = true;
 						byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
-						//sb.append('?');
-						//ew.bConversionError = true;
+						errorsPending += result.length();
+						while ( errorsPending > 0 && charBuffer.hasRemaining() ) {
+							charBuffer.append( '?' );
+							--errorsPending;
+						}
+						if ( errorsPending > 0 ) {
+							   bDecodeLoop = false;
+						}
 					}
 				}
 			}
 			catch (CoderMalfunctionError e) {
 				throw new IOException( "Colder malfunction!", e );
 			}
+			// Switch buffer to write mode.
 			byteBuffer.compact();
-			charBuffer.flip();
 		}
-		return bEof;
+		return (bEof && errorsPending == 0);
 	}
 
 	@Override
-	public boolean eof() {
-		return bEof;
+	public boolean isEof() {
+		return (bEof && errorsPending == 0);
+	}
+
+	@Override
+	public boolean hasConversionError() {
+		return bConversionError;
 	}
 
 }

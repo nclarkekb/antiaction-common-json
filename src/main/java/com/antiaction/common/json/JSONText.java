@@ -72,6 +72,10 @@ public class JSONText {
 
 		decoder.init( in );
 		decoder.fill( charBuffer );
+
+		// Switch buffer to read mode.
+		charBuffer.flip();
+
 		int pos = charBuffer.position();
 		int limit = charBuffer.limit();
 

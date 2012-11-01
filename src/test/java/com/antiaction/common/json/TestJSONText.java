@@ -159,7 +159,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -190,7 +190,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -237,7 +237,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -292,7 +292,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -347,7 +347,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -406,7 +406,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -461,7 +461,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -517,7 +517,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -568,7 +568,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -606,7 +606,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -645,7 +645,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -683,7 +683,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );
@@ -720,7 +720,7 @@ public class TestJSONText {
 			json.encodeJSONtext( json_object, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( new String( out.toByteArray() ) );
 
 			pbin = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( pbin );

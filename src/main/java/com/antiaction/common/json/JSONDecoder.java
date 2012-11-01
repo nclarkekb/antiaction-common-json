@@ -17,6 +17,8 @@ public interface JSONDecoder {
 
 	public boolean fill(CharBuffer charBuffer) throws IOException;
 
-	public boolean eof();
+	public boolean isEof();
+
+	public boolean hasConversionError();
 
 }
