@@ -33,6 +33,10 @@ public class JSONDecoderCharset implements JSONDecoder {
 
 	protected boolean bConversionError;
 
+	protected String replacement;
+
+	protected int replacementLength;
+
 	public JSONDecoderCharset(Charset charset) {
 		decoder = charset.newDecoder();
 		decoder.onMalformedInput( CodingErrorAction.REPORT );
@@ -47,6 +51,8 @@ public class JSONDecoderCharset implements JSONDecoder {
 		bEof = false;
 		errorsPending = 0;
 		bConversionError = false;
+		replacement = decoder.replacement();
+		replacementLength = replacement.length();
 		byteBuffer.clear();
 	}
 
@@ -57,12 +63,12 @@ public class JSONDecoderCharset implements JSONDecoder {
 	@Override
 	public boolean fill(CharBuffer charBuffer) throws IOException {
 		int read;
-		while ( errorsPending > 0 && charBuffer.hasRemaining() ) {
-			charBuffer.append( '?' );
+		while ( errorsPending > 0 && charBuffer.remaining() >= replacementLength ) {
+			charBuffer.append( replacement );
 			--errorsPending;
 		}
 		if ( charBuffer.hasRemaining() ) {
-			if ( byteBuffer.hasRemaining() ) {
+			if ( !bEof && byteBuffer.hasRemaining() ) {
 				read = in.read( byteArray, byteBuffer.position(), byteBuffer.remaining() );
 				if ( read != -1 ) {
 					byteBuffer.position( byteBuffer.position() + read );
@@ -83,9 +89,10 @@ public class JSONDecoderCharset implements JSONDecoder {
 					else if ( result.isError() ) {
 						bConversionError = true;
 						byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
-						errorsPending += result.length();
-						while ( errorsPending > 0 && charBuffer.hasRemaining() ) {
-							charBuffer.append( '?' );
+						//errorsPending += result.length();
+						++errorsPending;
+						while ( errorsPending > 0 && charBuffer.remaining() >= replacementLength ) {
+							charBuffer.append( replacement );
 							--errorsPending;
 						}
 						if ( errorsPending > 0 ) {
@@ -100,12 +107,12 @@ public class JSONDecoderCharset implements JSONDecoder {
 			// Switch buffer to write mode.
 			byteBuffer.compact();
 		}
-		return (bEof && errorsPending == 0);
+		return (bEof && byteBuffer.position() == 0 && errorsPending == 0);
 	}
 
 	@Override
 	public boolean isEof() {
-		return (bEof && errorsPending == 0);
+		return (bEof && byteBuffer.position() == 0 && errorsPending == 0);
 	}
 
 	@Override

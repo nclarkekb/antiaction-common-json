@@ -18,8 +18,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderMalfunctionError;
 import java.nio.charset.CoderResult;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -100,12 +99,20 @@ public class TestJSONDecoderCharset {
 				// debug
 				//System.out.println( "sb.length: " + sb.length() );
 			}
+			Assert.assertTrue( json_decoder.bEof );
 			Assert.assertTrue( json_decoder.isEof() );
 			Assert.assertFalse( json_decoder.hasConversionError() );
+
+			byte[] encodedOutBytes = sb.toString().getBytes( "UTF-8" );
+			Assert.assertArrayEquals( encodedBytes, encodedOutBytes );
+
+			byte[] outBytes = sb.toString().getBytes( "ISO-8859-1" );
+			Assert.assertArrayEquals( bytes, outBytes );
 
 			bEof = json_decoder.fill( charBuffer );
 			// Switch buffer to read mode.
 			charBuffer.flip();
+			Assert.assertTrue( json_decoder.bEof );
 			Assert.assertTrue( json_decoder.isEof() );
 			Assert.assertEquals( 0, charBuffer.position() );
 			Assert.assertEquals( 0, charBuffer.remaining() );
@@ -116,6 +123,7 @@ public class TestJSONDecoderCharset {
 			bEof = json_decoder.fill( charBuffer );
 			// Switch buffer to read mode.
 			charBuffer.flip();
+			Assert.assertTrue( json_decoder.bEof );
 			Assert.assertTrue( json_decoder.isEof() );
 			Assert.assertEquals( 0, charBuffer.position() );
 			Assert.assertEquals( 0, charBuffer.remaining() );
@@ -166,9 +174,11 @@ public class TestJSONDecoderCharset {
 			for ( int i=0; i<256; ++i ) {
 				out.write( i );
 			}
-			byte[] encodedBytes = out.toByteArray();
+			byte[] bytes = out.toByteArray();
 
-			in = new ByteArrayInputStream( encodedBytes );
+			byte[] encodedBytes = new String( bytes, "UTF-8" ).getBytes( "ISO-8859-1" );
+
+			in = new ByteArrayInputStream( bytes );
 			json_decoder = new JSONDecoderCharset( Charset.forName( "UTF-8" ) );
 
 			json_decoder.init( in );
@@ -201,11 +211,37 @@ public class TestJSONDecoderCharset {
 				charBuffer.clear();
 			}
 			// debug
-			System.out.println( sb.toString() );
-			System.out.println( sb.toString().length() );
+			//System.out.println( sb.toString() );
+			//System.out.println( sb.toString().length() );
 
+			Assert.assertArrayEquals( encodedBytes, sb.toString().getBytes( "ISO-8859-1" ) );
+
+			Assert.assertTrue( json_decoder.bEof );
 			Assert.assertTrue( json_decoder.isEof() );
-			Assert.assertFalse( json_decoder.hasConversionError() );
+			Assert.assertTrue( json_decoder.hasConversionError() );
+
+			json_decoder.bEof = false;
+			Assert.assertFalse( json_decoder.bEof );
+			Assert.assertFalse( json_decoder.isEof() );
+
+			json_decoder.byteBuffer.position( 0 );
+			json_decoder.byteBuffer.limit( 0 );
+
+			bEof = json_decoder.fill( charBuffer );
+			// bEof not set due to empty byteBuffer.
+			Assert.assertFalse( json_decoder.bEof );
+			Assert.assertFalse( json_decoder.isEof() );
+
+			Assert.assertEquals( 0, charBuffer.position() );
+			Assert.assertEquals( charBuffer.capacity(), charBuffer.limit() );
+
+			bEof = json_decoder.fill( charBuffer );
+			// bEof not set due to empty byteBuffer.
+			Assert.assertTrue( json_decoder.bEof );
+			Assert.assertTrue( json_decoder.isEof() );
+
+			Assert.assertEquals( 0, charBuffer.position() );
+			Assert.assertEquals( charBuffer.capacity(), charBuffer.limit() );
 		}
 		catch (IOException e) {
 		}
@@ -226,11 +262,11 @@ public class TestJSONDecoderCharset {
 			for ( int i=0; i<256; ++i ) {
 				out.write( i );
 			}
-			byte[] encodedBytes = out.toByteArray();
+			byte[] bytes = out.toByteArray();
 
-			String inStr = out.toString( "ISO-8859-1" );
+			byte[] encodedBytes = new String( bytes, "UTF-8" ).getBytes( "ISO-8859-1" );
 
-			in = new ByteArrayInputStream( encodedBytes );
+			in = new ByteArrayInputStream( bytes );
 			json_decoder = new JSONDecoderCharset( Charset.forName( "UTF-8" ) );
 
 			json_decoder.init( in );
@@ -262,26 +298,15 @@ public class TestJSONDecoderCharset {
 				// debug
 				//System.out.println( "sb.length: " + sb.length() );
 			}
+			Assert.assertTrue( json_decoder.bEof );
 			Assert.assertTrue( json_decoder.isEof() );
 			Assert.assertTrue( json_decoder.hasConversionError() );
 
-			String destStr = sb.toString();
-			Assert.assertEquals( inStr.length(), destStr.length() );
-
-			sb.setLength( 0 );
-			for ( int i=0; i<128; ++i) {
-				sb.append( (char)i );
-			}
-			for ( int i=0; i<128; ++i) {
-				sb.append( '?' );
-			}
-			String expectedStr = sb.toString();
+			Assert.assertArrayEquals( encodedBytes, sb.toString().getBytes( "ISO-8859-1" ) );
 
 			// debug
 			//System.out.println( sb.toString() );
 			//System.out.println( sb.toString().length() );
-
-			Assert.assertEquals( expectedStr, destStr );
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -289,7 +314,7 @@ public class TestJSONDecoderCharset {
 		}
 	}
 
-	//@Test
+	@Test
 	public void test_jsondecodercharset_conversionerror() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayInputStream in;
@@ -320,34 +345,73 @@ public class TestJSONDecoderCharset {
 
 			boolean bEof = false;
 			while ( !bEof ) {
-				while ( !bEof && charBuffer.remaining() > 0 ) {
-					Assert.assertFalse( json_decoder.isEof() );
-					// debug
-					//System.out.println( charBuffer.position() );
-					//System.out.println( charBuffer.remaining() );
-					//System.out.println( charBuffer.limit() );
+				Assert.assertFalse( json_decoder.isEof() );
 
-					bEof = json_decoder.fill( charBuffer );
+				bEof = json_decoder.fill( charBuffer );
 
-					// debug
-					//System.out.println( charBuffer.position() );
-					//System.out.println( charBuffer.remaining() );
-					//System.out.println( charBuffer.limit() );
-				}
+				// Switch buffer to read mode.
+				charBuffer.flip();
 				if (charBuffer.remaining() > 0 ) {
 					sb.append( chars, 0, charBuffer.remaining() );
 				}
+				// Switch buffer to write mode.
 				charBuffer.clear();
 				// debug
 				//System.out.println( "sb.length: " + sb.length() );
 			}
+			Assert.assertTrue( json_decoder.isEof() );
+			Assert.assertTrue( json_decoder.hasConversionError() );
+
+			json_decoder.errorsPending = 24;
+
+			Assert.assertFalse( json_decoder.isEof() );
+			Assert.assertTrue( json_decoder.hasConversionError() );
+
+			bEof = false;
+			while ( !bEof ) {
+				Assert.assertFalse( json_decoder.isEof() );
+
+				bEof = json_decoder.fill( charBuffer );
+
+				// Switch buffer to read mode.
+				charBuffer.flip();
+				if (charBuffer.remaining() > 0 ) {
+					sb.append( chars, 0, charBuffer.remaining() );
+				}
+				// Switch buffer to write mode.
+				charBuffer.clear();
+				// debug
+				//System.out.println( "sb.length: " + sb.length() );
+			}
+			Assert.assertTrue( json_decoder.isEof() );
+			Assert.assertTrue( json_decoder.hasConversionError() );
+
 			// debug
 			System.out.println( sb.toString() );
 			System.out.println( sb.toString().length() );
 
-			Assert.assertTrue( json_decoder.isEof() );
-			Assert.assertTrue( json_decoder.hasConversionError() );
+			out.reset();
+			for ( int i=0; i<256; ++i ) {
+				out.write( i );
+			}
+			byte[] bytes = out.toByteArray();
+			String expectedDecoded = new String( bytes, "UTF-8" );
 
+			StringBuilder esb = new StringBuilder();
+			for ( int i=0; i<24; ++i ) {
+				esb.append( (char)0xFFFD );
+			}
+			esb.append( expectedDecoded );
+			for ( int i=0; i<24; ++i ) {
+				esb.append( (char)0xFFFD );
+			}
+			expectedDecoded = esb.toString();
+
+			// debug
+			System.out.println( expectedDecoded );
+			System.out.println( expectedDecoded.length() );
+
+			Assert.assertEquals( expectedDecoded, sb.toString() );
 		}
 		catch (IOException e) {
 		}
