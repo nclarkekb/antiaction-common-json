@@ -753,7 +753,16 @@ public class JSONText {
 					++pos;
 				}
 			}
-			bLoop = false;
+			// Switch buffer to write mode.
+			charBuffer.clear();
+			decoder.fill( charBuffer );
+			// Switch buffer to read mode.
+			charBuffer.flip();
+
+			pos = charBuffer.position();
+			limit = charBuffer.limit();
+
+			bLoop = !(pos == limit);
 		}
 		if (current == null || stack.size() > 0) {
 			throw new IOException( "Invalid JSON structure!" );

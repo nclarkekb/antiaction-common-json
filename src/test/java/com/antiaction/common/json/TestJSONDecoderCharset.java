@@ -145,13 +145,14 @@ public class TestJSONDecoderCharset {
 		try {
 			final Charset charset = Charset.forName( "UTF-8" );
 			final CharsetDecoder decoder = charset.newDecoder();
-			json_decoder.decoder = new CharsetDecoder( decoder.charset(), decoder.averageCharsPerByte(), decoder.maxCharsPerByte()) {
+			json_decoder.decoder = new CharsetDecoder( decoder.charset(), decoder.averageCharsPerByte(), decoder.maxCharsPerByte() ) {
 				@Override
 				protected CoderResult decodeLoop(ByteBuffer in, CharBuffer out) {
 					throw new CoderMalfunctionError( new NullPointerException()  );
 				}
 			};
 			charBuffer.clear();
+			json_decoder.byteBuffer.put( "test".getBytes( "ISO-8859-1" ) );
 			json_decoder.fill( charBuffer );
 			Assert.fail( "Exception expected!" );
 		}
@@ -387,8 +388,8 @@ public class TestJSONDecoderCharset {
 			Assert.assertTrue( json_decoder.hasConversionError() );
 
 			// debug
-			System.out.println( sb.toString() );
-			System.out.println( sb.toString().length() );
+			//System.out.println( sb.toString() );
+			//System.out.println( sb.toString().length() );
 
 			out.reset();
 			for ( int i=0; i<256; ++i ) {
@@ -408,8 +409,8 @@ public class TestJSONDecoderCharset {
 			expectedDecoded = esb.toString();
 
 			// debug
-			System.out.println( expectedDecoded );
-			System.out.println( expectedDecoded.length() );
+			//System.out.println( expectedDecoded );
+			//System.out.println( expectedDecoded.length() );
 
 			Assert.assertEquals( expectedDecoded, sb.toString() );
 		}

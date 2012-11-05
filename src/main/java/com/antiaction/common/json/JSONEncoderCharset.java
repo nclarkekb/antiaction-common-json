@@ -42,29 +42,38 @@ public class JSONEncoderCharset implements JSONEncoder {
 
 	@Override
 	public void init(OutputStream out) {
+		encoder.reset();
 		this.out = out;
+		// Switch buffer to write mode.
 		charBuffer.clear();
+		// Switch buffer to write mode.
 		byteBuffer.clear();
 	}
 
 	protected void encode_buffer(boolean endOfInput) throws IOException {
+		// Switch buffer to read mode.
 		charBuffer.flip();
-		CoderResult result = encoder.encode( charBuffer, byteBuffer, endOfInput );
-		if ( result == CoderResult.OVERFLOW ) {
-			byteBuffer.flip();
-			int pos = byteBuffer.position();
-			int limit = byteBuffer.limit();
-			out.write( byteArray, pos, limit - pos );
-			byteBuffer.position( limit );
-			byteBuffer.compact();
+		boolean bEncodeLoop = true;
+		while ( bEncodeLoop ) {
+			CoderResult result = encoder.encode( charBuffer, byteBuffer, endOfInput );
+			if (result == CoderResult.UNDERFLOW) {
+				bEncodeLoop = false;
+			}
+			else if ( result == CoderResult.OVERFLOW ) {
+				// Switch buffer to read mode.
+				byteBuffer.flip();
+				int pos = byteBuffer.position();
+				int limit = byteBuffer.limit();
+				out.write( byteArray, pos, limit - pos );
+				byteBuffer.position( limit );
+				// Switch buffer to write mode.
+				byteBuffer.compact();
+			}
+			else if ( result.isError() ) {
+				throw new IOException( "Encoding error!" );
+			}
 		}
-		/*
-		else if (result == CoderResult.UNDERFLOW) {
-		}
-		*/
-		else if ( result.isError() ) {
-			throw new IOException( "Encoding error!" );
-		}
+		// Switch buffer to write mode.
 		charBuffer.compact();
 	}
 
@@ -89,19 +98,19 @@ public class JSONEncoderCharset implements JSONEncoder {
 
 	@Override
 	public void write(char[] c, int off, int len) throws IOException {
-		if ( charBuffer.remaining() == 0 ) {
-			encode_buffer( false );
-		}
 		while ( len > 0 ) {
-			int pos = charBuffer.position();
-			int remaining = charBuffer.remaining();
-			if ( remaining > len ) {
-				remaining = len;
+			if ( charBuffer.remaining() == 0 ) {
+				encode_buffer( false );
 			}
-			len -= remaining;
-			while ( remaining > 0 ) {
+			int pos = charBuffer.position();
+			int limit = charBuffer.remaining();
+			if ( limit > len ) {
+				limit = len;
+			}
+			len -= limit;
+			while ( limit > 0 ) {
 				charArray[ pos++ ] = c[ off++ ];
-				--remaining;
+				--limit;
 			}
 			charBuffer.position( pos );
 		}
@@ -122,19 +131,19 @@ public class JSONEncoderCharset implements JSONEncoder {
 
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
-		if ( charBuffer.remaining() == 0 ) {
-			encode_buffer( false );
-		}
 		while( len > 0 ) {
-			int pos = charBuffer.position();
-			int remaining = charBuffer.remaining();
-			if ( remaining > len ) {
-				remaining = len;
+			if ( charBuffer.remaining() == 0 ) {
+				encode_buffer( false );
 			}
-			len -= remaining;
-			while ( remaining > 0 ) {
+			int pos = charBuffer.position();
+			int limit = charBuffer.remaining();
+			if ( limit > len ) {
+				limit = len;
+			}
+			len -= limit;
+			while ( limit > 0 ) {
 				charArray[ pos++ ] = (char)(b[ off++ ] & 255);
-				--remaining;
+				--limit;
 			}
 			charBuffer.position( pos );
 		}
@@ -143,9 +152,6 @@ public class JSONEncoderCharset implements JSONEncoder {
 	@Override
 	public void close() throws IOException {
 		encode_buffer( true );
-		if ( charBuffer.position() > 0 ) {
-			throw new IOException( "'charBuffer' should be empty!" );
-		}
 		if ( byteBuffer.position() > 0 ) {
 			byteBuffer.flip();
 			int pos = byteBuffer.position();

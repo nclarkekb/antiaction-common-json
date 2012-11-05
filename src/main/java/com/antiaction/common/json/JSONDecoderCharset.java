@@ -47,6 +47,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 
 	@Override
 	public void init(InputStream in) {
+		decoder.reset();
 		this.in = in;
 		bEof = false;
 		errorsPending = 0;
@@ -68,7 +69,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 			--errorsPending;
 		}
 		if ( charBuffer.hasRemaining() ) {
-			if ( !bEof && byteBuffer.hasRemaining() ) {
+			while ( !bEof && byteBuffer.hasRemaining() ) {
 				read = in.read( byteArray, byteBuffer.position(), byteBuffer.remaining() );
 				if ( read != -1 ) {
 					byteBuffer.position( byteBuffer.position() + read );
@@ -79,30 +80,35 @@ public class JSONDecoderCharset implements JSONDecoder {
 			}
 			// Switch buffer to read mode.
 			byteBuffer.flip();
-			try {
-				boolean bDecodeLoop = true;
-				while ( bDecodeLoop ) {
-					CoderResult result = decoder.decode( byteBuffer, charBuffer, true );
-					if ( result == CoderResult.OVERFLOW || result == CoderResult.UNDERFLOW ) {
-						   bDecodeLoop = false;
-					}
-					else if ( result.isError() ) {
-						bConversionError = true;
-						byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
-						//errorsPending += result.length();
-						++errorsPending;
-						while ( errorsPending > 0 && charBuffer.remaining() >= replacementLength ) {
-							charBuffer.append( replacement );
-							--errorsPending;
+			if ( byteBuffer.hasRemaining() ) {
+				try {
+					boolean bDecodeLoop = true;
+					while ( bDecodeLoop ) {
+						CoderResult result = decoder.decode( byteBuffer, charBuffer, bEof );
+						if ( result == CoderResult.UNDERFLOW ) {
+							bDecodeLoop = false;
 						}
-						if ( errorsPending > 0 ) {
-							   bDecodeLoop = false;
+						else if ( result == CoderResult.OVERFLOW ) {
+							bDecodeLoop = false;
+						}
+						else if ( result.isError() ) {
+							bConversionError = true;
+							byteBuffer.position( Math.min( byteBuffer.position() + result.length(), byteBuffer.limit() ) );
+							//errorsPending += result.length();
+							++errorsPending;
+							while ( errorsPending > 0 && charBuffer.remaining() >= replacementLength ) {
+								charBuffer.append( replacement );
+								--errorsPending;
+							}
+							if ( errorsPending > 0 ) {
+								   bDecodeLoop = false;
+							}
 						}
 					}
 				}
-			}
-			catch (CoderMalfunctionError e) {
-				throw new IOException( "Colder malfunction!", e );
+				catch (CoderMalfunctionError e) {
+					throw new IOException( "Colder malfunction!", e );
+				}
 			}
 			// Switch buffer to write mode.
 			byteBuffer.compact();
