@@ -9,6 +9,8 @@ package com.antiaction.common.json;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PushbackInputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -159,6 +161,64 @@ public class TestJSONNumber {
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
+		}
+	}
+
+	@Test
+	public void test_jsonnumber_decode() {
+		byte[] bytes;
+		PushbackInputStream pbin = null;
+		int encoding;
+
+		JSONText json = new JSONText();
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONDecoder json_decoder = null;
+
+		JSONStructure json_struct;
+		JSONArray json_array;
+
+		String json_text;
+		try {
+			json_text = ""
+					+ "["
+					+ "0,"
+					+ "-0,"
+					+ "1234,"
+					+ "-1234,"
+					+ "0.0,"
+					+ "3.14159,"
+					+ "12345678901234,"
+					+ "123456789012345678901234567890123456789012,"
+					+ "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825,"
+					+ "3E02,"
+					+ "314159e02,"
+					+ "0E02,"
+					+ "0e02,"
+					+ "314.159e+02,"
+					+ "314.159e-02"
+					+ "]";
+			bytes = json_text.getBytes( "UTF-8" );
+
+			pbin = new PushbackInputStream( new ByteArrayInputStream( bytes ), 4 );
+			encoding = JSONEncoding.encoding( pbin );
+			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			Assert.assertNotNull( json_decoder );
+			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			Assert.assertNotNull( json_struct );
+
+			json_array = (JSONArray)json_struct;
+			for (int i=0; i<json_array.values.size(); ++i) {
+				System.out.println( json_array.values.get( i ).toString() );
+			}
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected expection!" );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected expection!" );
 		}
 	}
 
