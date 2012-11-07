@@ -26,7 +26,7 @@ public class JSONNumber extends JSONValue {
 
 	protected BigDecimal bigDecimalVal;
 
-	//protected String numberStr;
+	protected String numberStr;
 
 	protected byte[] numberBytes;
 
@@ -68,18 +68,51 @@ public class JSONNumber extends JSONValue {
 
 	protected JSONNumber(String str) {
 		type = JSONConstants.VT_NUMBER;
-		//this.numberStr = str;
+		this.numberStr = str;
 		this.numberBytes = str.getBytes();
 	}
 
-	/*
 	public int getInteger() {
 		if ( intVal == null ) {
 			intVal = Integer.parseInt( numberStr );
 		}
 		return intVal;
 	}
-	*/
+
+	public long getLong() {
+		if ( longVal == null ) {
+			longVal = Long.parseLong( numberStr );
+		}
+		return longVal;
+	}
+
+	public float getFloat() {
+		if ( floatVal == null ) {
+			floatVal = Float.parseFloat( numberStr );
+		}
+		return floatVal;
+	}
+
+	public double getDouble() {
+		if ( doubleVal == null ) {
+			doubleVal = Double.parseDouble( numberStr );
+		}
+		return doubleVal;
+	}
+
+	public BigInteger getBigInteger() {
+		if ( bigIntegerVal == null ) {
+			 bigIntegerVal = new BigInteger( numberStr );
+		}
+		return  bigIntegerVal;
+	}
+
+	public BigDecimal getBigDecimal() {
+		if ( bigDecimalVal == null ) {
+			bigDecimalVal = new BigDecimal( numberStr );
+		}
+		return bigDecimalVal;
+	}
 
 	@Override
 	public void encode(JSONEncoder encoder) throws IOException {

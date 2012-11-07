@@ -586,10 +586,12 @@ public class JSONText {
 						break;
 					case 'e':
 						sbStr.append( c );
+						state = S_NUMBER_E;
 						++pos;
 						break;
 					case 'E':
 						sbStr.append( c );
+						state = S_NUMBER_E;
 						++pos;
 						break;
 					default:
