@@ -140,7 +140,7 @@ public class TestJSONNumber {
 			json.encodeJSONtext( json_array, json_encoder, out );
 
 			// debug
-			System.out.println( new String( out.toByteArray() )  );
+			//System.out.println( new String( out.toByteArray() )  );
 
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
@@ -208,19 +208,21 @@ public class TestJSONNumber {
 			Assert.assertNotNull( json_struct );
 
 			json_array = (JSONArray)json_struct;
+			/*
 			for (int i=0; i<json_array.values.size(); ++i) {
 				System.out.println( json_array.values.get( i ).toString() );
 			}
+			*/
 
-			Assert.assertEquals( 0, ((JSONNumber)(json_array.get( 0 ))).getInteger() );
+			Assert.assertEquals( new Integer( 0 ), ((JSONNumber)(json_array.get( 0 ))).getInteger() );
 			Assert.assertEquals( new Float( -0.0F ), ((JSONNumber)(json_array.get( 1 ))).getFloat(), 0 );
 			Assert.assertEquals( new Double( -0.0 ), ((JSONNumber)(json_array.get( 1 ))).getDouble(), 0 );
-			Assert.assertEquals( 1234, ((JSONNumber)(json_array.get( 2 ))).getInteger() );
-			Assert.assertEquals( -1234, ((JSONNumber)(json_array.get( 3 ))).getInteger() );
+			Assert.assertEquals( new Integer( 1234 ), ((JSONNumber)(json_array.get( 2 ))).getInteger() );
+			Assert.assertEquals( new Integer( -1234 ), ((JSONNumber)(json_array.get( 3 ))).getInteger() );
 			Assert.assertEquals( new Float( -0.0 ), ((JSONNumber)(json_array.get( 4 ))).getFloat(), 0 );
 			Assert.assertEquals( new Double( 0.0 ), ((JSONNumber)(json_array.get( 4 ))).getDouble(), 0 );
 			Assert.assertEquals( 3.14159F, ((JSONNumber)(json_array.get( 5 ))).getFloat(), 0 );
-			Assert.assertEquals( 12345678901234L, ((JSONNumber)(json_array.get( 6 ))).getLong() );
+			Assert.assertEquals( new Long( 12345678901234L ), ((JSONNumber)(json_array.get( 6 ))).getLong() );
 			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), ((JSONNumber)(json_array.get( 7 ))).getBigInteger() );
 			Assert.assertEquals( new BigDecimal( "123456789012345678901234567890123456789012" ), ((JSONNumber)(json_array.get( 7 ))).getBigDecimal() );
 			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), ((JSONNumber)(json_array.get( 8 ))).getBigDecimal() );
@@ -243,15 +245,15 @@ public class TestJSONNumber {
 			Assert.assertEquals( 314.159E-02, ((JSONNumber)(json_array.get( 14 ))).getDouble(), 0 );
 			Assert.assertEquals( new BigDecimal( "314.159E-02" ), ((JSONNumber)(json_array.get( 14 ))).getBigDecimal() );
 
-			Assert.assertEquals( 0, ((JSONNumber)(json_array.get( 0 ))).getInteger() );
+			Assert.assertEquals( new Integer( 0 ), ((JSONNumber)(json_array.get( 0 ))).getInteger() );
 			Assert.assertEquals( new Float( -0.0F ), ((JSONNumber)(json_array.get( 1 ))).getFloat(), 0 );
 			Assert.assertEquals( new Double( -0.0 ), ((JSONNumber)(json_array.get( 1 ))).getDouble(), 0 );
-			Assert.assertEquals( 1234, ((JSONNumber)(json_array.get( 2 ))).getInteger() );
-			Assert.assertEquals( -1234, ((JSONNumber)(json_array.get( 3 ))).getInteger() );
+			Assert.assertEquals( new Integer( 1234 ), ((JSONNumber)(json_array.get( 2 ))).getInteger() );
+			Assert.assertEquals( new Integer( -1234 ), ((JSONNumber)(json_array.get( 3 ))).getInteger() );
 			Assert.assertEquals( new Float( -0.0 ), ((JSONNumber)(json_array.get( 4 ))).getFloat(), 0 );
 			Assert.assertEquals( new Double( 0.0 ), ((JSONNumber)(json_array.get( 4 ))).getDouble(), 0 );
 			Assert.assertEquals( 3.14159F, ((JSONNumber)(json_array.get( 5 ))).getFloat(), 0 );
-			Assert.assertEquals( 12345678901234L, ((JSONNumber)(json_array.get( 6 ))).getLong() );
+			Assert.assertEquals( new Long( 12345678901234L ), ((JSONNumber)(json_array.get( 6 ))).getLong() );
 			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), ((JSONNumber)(json_array.get( 7 ))).getBigInteger() );
 			Assert.assertEquals( new BigDecimal( "123456789012345678901234567890123456789012" ), ((JSONNumber)(json_array.get( 7 ))).getBigDecimal() );
 			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), ((JSONNumber)(json_array.get( 8 ))).getBigDecimal() );
@@ -281,6 +283,35 @@ public class TestJSONNumber {
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected expection!" );
+		}
+	}
+
+	@Test
+	public void test_jsonnumber_unsupporten() {
+		JSONNumber json_number = JSONNumber.Integer( 42 );
+		try {
+			json_number.getArray();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_number.getObject();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_number.getBoolean();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_number.getString();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
 		}
 	}
 

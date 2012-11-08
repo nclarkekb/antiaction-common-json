@@ -98,6 +98,65 @@ public class TestJSONBoolean {
 	}
 
 	@Test
+	public void test_jsonboolean_unsupporten() {
+		JSONBoolean json_boolean = JSONBoolean.Boolean( true );
+		try {
+			json_boolean.getArray();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getObject();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getString();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getLong();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getFloat();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getDouble();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getBigInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_boolean.getBigDecimal();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+	}
+
+	@Test
 	public void test_jsonboolean_equals_hashcode() {
 		JSONBoolean False = JSONBoolean.False;
 		JSONBoolean True = JSONBoolean.True;

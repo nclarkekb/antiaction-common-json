@@ -49,4 +49,66 @@ public class TestJSONArray {
 		}
 	}
 
+	@Test
+	public void test_jsonarray_supported_unsupporteed() {
+		JSONStructure json_struct = new JSONArray();
+		JSONArray json_array = json_struct.getArray();
+		Assert.assertEquals( json_struct, json_array );
+
+		try {
+			json_struct.getObject();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBoolean();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getString();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getLong();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getFloat();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getDouble();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBigInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBigDecimal();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+	}
+
 }

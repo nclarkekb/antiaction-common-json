@@ -109,6 +109,7 @@ public class JSONString extends JSONValue {
 		}
 	}
 
+	@Override
 	public String getString() {
 		return str;
 	}

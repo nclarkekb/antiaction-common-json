@@ -37,6 +37,11 @@ public class JSONArray extends JSONStructure {
 	}
 
 	@Override
+	public JSONArray getArray() {
+		return this;
+	}
+
+	@Override
 	public JSONValue get(int index) {
 		return values.get( index );
 	}

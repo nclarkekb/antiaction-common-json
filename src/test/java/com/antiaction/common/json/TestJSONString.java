@@ -87,6 +87,65 @@ public class TestJSONString {
 	}
 
 	@Test
+	public void test_jsonstring_unsupported() {
+		JSONString json_string = JSONString.String( "JSON" );
+		try {
+			json_string.getArray();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getObject();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getBoolean();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getLong();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getFloat();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getDouble();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getBigInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_string.getBigDecimal();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+	}
+
+	@Test
 	public void test_jsonnumber_equals_hashcode() {
 		StringBuilder sb = new StringBuilder();
 		for ( int i=0; i<256; ++i ) {

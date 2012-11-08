@@ -34,4 +34,66 @@ public class TestJSONObject {
 		}
 	}
 
+	@Test
+	public void test_jsonobject_supported_unsupported() {
+		JSONStructure json_struct = new JSONObject();
+		JSONObject json_object = json_struct.getObject();
+		Assert.assertEquals( json_struct, json_object );
+
+		try {
+			json_struct.getArray();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBoolean();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getString();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getLong();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getFloat();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getDouble();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBigInteger();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBigDecimal();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+	}
+
 }

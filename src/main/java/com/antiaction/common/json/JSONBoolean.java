@@ -35,7 +35,8 @@ public class JSONBoolean extends JSONValue {
 		this.b = b;
 	}
 
-	public boolean getBoolean() {
+	@Override
+	public Boolean getBoolean() {
 		return b;
 	}
 

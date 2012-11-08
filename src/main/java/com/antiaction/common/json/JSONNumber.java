@@ -72,34 +72,39 @@ public class JSONNumber extends JSONValue {
 		this.numberBytes = str.getBytes();
 	}
 
-	public int getInteger() {
+	@Override
+	public Integer getInteger() {
 		if ( intVal == null ) {
 			intVal = Integer.parseInt( numberStr );
 		}
 		return intVal;
 	}
 
-	public long getLong() {
+	@Override
+	public Long getLong() {
 		if ( longVal == null ) {
 			longVal = Long.parseLong( numberStr );
 		}
 		return longVal;
 	}
 
-	public float getFloat() {
+	@Override
+	public Float getFloat() {
 		if ( floatVal == null ) {
 			floatVal = Float.parseFloat( numberStr );
 		}
 		return floatVal;
 	}
 
-	public double getDouble() {
+	@Override
+	public Double getDouble() {
 		if ( doubleVal == null ) {
 			doubleVal = Double.parseDouble( numberStr );
 		}
 		return doubleVal;
 	}
 
+	@Override
 	public BigInteger getBigInteger() {
 		if ( bigIntegerVal == null ) {
 			 bigIntegerVal = new BigInteger( numberStr );
@@ -107,6 +112,7 @@ public class JSONNumber extends JSONValue {
 		return  bigIntegerVal;
 	}
 
+	@Override
 	public BigDecimal getBigDecimal() {
 		if ( bigDecimalVal == null ) {
 			bigDecimalVal = new BigDecimal( numberStr );

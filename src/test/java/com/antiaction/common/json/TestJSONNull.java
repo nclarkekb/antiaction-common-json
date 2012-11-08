@@ -72,6 +72,21 @@ public class TestJSONNull {
 	}
 
 	@Test
+	public void test_jsonnull_supported() {
+		JSONNull json_null = JSONNull.Null;
+		Assert.assertNull( json_null.getArray() );
+		Assert.assertNull( json_null.getObject() );
+		Assert.assertNull( json_null.getBoolean() );
+		Assert.assertNull( json_null.getString() );
+		Assert.assertNull( json_null.getInteger() );
+		Assert.assertNull( json_null.getLong() );
+		Assert.assertNull( json_null.getFloat() );
+		Assert.assertNull( json_null.getDouble() );
+		Assert.assertNull( json_null.getBigInteger() );
+		Assert.assertNull( json_null.getBigDecimal() );
+	}
+
+	@Test
 	public void test_jsonnull_equals_hashcode() {
 		JSONNull json_null = JSONNull.Null;
 

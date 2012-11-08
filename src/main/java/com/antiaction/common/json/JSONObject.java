@@ -53,6 +53,11 @@ public class JSONObject extends JSONStructure {
 	}
 
 	@Override
+	public JSONObject getObject() {
+		return this;
+	}
+
+	@Override
 	public JSONValue get(String key) {
 		return values.get( JSONString.String( key ) );
 	}

@@ -8,6 +8,8 @@
 package com.antiaction.common.json;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class JSONNull extends JSONValue {
@@ -20,6 +22,56 @@ public class JSONNull extends JSONValue {
 
 	protected JSONNull() {
 		type = JSONConstants.VT_NULL;
+	}
+
+	@Override
+	public JSONArray getArray() {
+		return null;
+	}
+
+	@Override
+	public JSONObject getObject() {
+		return null;
+	}
+
+	@Override
+	public Boolean getBoolean() {
+		return null;
+	}
+
+	@Override
+	public String getString() {
+		return null;
+	}
+
+	@Override
+	public Integer getInteger() {
+		return null;
+	}
+
+	@Override
+	public Long getLong() {
+		return null;
+	}
+
+	@Override
+	public Float getFloat() {
+		return null;
+	}
+
+	@Override
+	public Double getDouble() {
+		return null;
+	}
+
+	@Override
+	public BigInteger getBigInteger() {
+		return null;
+	}
+
+	@Override
+	public BigDecimal getBigDecimal() {
+		return null;
 	}
 
 	@Override
