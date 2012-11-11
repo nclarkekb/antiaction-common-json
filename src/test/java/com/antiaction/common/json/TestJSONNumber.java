@@ -313,6 +313,12 @@ public class TestJSONNumber {
 		}
 		catch (UnsupportedOperationException e) {
 		}
+		try {
+			json_number.getBytes();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
 	}
 
 	@Test

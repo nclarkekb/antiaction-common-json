@@ -45,6 +45,11 @@ public class JSONNull extends JSONValue {
 	}
 
 	@Override
+	public byte[] getBytes() {
+		return null;
+	}
+
+	@Override
 	public Integer getInteger() {
 		return null;
 	}

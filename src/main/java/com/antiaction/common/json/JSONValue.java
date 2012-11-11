@@ -35,6 +35,10 @@ public abstract class JSONValue {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	public byte[] getBytes() {
+		throw new UnsupportedOperationException("Unimplemented");
+	}
+
 	public Integer getInteger() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}

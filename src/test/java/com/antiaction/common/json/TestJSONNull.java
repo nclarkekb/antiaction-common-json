@@ -78,6 +78,7 @@ public class TestJSONNull {
 		Assert.assertNull( json_null.getObject() );
 		Assert.assertNull( json_null.getBoolean() );
 		Assert.assertNull( json_null.getString() );
+		Assert.assertNull( json_null.getBytes() );
 		Assert.assertNull( json_null.getInteger() );
 		Assert.assertNull( json_null.getLong() );
 		Assert.assertNull( json_null.getFloat() );

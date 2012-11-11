@@ -119,6 +119,12 @@ public class TestJSONBoolean {
 		catch (UnsupportedOperationException e) {
 		}
 		try {
+			json_boolean.getBytes();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
 			json_boolean.getInteger();
 			Assert.fail( "Exception expected !" );
 		}

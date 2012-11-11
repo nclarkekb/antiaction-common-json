@@ -6,6 +6,14 @@
  */
 package com.antiaction.common.json;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PushbackInputStream;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +58,61 @@ public class TestJSONArray {
 	}
 
 	@Test
+	public void test_jsonarray_large() {
+		try {
+			SecureRandom random = new SecureRandom();
+			byte[] bytes;
+
+			List<byte[]> inArrays = new ArrayList<byte[]>();
+			for ( int i=0; i<8; ++i ) {
+				bytes = new byte[ 16384 ];
+				random.nextBytes( bytes );
+				inArrays.add( bytes );
+			}
+
+			JSONStructure json_struct = new JSONArray();
+			for ( int i=0; i<inArrays.size(); ++i ) {
+				json_struct.add( JSONString.String( inArrays.get( i ) ) );
+			}
+
+			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+			int encoding;
+			JSONDecoder json_decoder;
+			JSONText json_text = new JSONText();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			PushbackInputStream in;
+
+			// debug
+			//System.out.println( 16384 * 8 );
+
+			out.reset();
+			json_text.encodeJSONtext( json_struct, json_encoder, out );
+
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
+			//System.out.println( out.size() );
+
+			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
+			encoding = JSONEncoding.encoding( in );
+			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			in.close();
+
+			for ( int i=0; i<inArrays.size(); ++i ) {
+				Assert.assertArrayEquals( inArrays.get( i ), json_struct.get( i ).getBytes() );
+				// debug
+				//System.out.println( json_struct.get( i ).getBytes().length );
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	@Test
 	public void test_jsonarray_supported_unsupporteed() {
 		JSONStructure json_struct = new JSONArray();
 		JSONArray json_array = json_struct.getArray();
@@ -69,6 +132,12 @@ public class TestJSONArray {
 		}
 		try {
 			json_struct.getString();
+			Assert.fail( "Exception expected !" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+		try {
+			json_struct.getBytes();
 			Assert.fail( "Exception expected !" );
 		}
 		catch (UnsupportedOperationException e) {

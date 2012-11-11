@@ -15,10 +15,16 @@ public class JSONString extends JSONValue {
 
 	public static class Block {
 		char[] chars;
+		byte[] bytes;
 		int offset;
 		int len;
 		public Block(char[] chars, int offset, int len) {
 			this.chars = chars;
+			this.offset = offset;
+			this.len = len;
+		}
+		public Block(byte[] bytes, int offset, int len) {
+			this.bytes = bytes;
 			this.offset = offset;
 			this.len = len;
 		}
@@ -28,7 +34,9 @@ public class JSONString extends JSONValue {
 
 	protected String str;
 
-	protected char[] chars;
+	protected byte[] strBytes;
+
+	protected char[] strChars;
 
 	protected List<Block> blocks = new LinkedList<Block>();
 
@@ -74,23 +82,27 @@ public class JSONString extends JSONValue {
 		return new JSONString( str );
 	}
 
+	public static final JSONString String(byte[] bytes) {
+		return new JSONString( bytes );
+	}
+
 	public JSONString(String str) {
 		type = JSONConstants.VT_STRING;
 		this.str = str;
-		chars = str.toCharArray();
+		strChars = str.toCharArray();
 		// Blockify.
 		int pos = 0;
 		int prev = pos;
-		int len = chars.length;
+		int len = strChars.length;
 		char c;
 		Block escaped;
 		while ( pos < len ) {
-			c = chars[ pos ];
+			c = strChars[ pos ];
 			if ( c < 128 ) {
 				escaped = escapeTable[ c ];
 				if ( escaped != null ) {
 					if ( pos > prev ) {
-						blocks.add( new Block( chars, prev, pos - prev ) );
+						blocks.add( new Block( strChars, prev, pos - prev ) );
 					}
 					blocks.add( escaped );
 					++pos;
@@ -105,7 +117,41 @@ public class JSONString extends JSONValue {
 			}
 		}
 		if ( pos > prev ) {
-			blocks.add( new Block( chars, prev, pos - prev ) );
+			blocks.add( new Block( strChars, prev, pos - prev ) );
+		}
+	}
+
+	public JSONString(byte[] bytes) {
+		type = JSONConstants.VT_STRING;
+		strBytes = bytes;
+		// Blockify.
+		int pos = 0;
+		int prev = pos;
+		int len = bytes.length;
+		int c;
+		Block escaped;
+		while ( pos < len ) {
+			c = bytes[ pos ] & 255;
+			if ( c < 128 ) {
+				escaped = escapeTable[ c ];
+				if ( escaped != null ) {
+					if ( pos > prev ) {
+						blocks.add( new Block( bytes, prev, pos - prev ) );
+					}
+					blocks.add( escaped );
+					++pos;
+					prev = pos;
+				}
+				else {
+					++pos;
+				}
+			}
+			else {
+				++pos;
+			}
+		}
+		if ( pos > prev ) {
+			blocks.add( new Block( bytes, prev, pos - prev ) );
 		}
 	}
 
@@ -115,12 +161,37 @@ public class JSONString extends JSONValue {
 	}
 
 	@Override
+	public byte[] getBytes() {
+		if ( strBytes == null ) {
+			strBytes = new byte[ str.length() ];
+			int len = str.length();
+			char c;
+			for ( int i=0; i<len; ++i ) {
+				c = strChars[ i ];
+				if ( c < 256 ) {
+					strBytes[ i ] = (byte)(c & 255);
+				}
+				else {
+					strBytes = null;
+					throw new IllegalStateException( "Not a compatible byte stream!" );
+				}
+			}
+		}
+		return strBytes;
+	}
+
+	@Override
 	public void encode(JSONEncoder encoder) throws IOException {
 		encoder.write( '"' );
 		Block block;
 		for ( int i=0; i<blocks.size(); ++i ) {
 			block = blocks.get( i );
-			encoder.write( block.chars, block.offset, block.len );
+			if ( block.chars != null ) {
+				encoder.write( block.chars, block.offset, block.len );
+			}
+			else {
+				encoder.write( block.bytes, block.offset, block.len );
+			}
 		}
 		encoder.write( '"' );
 	}
