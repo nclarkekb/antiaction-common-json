@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +49,22 @@ public class TestJSONObject {
 
 	@Test
 	public void test_jsonobject_large() {
+		Charset charset;
+
+		charset = Charset.forName("UTF-8");
+		test_jsonobject_large_params( charset, JSONEncoding.E_UTF8 );
+
+		charset = Charset.forName("UTF-16");
+		test_jsonobject_large_params( charset, JSONEncoding.E_UTF16BE );
+
+		charset = Charset.forName("UTF-16BE");
+		test_jsonobject_large_params( charset, JSONEncoding.E_UTF16BE );
+
+		charset = Charset.forName("UTF-16LE");
+		test_jsonobject_large_params( charset, JSONEncoding.E_UTF16LE );
+	}
+
+	public void test_jsonobject_large_params(Charset charset, int expected_encoding) {
 		try {
 			SecureRandom random = new SecureRandom();
 			byte[] bytes;
@@ -69,7 +86,7 @@ public class TestJSONObject {
 			}
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			int encoding;
 			JSONDecoder json_decoder;
 			JSONText json_text = new JSONText();
@@ -81,7 +98,7 @@ public class TestJSONObject {
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );
-			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
+			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			json_struct = json_text.decodeJSONtext( in, json_decoder );
 			in.close();

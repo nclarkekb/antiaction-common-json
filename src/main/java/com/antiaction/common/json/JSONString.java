@@ -173,7 +173,7 @@ public class JSONString extends JSONValue {
 				}
 				else {
 					strBytes = null;
-					throw new IllegalStateException( "Not a compatible byte stream!" );
+					throw new NumberFormatException( "Not a compatible byte stream!" );
 				}
 			}
 		}

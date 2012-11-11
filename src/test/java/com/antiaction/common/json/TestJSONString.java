@@ -10,10 +10,10 @@ package com.antiaction.common.json;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -83,6 +83,107 @@ public class TestJSONString {
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
+		}
+	}
+
+	@Test
+	public void test_jsonstring_bytearray() {
+		Charset charset;
+
+		charset = Charset.forName("UTF-8");
+		test_jsonstring_bytearray_params( charset, JSONEncoding.E_UTF8 );
+
+		charset = Charset.forName("UTF-16");
+		test_jsonstring_bytearray_params( charset, JSONEncoding.E_UTF16BE );
+
+		charset = Charset.forName("UTF-16BE");
+		test_jsonstring_bytearray_params( charset, JSONEncoding.E_UTF16BE );
+
+		charset = Charset.forName("UTF-16LE");
+		test_jsonstring_bytearray_params( charset, JSONEncoding.E_UTF16LE );
+	}
+
+	public void test_jsonstring_bytearray_params(Charset charset, int expected_encoding) {
+		JSONStructure json_struct;
+		byte[] bytes;
+
+		try {
+			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
+			int encoding;
+			JSONDecoder json_decoder;
+			JSONText json_text = new JSONText();
+			PushbackInputStream in;
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			StringBuilder sb = new StringBuilder();
+
+			/*
+			 * Valid byte array.
+			 */
+
+			sb.setLength( 0 );
+			out.reset();
+			for ( int i=0; i<256; ++i ) {
+				sb.append( (char)i );
+				out.write( i );
+			}
+			bytes = out.toByteArray();
+
+			json_struct = new JSONArray();
+			json_struct.add( JSONString.String( sb.toString() ) );
+
+			out.reset();
+			json_text.encodeJSONtext( json_struct, json_encoder, out );
+
+			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
+			encoding = JSONEncoding.encoding( in );
+			Assert.assertEquals( expected_encoding, encoding );
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			in.close();
+
+			Assert.assertArrayEquals( bytes, json_struct.get( 0 ).getBytes() );
+			Assert.assertArrayEquals( bytes, json_struct.get( 0 ).getBytes() );
+
+			/*
+			 * Invalid byte array.
+			 */
+
+			sb.setLength( 0 );
+			for ( int i=0; i<257; ++i ) {
+				sb.append( (char)i );
+			}
+
+			json_struct = new JSONArray();
+			json_struct.add( JSONString.String( sb.toString() ) );
+
+			out.reset();
+			json_text.encodeJSONtext( json_struct, json_encoder, out );
+
+			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
+			encoding = JSONEncoding.encoding( in );
+			Assert.assertEquals( expected_encoding, encoding );
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			in.close();
+
+			try {
+				json_struct.get( 0 ).getBytes();
+				Assert.fail( "Exception expected!" );
+			}
+			catch (NumberFormatException e) {
+			}
+			try {
+				json_struct.get( 0 ).getBytes();
+				Assert.fail( "Exception expected!" );
+			}
+			catch (NumberFormatException e) {
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 
