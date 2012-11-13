@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import java.nio.charset.Charset;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class TestJSONEncoding {
 				in = new ByteArrayInputStream( bytes );
 				pbin = new PushbackInputStream( in, 4 );
 				// debug
-				System.out.println( i + ": " + new String( bytes ) );
+				//System.out.println( i + ": " + new String( bytes ) );
 				encoding = JSONEncoding.encoding( pbin );
 				Assert.assertEquals( expected_encoding, encoding );
 				read = 0;
@@ -110,7 +111,7 @@ public class TestJSONEncoding {
 					out.write( buffer, 0, read );
 					read = pbin.read( buffer );
 				}
-				Assert.assertEquals(expected_bom, bytes.length - out.toString().length());
+				Assert.assertEquals( expected_bom, bytes.length - out.toString( "ISO-8859-1" ).length() );
 			}
 		}
 		catch (IOException e) {
