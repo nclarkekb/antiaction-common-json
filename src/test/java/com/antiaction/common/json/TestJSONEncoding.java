@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
-import java.nio.charset.Charset;
 
 import org.junit.Assert;
 import org.junit.Test;
