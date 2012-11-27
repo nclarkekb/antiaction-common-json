@@ -284,6 +284,12 @@ public class TestJSONNumber {
 			e.printStackTrace();
 			Assert.fail( "Unexpected expection!" );
 		}
+
+
+		JSONNumber json_number = JSONNumber.Integer( 0 );
+		Assert.assertFalse( json_number.getBoolean() );
+		json_number = JSONNumber.Integer( 1 );
+		Assert.assertTrue( json_number.getBoolean() );
 	}
 
 	@Test
@@ -305,7 +311,7 @@ public class TestJSONNumber {
 			json_number.getBoolean();
 			Assert.fail( "Exception expected !" );
 		}
-		catch (UnsupportedOperationException e) {
+		catch (NumberFormatException e) {
 		}
 		try {
 			json_number.getString();

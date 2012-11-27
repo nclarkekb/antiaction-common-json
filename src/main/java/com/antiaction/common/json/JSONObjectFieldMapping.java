@@ -7,16 +7,34 @@
 
 package com.antiaction.common.json;
 
+import java.lang.reflect.Field;
+
+/**
+ * A JSON objects field mapping description.
+ *
+ * @author Nicholas
+ */
 public class JSONObjectFieldMapping {
 
+	/** Field name. */
 	public String name;
 
+	/** JSON Java type identifier. */
 	public int type;
 
+	/** Field class type name. */
 	public String className;
 
+	/** Field class. */
+	public Class<?> clazz;
+
+	/** Field object mapping, if object type. */
 	public JSONObjectMapping objectMapping;
 
+	/** Reflection field. */
+	public Field field;
+
+	/** Nullable. */
 	public boolean nullable;
 
 }

@@ -73,6 +73,22 @@ public class JSONNumber extends JSONValue {
 	}
 
 	@Override
+	public Boolean getBoolean() {
+		if ( intVal == null ) {
+			intVal = Integer.parseInt( numberStr );
+		}
+		if ( intVal == 0 ) {
+			return false;
+		}
+		else if ( intVal == 1 ) {
+			return true;
+		}
+		else {
+			throw new NumberFormatException("Unimplemented");
+		}
+	}
+
+	@Override
 	public Integer getInteger() {
 		if ( intVal == null ) {
 			intVal = Integer.parseInt( numberStr );
