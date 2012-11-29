@@ -12,14 +12,25 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+/**
+ * JSON Null implementation.
+ *
+ * @author Nicholas
+ */
 public class JSONNull extends JSONValue {
 
+	/** Static Null value. */
 	public static final JSONNull Null = new JSONNull();
 
+	/** Null string cached as bytes. */
 	protected static final byte[] nullBytes = "null".getBytes();
 
+	/** Cached hashCode value of Null string as bytes. */
 	protected static int hashCode = Arrays.deepHashCode( new Object[] { nullBytes } );
 
+	/**
+	 * Construct a JSON Null.
+	 */
 	protected JSONNull() {
 		type = JSONConstants.VT_NULL;
 	}

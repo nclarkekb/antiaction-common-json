@@ -51,6 +51,7 @@ public class JSONText {
 	public static final int S_NUMBER_EXPONENTS = 17;
 	public static final int S_EOF = 18;
 
+	/** Temporary <code>StringBuilder</code> used to store JSON strings and values. */
 	protected StringBuilder sbStr = new StringBuilder();
 
 	protected static class StackEntry {

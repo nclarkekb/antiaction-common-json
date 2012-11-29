@@ -13,10 +13,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * JSON Object implementation.
+ *
+ * @author Nicholas
+ */
 public class JSONObject extends JSONStructure {
 
+	/** <code>Map</code> of JSON Object key/value pairs. */
 	protected Map<JSONString, JSONValue> values = new HashMap<JSONString, JSONValue>();
 
+	/**
+	 * Construct a JSON OBject.
+	 */
 	public JSONObject() {
 		type = JSONConstants.VT_OBJECT;
 	}

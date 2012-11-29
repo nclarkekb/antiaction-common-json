@@ -11,54 +11,110 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+/**
+ * Abstract JSON value base. Implementations should only override the methods
+ * which are relevant for their supported value type.
+ *
+ * @author Nicholas
+ */
 public abstract class JSONValue {
 
+	/** Type of the extending instance. */
 	public int type;
 
+	/**
+	 * Output the JSON value to the given Encoder.
+	 * @param encoder output encoder
+	 * @throws IOException if an i/o error occurs while encoding
+	 */
 	public void encode(JSONEncoder encoder) throws IOException {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as an <code>JSONArray</code> or null
+	 * @return the JSON value as an <code>JSONArray</code> or null
+	 */
 	public JSONArray getArray() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as an <code>JSONObject</code> or null
+	 * @return the JSON value as an <code>JSONObject</code> or null
+	 */
 	public JSONObject getObject() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>Boolean</code> or null
+	 * @return the JSON value as a <code>Boolean</code> or null
+	 */
 	public Boolean getBoolean() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>String</code> of null
+	 * @return the JSON value as a <code>String</code> of null
+	 */
 	public String getString() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>Byte</code> array or null
+	 * @return the JSON value as a <code>Byte</code> array or null
+	 */
 	public byte[] getBytes() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as an <code>Integer</code> or null
+	 * @return the JSON value as an <code>Integer</code> or null
+	 */
 	public Integer getInteger() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>Long</code> or null
+	 * @return the JSON value as a <code>Long</code> or null
+	 */
 	public Long getLong() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>Float</code> or null
+	 * @return the JSON value as a <code>Float</code> or null
+	 */
 	public Float getFloat() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>Double</code> or null
+	 * @return the JSON value as a <code>Double</code> or null
+	 */
 	public Double getDouble() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>BigInteger</code> or null
+	 * @return the JSON value as a <code>BigInteger</code> or null
+	 */
 	public BigInteger getBigInteger() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}
 
+	/**
+	 * Returns the JSON value as a <code>BigDecimal</code> or null
+	 * @return the JSON value as a <code>BigDecimal</code> or null
+	 */
 	public BigDecimal getBigDecimal() {
 		throw new UnsupportedOperationException("Unimplemented");
 	}

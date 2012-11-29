@@ -16,20 +16,35 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 
+/**
+ * JSON Encoder implementation using a given <code>Charset</code>.
+ *
+ * @author Nicholas
+ */
 public class JSONEncoderCharset implements JSONEncoder {
 
+	/** Charset Encoder used. */
 	protected CharsetEncoder encoder;
 
+	/** Char array used by <code>CharBuffer</code>. */
 	protected char[] charArray;
 
+	/** Internal staging char buffer prior to encoding. */
 	protected CharBuffer charBuffer;
 
+	/** Byte array used by <code>ByteBuffer</code>. */
 	protected byte[] byteArray;
 
+	/** Internal staging byte buffer prior to output. */
 	protected ByteBuffer byteBuffer;
 
+	/** <code>OuputStream</code> currently used. */
 	protected OutputStream out;
 
+	/**
+	 * Construct a reusable JSON Encoder using the provided <code>Charset</code>.
+	 * @param charset <code>charset</code> to use when encoding text
+	 */
 	public JSONEncoderCharset(Charset charset) {
 		encoder = charset.newEncoder();
 		encoder.onMalformedInput( CodingErrorAction.REPORT );
@@ -50,6 +65,12 @@ public class JSONEncoderCharset implements JSONEncoder {
 		byteBuffer.clear();
 	}
 
+	/**
+	 * Encode as much of the char buffer as possible and write the byte buffer
+	 * to the output stream, if the byte buffer is full.
+	 * @param endOfInput boolean indicating not to expect more input data
+	 * @throws IOException if an i/o error occurs while encoding
+	 */
 	protected void encode_buffer(boolean endOfInput) throws IOException {
 		// Switch buffer to read mode.
 		charBuffer.flip();

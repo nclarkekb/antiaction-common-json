@@ -12,6 +12,13 @@ import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
 
 /**
+ * Class used to determine the UTF encoding used to encode a JSON text based
+ * on the first 4 bytes of encoded text.
+ * Methods are also available to get the appropriate decoder/encoder based on
+ * the encoding identifier.
+ * For performance issues this class uses <code>ThreadLocal</code> instances to
+ * add concurrency support.
+ *
  * BOM
  * 00 00 FE FF  UTF-32, big-endian
  * FF FE 00 00  UTF-32, little-endian
@@ -29,24 +36,30 @@ import java.nio.charset.Charset;
  */
 public class JSONEncoding {
 
-	// Error
+	/** Error encoding identifier. */
 	public static final int E_UNKNOWN = -1;
 
-	// "UTF-8" - xx xx xx xx
+	/** UTF-8 encoding identifier. (xx xx xx xx) */
 	public static final int E_UTF8 = 0;
 
-	// "UTF-16BE" - 00 xx 00 xx
+	/** UTF-16BE encoding identifier. (00 xx 00 xx) */
 	public static final int E_UTF16BE = 1;
 
-	// "UTF-16LE" - xx 00 xx 00
+	/** UTF-16LE encoding identifier. (xx 00 xx 00) */
 	public static final int E_UTF16LE = 2;
 
-	// "UTF-32BE" - 00 00 00 xx
+	/** UTF-32BE encoding identifier. (00 00 00 xx) */
 	public static final int E_UTF32BE = 3;
 
-	// "UTF-32LE" - xx 00 00 00
+	/** UTF-32LE encoding identifier. (xx 00 00 00) */
 	public static final int E_UTF32LE = 4;
 
+	/**
+	 * Determine the UTF encoding used based of the first 4 bytes of the JSON text.
+	 * @param in JSON text <code>InputStream</code>
+	 * @return identified encoding or error
+	 * @throws IOException if an i/o error occurs while determining the encoding used
+	 */
 	public static int encoding(PushbackInputStream in) throws IOException {
 		int encoding = E_UNKNOWN;
 		byte[] bytes = new byte[ 4 ];
@@ -210,6 +223,9 @@ public class JSONEncoding {
 		return encoding;
 	}
 
+	/**
+	 * Manage <code>JSONEncoding</code> instances for each calling <code<Thread</code>.
+	 */
 	private static final ThreadLocal<JSONEncoding> JSONEncodingTL =
 		new ThreadLocal<JSONEncoding>() {
 		@Override
@@ -218,17 +234,34 @@ public class JSONEncoding {
 		}
 	};
 
+	/**
+	 * Returns a <code>JSONEncoding</code> instance for the current thread.
+	 * @return a <code>JSONEncoding</code> instance for the current thread.
+	 */
 	public static JSONEncoding getJSONEncoding() {
 		return JSONEncodingTL.get();
 	}
 
+	/** Cached UTF-8 decoder. */
 	private JSONDecoder utf8_decoder;
+
+	/** Cached UTF-16BE decoder. */
 	private JSONDecoder utf16be_decoder;
+
+	/** Cached UTF-16LE decoder. */
 	private JSONDecoder utf16le_decoder;
 
+	/**
+	 * Internal constructor used by the <code>ThreadLocal</code> class.
+	 */
 	private JSONEncoding() {
 	}
 
+	/**
+	 * Returns a JSON Decoder based on the encoding identifier.
+	 * @param encoding encoding identifier
+	 * @return a JSON Decoder based on the encoding identifier.
+	 */
 	public JSONDecoder getJSONDecoder(int encoding) {
 		JSONDecoder jsondecoder = null;
 		Charset charset;
@@ -263,10 +296,20 @@ public class JSONEncoding {
 		return jsondecoder;
 	}
 
+	/** Cached UTF-8 encoder. */
 	private JSONEncoder utf8_encoder;
+
+	/** Cached UTF-16BE encoder. */
 	private JSONEncoder utf16be_encoder;
+
+	/** Cached UTF-16LE encoder. */
 	private JSONEncoder utf16le_encoder;
 
+	/**
+	 * Returns a JSON Encoder based on the encoding identifier.
+	 * @param encoding encoding identifier
+	 * @return a JSON Encoder based on the encoding identifier
+	 */
 	public JSONEncoder getJSONEncoder(int encoding) {
 		JSONEncoder jsonencoder = null;
 		Charset charset;

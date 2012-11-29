@@ -10,26 +10,47 @@ package com.antiaction.common.json;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * JSON Boolean implementation.
+ *
+ * @author Nicholas
+ */
 public class JSONBoolean extends JSONValue {
 
+	/** Static False Boolean value. */
 	public static final JSONBoolean False = new JSONBoolean( false );
 
+	/** False string cached as bytes. */
 	protected static final byte[] falseBytes = "false".getBytes();
 
+	/** Cached hashCode value of False string as bytes. */
 	protected static int false_hashCode = Arrays.deepHashCode( new Object[] { falseBytes } );
 
+	/** Static True Boolean value. */
 	public static final JSONBoolean True = new JSONBoolean( true );
 
+	/** True string cached as bytes. */
 	protected static final byte[] trueBytes = "true".getBytes();
 
+	/** Cached hashCode value of True string as bytes. */
 	protected static int true_hashCode = Arrays.deepHashCode( new Object[] { trueBytes } );
 
+	/**
+	 * Static JSON Boolean constructor.
+	 * @param b boolean value
+	 * @return JSON Boolean value
+	 */
 	public static final JSONBoolean Boolean(boolean b) {
 		return new JSONBoolean( b );
 	}
 
+	/** The Boolean value. */
 	protected boolean b;
 
+	/**
+	 * Construct a JSON Boolean.
+	 * @param b boolean value
+	 */
 	public JSONBoolean(boolean b) {
 		type = JSONConstants.VT_BOOLEAN;
 		this.b = b;

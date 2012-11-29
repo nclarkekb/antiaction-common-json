@@ -17,26 +17,44 @@ import java.nio.charset.CoderMalfunctionError;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 
+/**
+ * JSON Decoder implementation using a given <code>Charset</code>.
+ *
+ * @author Nicholas
+ */
 public class JSONDecoderCharset implements JSONDecoder {
 
+	/** Charset Decoder used. */
 	protected CharsetDecoder decoder;
 
+	/** Byte array used by <code>ByteBuffer</code>. */
 	protected byte[] byteArray;
 
+	/** Internal staging byte buffer prior to decoding. */
 	protected ByteBuffer byteBuffer;
 
+	/** <code>InputStream</code> currently used. */
 	protected InputStream in;
 
+	/** Is inputstream EOF. */
 	protected boolean bEof;
 
+	/** Conversion errors pending where replacement still has to be written to the char buffer. */
 	protected int errorsPending;
 
+	/** Has a conversion error occurred. */
 	protected boolean bConversionError;
 
+	/** Replacement string used in conversion errors. */
 	protected String replacement;
 
+	/** Length of replacement string. */
 	protected int replacementLength;
 
+	/**
+	 * Construct a reusable JSON Decoder using the provided <code>Charset</code>.
+	 * @param charset <code>charset</code> to use when decoding text
+	 */
 	public JSONDecoderCharset(Charset charset) {
 		decoder = charset.newDecoder();
 		decoder.onMalformedInput( CodingErrorAction.REPORT );

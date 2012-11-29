@@ -8,13 +8,22 @@
 package com.antiaction.common.json;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JSON Array implementation.
+ *
+ * @author Nicholas
+ */
 public class JSONArray extends JSONStructure {
 
-	protected List<JSONValue> values = new LinkedList<JSONValue>();
+	/** <code>List</code> of JSON Array values. */
+	protected List<JSONValue> values = new ArrayList<JSONValue>();
 
+	/**
+	 * Construct a JSON Array.
+	 */
 	public JSONArray() {
 		type = JSONConstants.VT_ARRAY;
 	}

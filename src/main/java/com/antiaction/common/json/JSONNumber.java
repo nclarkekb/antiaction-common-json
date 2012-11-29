@@ -12,60 +12,107 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+/**
+ * JSON Number implementation.
+ *
+ * @author Nicholas
+ */
 public class JSONNumber extends JSONValue {
 
+	/** <code>Integer</code> representation of the number, if possible. */
 	protected Integer intVal;
 
+	/** <code>Long</code> representation of the number, if possible. */
 	protected Long longVal;
 
+	/** <code>Float</code> representation of the number, if possible. */
 	protected Float floatVal;
 
+	/** <code>Double</code> representation of the number, if possible. */
 	protected Double doubleVal;
 
+	/** <code>BigInteger</code> representation of the number, if possible. */
 	protected BigInteger bigIntegerVal;
 
+	/** <code>BigDecimal</code> representation of the number, if possible. */
 	protected BigDecimal bigDecimalVal;
 
+	/** String representation of the number. */
 	protected String numberStr;
 
+	/** String representation of the number as bytes. */
 	protected byte[] numberBytes;
 
+	/**
+	 * Construct a JSON Number from an integer.
+	 * @param intVal integer value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber Integer(int intVal) {
 		JSONNumber number = new JSONNumber( Integer.toString( intVal ) );
 		number.intVal = intVal;
 		return number;
 	}
 
+	/**
+	 * Construct a JSON Number from a long.
+	 * @param longVal long value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber Long(long longVal) {
 		JSONNumber number = new JSONNumber( Long.toString( longVal ) );
 		number.longVal = longVal;
 		return number;
 	}
 
+	/**
+	 * Construct a JSON Number from a float.
+	 * @param floatVal float value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber Float(float floatVal) {
 		JSONNumber number = new JSONNumber( Float.toString( floatVal ) );
 		number.floatVal = floatVal;
 		return number;
 	}
 
+	/**
+	 * Construct a JSON Number from a double.
+	 * @param doubleVal double value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber Double(double doubleVal) {
 		JSONNumber number = new JSONNumber( Double.toString( doubleVal ) );
 		number.doubleVal = doubleVal;
 		return number;
 	}
 
+	/**
+	 * Construct a JSON Number from a big integer.
+	 * @param bigIntegerVal big integer value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber BigInteger(BigInteger bigIntegerVal) {
 		JSONNumber number = new JSONNumber( bigIntegerVal.toString() );
 		number.bigIntegerVal = bigIntegerVal;
 		return number;
 	}
 
+	/**
+	 * Construct a JSON Number from a big decimal.
+	 * @param bigDecimalVal big decimal value
+	 * @return JSON Number object
+	 */
 	public static JSONNumber BigDecimal(BigDecimal bigDecimalVal) {
 		JSONNumber number = new JSONNumber( bigDecimalVal.toString() );
 		number.bigDecimalVal = bigDecimalVal;
 		return number;
 	}
 
+	/**
+	 * Internal JSON Number constructor.
+	 * @param str number string
+	 */
 	protected JSONNumber(String str) {
 		type = JSONConstants.VT_NUMBER;
 		this.numberStr = str;
