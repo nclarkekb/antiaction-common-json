@@ -8,7 +8,6 @@
 package com.antiaction.common.json;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -20,29 +19,6 @@ import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
 
 public class JSONObjectMapper {
-
-	public static final int CT_ANNOTATION = 1 << 0;
-	public static final int CT_ANONYMOUSCLASS = 1 << 1;
-	public static final int CT_ARRAY = 1 << 2;
-	public static final int CT_ENUM = 1 << 3;
-	public static final int CT_INTERFACE = 1 << 4;
-	public static final int CT_LOCALCLASS = 1 << 5;
-	public static final int CT_MEMBERCLASS = 1 << 6;
-	public static final int CT_PRIMITIVE = 1 << 7;
-	public static final int CT_SYNTHETIC = 1 << 8;
-	public static final int CT_CLASS = 1 << 9;
-
-	public static final int CT_ABSTRACT = 1 << 16;
-	public static final int CT_FINAL = 1 << 17;
-	public static final int CT_NATIVE = 1 << 18;
-	public static final int CT_PRIVATE = 1 << 19;
-	public static final int CT_PROTECTED = 1 << 20;
-	public static final int CT_PUBLIC = 1 << 21;
-	public static final int CT_STATIC = 1 << 22;
-	public static final int CT_STRICT = 1 << 23;
-	public static final int CT_SYNCHRONIZED = 1 << 24;
-	public static final int CT_TRANSIENT = 1 << 25;
-	public static final int CT_VOLATILE = 1 << 26;
 
 	public static final int T_BOOLEAN = 1;
 	public static final int T_INTEGER = 2;
@@ -76,10 +52,32 @@ public class JSONObjectMapper {
 		typeMappings.put( byte[].class.getName(), T_BYTEARRAY );
 	}
 
+	public static final int INVALID_CLASS_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
+			| ClassTypeModifiers.CT_ANONYMOUSCLASS
+			| ClassTypeModifiers.CT_ARRAY
+			| ClassTypeModifiers.CT_ENUM
+			| ClassTypeModifiers.CT_INTERFACE
+			| ClassTypeModifiers.CT_LOCALCLASS
+			| ClassTypeModifiers.CT_PRIMITIVE
+			| ClassTypeModifiers.CM_ABSTRACT
+			| ClassTypeModifiers.CM_NATIVE;
+
+	public static final int VALID_CLASS_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_MEMBERCLASS
+			| ClassTypeModifiers.CT_CLASS
+			| ClassTypeModifiers.CM_STATIC;
+
+	public static final int VALID_CLASS = ClassTypeModifiers.CT_CLASS;
+
+	public static final int VALID_MEMBER_CLASS =  ClassTypeModifiers.CT_MEMBERCLASS | ClassTypeModifiers.CM_STATIC;
+
 	// ClassNotFoundException, SecurityException, NoSuchFieldException
 	public void register(Class<?> clazz) throws JSONException {
-		int classTypeMask = classTypeModifiersMask( clazz );
-		if ( (classTypeMask & (CT_CLASS | CT_MEMBERCLASS)) == 0 ) {
+		int classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( clazz );
+		if ( (classTypeMask & INVALID_CLASS_TYPE_MODIFIERS_MASK) != 0 ) {
+			throw new JSONException( "Unsupported class type." );
+		}
+		classTypeMask &= VALID_CLASS_TYPE_MODIFIERS_MASK;
+		if ( (classTypeMask != VALID_CLASS) && (classTypeMask != VALID_MEMBER_CLASS) ) {
 			throw new JSONException( "Unsupported class type." );
 		}
 		if ( !classMappings.containsKey( clazz.getName() ) ) {
@@ -146,10 +144,10 @@ public class JSONObjectMapper {
 					type = typeMappings.get( fieldType.getName() );
 					fieldObjectMapping = null;
 					if ( type == null ) {
-						classTypeMask = classTypeModifiersMask( fieldType );
+						classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
 						// debug
-						//System.out.println( classTypeMask );
-						if ( (classTypeMask & (CT_CLASS | CT_MEMBERCLASS)) == 0 ) {
+						//System.out.println( fieldType.getName() + " " + classTypeMask );
+						if ( (classTypeMask & (ClassTypeModifiers.CT_CLASS | ClassTypeModifiers.CT_MEMBERCLASS)) == 0 ) {
 							throw new JSONException( "Unsupported field type." );
 						}
 						type = T_OBJECT;
@@ -186,90 +184,6 @@ public class JSONObjectMapper {
 		catch (Exception e) {
 			throw new JSONException( e );
 		}
-	}
-
-	public static int classTypeModifiersMask(Class<?> clazz) {
-		 //isAnnotationPresent(Class<? extends Annotation> annotationClass)
-		 //isAssignableFrom(Class<?> cls)
-		 //isInstance(Object obj)
-		int mask = 0;
-		/*
-		 * Type.
-		 */
-		if ( clazz.isAnnotation() ) {
-			mask |= CT_ANNOTATION;
-		}
-		if ( clazz.isAnonymousClass() ) {
-			mask |= CT_ANONYMOUSCLASS;
-		}
-		if ( clazz.isArray() ) {
-			mask |= CT_ARRAY;
-		}
-		if ( clazz.isEnum() ) {
-			mask |= CT_ENUM;
-		}
-		if ( clazz.isInterface() ) {
-			mask |= CT_INTERFACE;
-		}
-		if ( clazz.isLocalClass() ) {
-			mask |= CT_LOCALCLASS;
-		}
-		if ( clazz.isMemberClass() ) {
-			mask |= CT_MEMBERCLASS;
-		}
-		if ( clazz.isPrimitive() ) {
-			mask |= CT_PRIMITIVE;
-		}
-		if ( clazz.isSynthetic() ) {
-			mask |= CT_SYNTHETIC;
-		}
-		/*
-		 * Class.
-		 */
-		if ( (mask & (CT_ANNOTATION | CT_ANONYMOUSCLASS | CT_ARRAY | CT_ENUM | CT_INTERFACE | CT_LOCALCLASS | CT_MEMBERCLASS | CT_PRIMITIVE)) == 0 ) {
-			mask |= CT_CLASS;
-		}
-		/*
-		 * Modifiers.
-		 */
-		int mod = clazz.getModifiers();
-		if ( Modifier.isAbstract( mod ) ) {
-			mask |= CT_ABSTRACT;
-		}
-		if ( Modifier.isFinal( mod ) ) {
-			mask |= CT_FINAL;
-		}
-		if ( Modifier.isInterface( mod ) ) {
-			mask |= CT_INTERFACE;
-		}
-		if ( Modifier.isNative( mod ) ) {
-			mask |= CT_NATIVE;
-		}
-		if ( Modifier.isPrivate( mod) ) {
-			mask |= CT_PRIVATE;
-		}
-		if ( Modifier.isProtected( mod ) ) {
-			mask |= CT_PROTECTED;
-		}
-		if ( Modifier.isPublic( mod) ) {
-			mask |= CT_PUBLIC;
-		}
-		if ( Modifier.isStatic( mod ) ) {
-			mask |= CT_STATIC;
-		}
-		if ( Modifier.isStrict( mod ) ) {
-			mask |= CT_STRICT;
-		}
-		if ( Modifier.isSynchronized( mod ) ) {
-			mask |= CT_SYNCHRONIZED;
-		}
-		if ( Modifier.isTransient( mod ) ) {
-			mask |= CT_TRANSIENT;
-		}
-		if ( Modifier.isVolatile( mod ) ) {
-			mask |= CT_VOLATILE;
-		}
-		return mask;
 	}
 
 	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws InstantiationException, IllegalAccessException {
