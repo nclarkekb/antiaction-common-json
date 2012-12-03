@@ -7,6 +7,7 @@
 
 package com.antiaction.common.json;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
@@ -66,7 +67,7 @@ public class ClassTypeModifiers {
 	public static final int CM_SYNCHRONIZED = 1 << 24;
 	/** Transient class modifier identifier mask. */
 	public static final int CM_TRANSIENT = 1 << 25;
-	/** Volative class modifier identifier mask. */
+	/** Volatile class modifier identifier mask. */
 	public static final int CM_VOLATILE = 1 << 26;
 
 	/**
@@ -115,7 +116,15 @@ public class ClassTypeModifiers {
 		/*
 		 * Modifiers.
 		 */
-		int mod = clazz.getModifiers();
+		return mask | getModifiersMask( clazz.getModifiers() );
+	}
+
+	public static int getFieldModifiersMask(Field field) {
+		return getModifiersMask( field.getModifiers() );
+	}
+
+	public static int getModifiersMask(int mod) {
+		int mask = 0;
 		if ( Modifier.isAbstract( mod ) ) {
 			mask |= CM_ABSTRACT;
 		}
@@ -153,6 +162,65 @@ public class ClassTypeModifiers {
 			mask |= CM_VOLATILE;
 		}
 		return mask;
+	}
+
+	public static String toString(int mask) {
+		int[] masks = new int[] {
+				CT_ANNOTATION,
+				CT_ANONYMOUSCLASS,
+				CT_ARRAY,
+				CT_ENUM,
+				CT_INTERFACE,
+				CT_LOCALCLASS,
+				CT_MEMBERCLASS,
+				CT_PRIMITIVE,
+				CT_SYNTHETIC,
+				CT_CLASS,
+				CM_ABSTRACT,
+				CM_FINAL,
+				CM_NATIVE,
+				CM_PRIVATE,
+				CM_PROTECTED,
+				CM_PUBLIC,
+				CM_STATIC,
+				CM_STRICT,
+				CM_SYNCHRONIZED,
+				CM_TRANSIENT,
+				CM_VOLATILE
+		};
+		String[] names = new String[] {
+				"Annotation",
+				"Anonymous",
+				"Array",
+				"Enum",
+				"Interface",
+				"Local",
+				"Member",
+				"Primitive",
+				"Synthetic",
+				"Class",
+				"Abstract",
+				"Final",
+				"Native",
+				"Private",
+				"Protected",
+				"Public",
+				"Static",
+				"Strict",
+				"Synchronized",
+				"Transient",
+				"Volative"
+		};
+		StringBuilder sb = new StringBuilder();
+		for ( int i=0; i<masks.length; ++i ) {
+			if ( (mask & masks[ i ]) != 0 ) {
+				if ( sb.length() > 0 ) {
+					sb.append( ", " );
+				}
+				sb.append( names[ i ] );
+			}
+		}
+		return sb.toString();
 	}
 
 }

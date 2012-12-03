@@ -31,6 +31,7 @@ public class JSONObjectMapper {
 	public static final int T_BYTEARRAY = 9;
 	public static final int T_OBJECT = 10;
 
+	// TODO maybe better not static.
 	protected static Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
 
 	protected static Map<String, Integer> typeMappings = new TreeMap<String, Integer>();
@@ -85,6 +86,18 @@ public class JSONObjectMapper {
 		}
 	}
 
+	public static final int IGNORE_FIELD_TYPE_MODIFIER = ClassTypeModifiers.CM_STATIC
+			| ClassTypeModifiers.CM_TRANSIENT;
+
+	public static final int INVALID_FIELD_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
+			| ClassTypeModifiers.CT_ANONYMOUSCLASS
+			| ClassTypeModifiers.CT_ARRAY
+			| ClassTypeModifiers.CT_ENUM
+			| ClassTypeModifiers.CT_INTERFACE
+			| ClassTypeModifiers.CT_LOCALCLASS
+			| ClassTypeModifiers.CT_PRIMITIVE
+			| ClassTypeModifiers.CM_ABSTRACT;
+
 	// ClassNotFoundException, SecurityException, NoSuchFieldException
 	protected JSONObjectMapping mapClass(Class<?> clazz) throws JSONException {
 		try {
@@ -110,13 +123,14 @@ public class JSONObjectMapper {
 			Field field;
 			boolean bIgnore;
 			Integer type;
-			int classTypeMask;
+			Class<?> fieldType = null;
+			int fieldModsMask = 0;
+			int classTypeMask = 0;
 			JSONObjectMapping fieldObjectMapping;
 			for ( int i=0; i<fields.length; ++i ) {
 				field = fields[ i ];
 				// debug
 				//System.out.println( field.getName() );
-
 				bIgnore = json_om.ignore.contains( field.getName() );
 				ignore = field.getAnnotation( JSONIgnore.class );
 				if ( ignore != null ) {
@@ -124,31 +138,27 @@ public class JSONObjectMapper {
 					//System.out.println( "ignore" );
 					bIgnore = true;
 				}
-
 				if ( !bIgnore ) {
-					Class<?> fieldType = field.getType();
-
-					/*
-					System.out.println( fieldType.getName() );
-					System.out.println( fieldType.isAnnotation() );
-					System.out.println( fieldType.isAnonymousClass() );
-					System.out.println( fieldType.isArray() );
-					System.out.println( fieldType.isEnum() );
-					System.out.println( fieldType.isInterface() );
-					System.out.println( fieldType.isLocalClass() );
-					System.out.println( fieldType.isMemberClass() );
-					System.out.println( fieldType.isPrimitive() );
-					System.out.println( fieldType.isSynthetic() );
-					*/
+					fieldModsMask = ClassTypeModifiers.getFieldModifiersMask( field );
+					// debug
+					System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
+					bIgnore = (fieldModsMask & IGNORE_FIELD_TYPE_MODIFIER) != 0;
+				}
+				if ( !bIgnore ) {
+					fieldType = field.getType();
+					classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
+					// debug
+					System.out.println( fieldType.getName() + " " + ClassTypeModifiers.toString( classTypeMask ) );
 
 					type = typeMappings.get( fieldType.getName() );
 					fieldObjectMapping = null;
 					if ( type == null ) {
-						classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
-						// debug
-						//System.out.println( fieldType.getName() + " " + classTypeMask );
-						if ( (classTypeMask & (ClassTypeModifiers.CT_CLASS | ClassTypeModifiers.CT_MEMBERCLASS)) == 0 ) {
-							throw new JSONException( "Unsupported field type." );
+						if ( (classTypeMask & INVALID_FIELD_TYPE_MODIFIERS_MASK) != 0 ) {
+							throw new JSONException( "Unsupported class type." );
+						}
+						classTypeMask &= VALID_CLASS_TYPE_MODIFIERS_MASK;
+						if ( (classTypeMask != VALID_CLASS) && (classTypeMask != VALID_MEMBER_CLASS) ) {
+							throw new JSONException( "Unsupported field class type." );
 						}
 						type = T_OBJECT;
 						fieldObjectMapping = classMappings.get( fieldType.getName() );
@@ -205,22 +215,27 @@ public class JSONObjectMapper {
 				switch ( fieldMapping.type ) {
 				case T_BOOLEAN:
 					Boolean booleanVal = json_value.getBoolean();
-					fieldMapping.field.setBoolean( dstObj, booleanVal );
+					//fieldMapping.field.setBoolean( dstObj, booleanVal );
+					fieldMapping.field.set( dstObj, booleanVal );
 					break;
 				case T_INTEGER:
 					Integer intVal = json_value.getInteger();
-					fieldMapping.field.setInt( dstObj, intVal );
+					//fieldMapping.field.setInt( dstObj, intVal );
+					fieldMapping.field.set( dstObj, intVal );
 					break;
 				case T_LONG:
 					Long longVal = json_value.getLong();
-					fieldMapping.field.setLong( dstObj, longVal );
+					//fieldMapping.field.setLong( dstObj, longVal );
+					fieldMapping.field.set( dstObj, longVal );
 					break;
 				case T_FLOAT:
 					Float floatVal = json_value.getFloat();
-					fieldMapping.field.setFloat( dstObj, floatVal );
+					//fieldMapping.field.setFloat( dstObj, floatVal );
+					fieldMapping.field.set( dstObj, floatVal );
 					break;
 				case T_DOUBLE:
 					Double doubleVal = json_value.getDouble();
+					//fieldMapping.field.setDouble( dstObj, doubleVal );
 					fieldMapping.field.set( dstObj, doubleVal );
 					break;
 				case T_BIGINTEGER:

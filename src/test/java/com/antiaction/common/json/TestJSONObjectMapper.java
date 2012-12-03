@@ -10,14 +10,16 @@ package com.antiaction.common.json;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.antiaction.common.json.annotation.JSON;
+import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
 
 @RunWith(JUnit4.class)
@@ -122,12 +124,12 @@ public class TestJSONObjectMapper {
 			Assert.assertEquals( 1, result.email.appears );
 			Assert.assertEquals( 166, result.email.frequency );
 			Assert.assertEquals( "2012-11-15 20:30:38", result.email.lastseen );
-			Assert.assertEquals( 99.1, result.email.confidence );
+			Assert.assertEquals( new Double(99.1), result.email.confidence );
 			Assert.assertNotNull( result.ip );
 			Assert.assertEquals( 1, result.ip.appears );
 			Assert.assertEquals( 54, result.ip.frequency );
 			Assert.assertEquals( "2012-11-15 20:30:38", result.ip.lastseen );
-			Assert.assertEquals( 97.3, result.ip.confidence );
+			Assert.assertEquals( new Double(97.3), result.ip.confidence );
 			Assert.assertNotNull( result.username );
 			Assert.assertEquals( 0, result.username.appears );
 			Assert.assertEquals( 0, result.username.frequency );
@@ -169,6 +171,64 @@ public class TestJSONObjectMapper {
 			}
 			catch (JSONException e) {
 			}
+
+			json_om.register( TestClass.class );
+			JSONObjectMapping objMapping = JSONObjectMapper.classMappings.get( TestClass.class.getName() );
+			Assert.assertEquals( 0, objMapping.fieldMappingsList.size() );
+
+			/*
+			 * Types.
+			 */
+
+			TestTypesClass testTypes;
+
+			try {
+				testTypes = json_om.toObject( json_struct, TestTypesClass.class );
+			}
+			catch (IllegalArgumentException e) {
+			}
+
+			json_om.register( TestTypesClass.class );
+
+			text = "{"
+					+ "\"b1\":true, \"b2\":false,"
+					+ "\"i1\":1234, \"i2\":42,"
+					+ "\"l1\":12345678901234, \"l2\":43210987654321,"
+					+ "\"f1\":" + new Float( 1.0F / 3.0F ).toString() + ", \"f2\":" + new Float( 3.0F ).toString() + ","
+					+ "\"d1\":" + new Double( 1.0 / 3.0 ).toString() + ", \"d2\":" + new Double( 3.0 ).toString() + ","
+					+ "\"bi\":" + new BigInteger( "123456789012345678901234567890123456789012" ).toString() + ","
+					+ "\"bd\":" + new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).toString() + ","
+					+ "\"s\":\"mapping\","
+					+ "\"b\":\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\""
+					+ "}";
+			bytes = text.getBytes( "UTF-8" );
+
+			pbin = new PushbackInputStream( new ByteArrayInputStream( bytes ), 4 );
+			encoding = JSONEncoding.encoding( pbin );
+			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			Assert.assertNotNull( json_decoder );
+			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			Assert.assertNotNull( json_struct );
+
+			testTypes = json_om.toObject( json_struct, TestTypesClass.class );
+			Assert.assertTrue( testTypes.b1 );
+			Assert.assertFalse( testTypes.b2 );
+			Assert.assertEquals( 1234, testTypes.i1 );
+			Assert.assertEquals( new Integer( 42 ), testTypes.i2 );
+			Assert.assertEquals( 12345678901234L, testTypes.l1 );
+			Assert.assertEquals( new Long( 43210987654321L ), testTypes.l2 );
+			Assert.assertEquals( new Float( 1.0F / 3.0F ), (Float)testTypes.f1 );
+			Assert.assertEquals( new Float( 3.0F ), testTypes.f2 );
+			Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)testTypes.d1 );
+			Assert.assertEquals( new Double( 3.0 ), testTypes.d2 );
+			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), testTypes.bi );
+			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), testTypes.bd );
+			Assert.assertEquals( "mapping", testTypes.s );
+			byte[] eb = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+			Assert.assertArrayEquals( eb, testTypes.b );
+			/*
+			 */
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -219,6 +279,52 @@ public class TestJSONObjectMapper {
 
 		@JSONNullable
 		public Double confidence;
+
+	}
+
+	@JSON(ignore={"$jacocoData", "jsonignore"})
+	public static class TestClass {
+
+		public transient String transientModifier = null;
+
+		@JSONIgnore
+		public String ignoreAnnotation = null;
+
+		public String jsonignore = null;
+
+		public static String staticModifiers = null;
+
+	}
+
+	public static class TestTypesClass {
+
+		public boolean b1;
+
+		public Boolean b2;
+
+		public int i1;
+
+		public Integer i2;
+
+		public long l1;
+
+		public Long l2;
+
+		public float f1;
+
+		public Float f2;
+
+		public double d1;
+
+		public Double d2;
+
+		public BigInteger bi;
+
+		public BigDecimal bd;
+
+		public String s;
+
+		public byte[] b;
 
 	}
 
