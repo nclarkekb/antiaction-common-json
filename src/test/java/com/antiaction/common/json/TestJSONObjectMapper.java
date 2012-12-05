@@ -18,6 +18,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.TestClassTypeModifiers.TestAbstractMemberClass;
+import com.antiaction.common.json.TestClassTypeModifiers.TestEnum;
+import com.antiaction.common.json.TestClassTypeModifiers.TestInterface;
+import com.antiaction.common.json.TestClassTypeModifiers.TestMemberClass;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -298,34 +302,159 @@ public class TestJSONObjectMapper {
 
 	public static class TestTypesClass {
 
-		public boolean b1;
+		private boolean b1;
 
-		public Boolean b2;
+		@JSONNullable
+		private Boolean b2;
 
-		public int i1;
+		private int i1;
 
-		public Integer i2;
+		@JSONNullable
+		private Integer i2;
 
-		public long l1;
+		private long l1;
 
-		public Long l2;
+		@JSONNullable
+		private Long l2;
 
-		public float f1;
+		private float f1;
 
-		public Float f2;
+		@JSONNullable
+		private Float f2;
 
-		public double d1;
+		private double d1;
 
-		public Double d2;
+		@JSONNullable
+		private Double d2;
 
-		public BigInteger bi;
+		@JSONNullable
+		private BigInteger bi;
 
-		public BigDecimal bd;
+		@JSONNullable
+		private BigDecimal bd;
 
-		public String s;
+		@JSONNullable
+		private String s;
 
-		public byte[] b;
+		@JSONNullable
+		private byte[] b;
 
+	}
+
+	@Test
+	public void test_jsonobjectmapper_invalidfields() {
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		try {
+			json_om.register( InvalidField1.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( InvalidField2.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( InvalidField3.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( InvalidField4.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( ValidField1.class );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	public static class InvalidField1 {
+		TestEnum enumse;
+	}
+
+	public static class InvalidField2 {
+		TestInterface interf;
+	}
+
+	public static class InvalidField3 {
+		TestAbstractMemberClass tabstract;
+	}
+
+	public static class InvalidField4 {
+		TestMemberClass memass;
+	}
+
+	public static class ValidField1 {
+		TestClassTypeModifiers normass;
+	}
+
+	@Test
+	public void test_jsonobjectmapper_nullable() {
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		try {
+			json_om.register( TestNullableField1Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField2Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField3Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField4Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField5Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+	}
+
+	public static class TestNullableField1Class {
+		@JSONNullable
+		boolean b1;
+	}
+
+	public static class TestNullableField2Class {
+		@JSONNullable
+		int i1;
+	}
+
+	public static class TestNullableField3Class {
+		@JSONNullable
+		long l1;
+	}
+
+	public static class TestNullableField4Class {
+		@JSONNullable
+		float f1;
+	}
+
+	public static class TestNullableField5Class {
+		@JSONNullable
+		double d1;
 	}
 
 }

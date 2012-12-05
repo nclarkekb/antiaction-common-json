@@ -20,16 +20,21 @@ import com.antiaction.common.json.annotation.JSONNullable;
 
 public class JSONObjectMapper {
 
-	public static final int T_BOOLEAN = 1;
-	public static final int T_INTEGER = 2;
-	public static final int T_LONG = 3;
-	public static final int T_FLOAT = 4;
-	public static final int T_DOUBLE = 5;
-	public static final int T_BIGINTEGER = 6;
-	public static final int T_BIGDECIMAL = 7;
-	public static final int T_STRING = 8;
-	public static final int T_BYTEARRAY = 9;
-	public static final int T_OBJECT = 10;
+	public static final int T_PRIMITIVE_BOOLEAN = 1;
+	public static final int T_PRIMITIVE_INTEGER = 2;
+	public static final int T_PRIMITIVE_LONG = 3;
+	public static final int T_PRIMITIVE_FLOAT = 4;
+	public static final int T_PRIMITIVE_DOUBLE = 5;
+	public static final int T_OBJECT = 100;
+	public static final int T_BOOLEAN = 101;
+	public static final int T_INTEGER = 102;
+	public static final int T_LONG = 103;
+	public static final int T_FLOAT = 104;
+	public static final int T_DOUBLE = 105;
+	public static final int T_BIGINTEGER = 106;
+	public static final int T_BIGDECIMAL = 107;
+	public static final int T_STRING = 108;
+	public static final int T_BYTEARRAY = 109;
 
 	// TODO maybe better not static.
 	protected static Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
@@ -37,11 +42,11 @@ public class JSONObjectMapper {
 	protected static Map<String, Integer> typeMappings = new TreeMap<String, Integer>();
 
 	static {
-		typeMappings.put( boolean.class.getName(), T_BOOLEAN );
-		typeMappings.put( int.class.getName(), T_INTEGER );
-		typeMappings.put( long.class.getName(), T_LONG );
-		typeMappings.put( float.class.getName(), T_FLOAT );
-		typeMappings.put( double.class.getName(), T_DOUBLE );
+		typeMappings.put( boolean.class.getName(), T_PRIMITIVE_BOOLEAN );
+		typeMappings.put( int.class.getName(), T_PRIMITIVE_INTEGER );
+		typeMappings.put( long.class.getName(), T_PRIMITIVE_LONG );
+		typeMappings.put( float.class.getName(), T_PRIMITIVE_FLOAT );
+		typeMappings.put( double.class.getName(), T_PRIMITIVE_DOUBLE );
 		typeMappings.put( Boolean.class.getName(), T_BOOLEAN );
 		typeMappings.put( Integer.class.getName(), T_INTEGER );
 		typeMappings.put( Long.class.getName(), T_LONG );
@@ -154,7 +159,7 @@ public class JSONObjectMapper {
 					fieldObjectMapping = null;
 					if ( type == null ) {
 						if ( (classTypeMask & INVALID_FIELD_TYPE_MODIFIERS_MASK) != 0 ) {
-							throw new JSONException( "Unsupported class type." );
+							throw new JSONException( "Unsupported field class type." );
 						}
 						classTypeMask &= VALID_CLASS_TYPE_MODIFIERS_MASK;
 						if ( (classTypeMask != VALID_CLASS) && (classTypeMask != VALID_MEMBER_CLASS) ) {
@@ -176,12 +181,16 @@ public class JSONObjectMapper {
 						json_fm.className = fieldType.getName();
 						json_fm.clazz = fieldType;
 						json_fm.objectMapping = fieldObjectMapping;
-						json_fm.field = clazz.getField( json_fm.name );
+						json_fm.field = clazz.getDeclaredField( json_fm.name );
+						json_fm.field.setAccessible( true );
 						json_om.fieldMappingsMap.put( json_fm.name, json_fm );
 						json_om.fieldMappingsList.add( json_fm );
 
 						nullable = field.getAnnotation( JSONNullable.class );
 						if ( nullable != null ) {
+							if ( json_fm.type < T_OBJECT ) {
+								throw new JSONException( "Primitive types can not be nullable." );
+							}
 							// debug
 							//System.out.println( "nullable" );
 							json_fm.nullable = true;
@@ -197,6 +206,17 @@ public class JSONObjectMapper {
 	}
 
 	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+		Boolean booleanVal;
+		Integer intVal;
+		Long longVal;
+		Float floatVal;
+		Double doubleVal;
+		BigInteger bigIntegerVal;
+		BigDecimal bigDecimalVal;
+		String strVal;
+		byte[] byteArray;
+		Object object;
+
 		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
 		if ( json_om == null ) {
 			throw new IllegalArgumentException( "Class not registered." );
@@ -213,49 +233,64 @@ public class JSONObjectMapper {
 			json_value = json_object.get( fieldMapping.name );
 			if ( json_value != null ) {
 				switch ( fieldMapping.type ) {
+				case T_PRIMITIVE_BOOLEAN:
+					booleanVal = json_value.getBoolean();
+					fieldMapping.field.setBoolean( dstObj, booleanVal );
+					break;
+				case T_PRIMITIVE_INTEGER:
+					intVal = json_value.getInteger();
+					fieldMapping.field.setInt( dstObj, intVal );
+					break;
+				case T_PRIMITIVE_LONG:
+					longVal = json_value.getLong();
+					fieldMapping.field.setLong( dstObj, longVal );
+					break;
+				case T_PRIMITIVE_FLOAT:
+					floatVal = json_value.getFloat();
+					fieldMapping.field.setFloat( dstObj, floatVal );
+					break;
+				case T_PRIMITIVE_DOUBLE:
+					doubleVal = json_value.getDouble();
+					fieldMapping.field.setDouble( dstObj, doubleVal );
+					break;
 				case T_BOOLEAN:
-					Boolean booleanVal = json_value.getBoolean();
-					//fieldMapping.field.setBoolean( dstObj, booleanVal );
+					booleanVal = json_value.getBoolean();
 					fieldMapping.field.set( dstObj, booleanVal );
 					break;
 				case T_INTEGER:
-					Integer intVal = json_value.getInteger();
-					//fieldMapping.field.setInt( dstObj, intVal );
+					intVal = json_value.getInteger();
 					fieldMapping.field.set( dstObj, intVal );
 					break;
 				case T_LONG:
-					Long longVal = json_value.getLong();
-					//fieldMapping.field.setLong( dstObj, longVal );
+					longVal = json_value.getLong();
 					fieldMapping.field.set( dstObj, longVal );
 					break;
 				case T_FLOAT:
-					Float floatVal = json_value.getFloat();
-					//fieldMapping.field.setFloat( dstObj, floatVal );
+					floatVal = json_value.getFloat();
 					fieldMapping.field.set( dstObj, floatVal );
 					break;
 				case T_DOUBLE:
-					Double doubleVal = json_value.getDouble();
-					//fieldMapping.field.setDouble( dstObj, doubleVal );
+					doubleVal = json_value.getDouble();
 					fieldMapping.field.set( dstObj, doubleVal );
 					break;
 				case T_BIGINTEGER:
-					BigInteger bigIntegerVal = json_value.getBigInteger();
+					bigIntegerVal = json_value.getBigInteger();
 					fieldMapping.field.set( dstObj, bigIntegerVal );
 					break;
 				case T_BIGDECIMAL:
-					BigDecimal bigDecimalVal = json_value.getBigDecimal();
+					bigDecimalVal = json_value.getBigDecimal();
 					fieldMapping.field.set( dstObj, bigDecimalVal );
 					break;
 				case T_STRING:
-					String strVal = json_value.getString();
+					strVal = json_value.getString();
 					fieldMapping.field.set( dstObj, strVal );
 					break;
 				case T_BYTEARRAY:
-					byte[] byteArray = json_value.getBytes();
+					byteArray = json_value.getBytes();
 					fieldMapping.field.set( dstObj, byteArray );
 					break;
 				case T_OBJECT:
-					Object object = toObject( json_value.getObject(), fieldMapping.clazz );
+					object = toObject( json_value.getObject(), fieldMapping.clazz );
 					fieldMapping.field.set( dstObj, object );
 					break;
 				}
@@ -266,5 +301,11 @@ public class JSONObjectMapper {
 
 		return dstObj;
 	}
+
+	/*
+	public JSONStructure toJSON() {
+		return null;
+	}
+	*/
 
 }
