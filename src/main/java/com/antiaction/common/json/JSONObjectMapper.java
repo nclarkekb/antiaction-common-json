@@ -146,14 +146,14 @@ public class JSONObjectMapper {
 				if ( !bIgnore ) {
 					fieldModsMask = ClassTypeModifiers.getFieldModifiersMask( field );
 					// debug
-					System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
+					//System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
 					bIgnore = (fieldModsMask & IGNORE_FIELD_TYPE_MODIFIER) != 0;
 				}
 				if ( !bIgnore ) {
 					fieldType = field.getType();
 					classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
 					// debug
-					System.out.println( fieldType.getName() + " " + ClassTypeModifiers.toString( classTypeMask ) );
+					//System.out.println( fieldType.getName() + " " + ClassTypeModifiers.toString( classTypeMask ) );
 
 					type = typeMappings.get( fieldType.getName() );
 					fieldObjectMapping = null;
