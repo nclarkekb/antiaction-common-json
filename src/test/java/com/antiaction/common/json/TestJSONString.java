@@ -64,7 +64,7 @@ public class TestJSONString {
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_string );
 
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );
@@ -134,7 +134,7 @@ public class TestJSONString {
 			json_struct.add( JSONString.String( sb.toString() ) );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, out );
+			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );
@@ -159,7 +159,7 @@ public class TestJSONString {
 			json_struct.add( JSONString.String( sb.toString() ) );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, out );
+			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );

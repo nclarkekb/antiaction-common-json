@@ -49,6 +49,28 @@ public class JSONObject extends JSONStructure {
 		encoder.write( '}' );
 	}
 
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		encoder.write( "{\n" );
+		Iterator<Entry<JSONString, JSONValue>> iter = values.entrySet().iterator();
+		Entry<JSONString, JSONValue> entry;
+		String innerIndentation = indentation + indent;
+		int i = 0;
+		while ( iter.hasNext() ) {
+			if ( i > 0 ) {
+				encoder.write( ",\n" );
+			}
+			entry = iter.next();
+			encoder.write( innerIndentation );
+			entry.getKey().encode( encoder, innerIndentation, indent );
+			encoder.write( ": " );
+			entry.getValue().encode( encoder, innerIndentation, indent );
+			++i;
+		}
+		encoder.write( "\n" );
+		encoder.write( indentation );
+		encoder.write( "}" );
+	}
+
 	@Override 
 	public JSONString put(String name, JSONValue value) {
 		JSONString json_string = JSONString.String( name );

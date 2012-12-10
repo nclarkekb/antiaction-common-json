@@ -197,6 +197,22 @@ public class JSONString extends JSONValue {
 	}
 
 	@Override
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		encoder.write( '"' );
+		Block block;
+		for ( int i=0; i<blocks.size(); ++i ) {
+			block = blocks.get( i );
+			if ( block.chars != null ) {
+				encoder.write( block.chars, block.offset, block.len );
+			}
+			else {
+				encoder.write( block.bytes, block.offset, block.len );
+			}
+		}
+		encoder.write( '"' );
+	}
+
+	@Override
 	public String toString() {
 		return '"' + str + '"';
 	}

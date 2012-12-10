@@ -32,6 +32,15 @@ public abstract class JSONValue {
 	}
 
 	/**
+	 * Output pretty print the JSON value to the given Encoder.
+	 * @param encoder output encoder
+	 * @throws IOException if an i/o error occurs while encoding
+	 */
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented");
+	}
+
+	/**
 	 * Returns the JSON value as an <code>JSONArray</code> or null
 	 * @return the JSON value as an <code>JSONArray</code> or null
 	 */

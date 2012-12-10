@@ -72,6 +72,16 @@ public class JSONBoolean extends JSONValue {
 	}
 
 	@Override
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		if ( b ) {
+			encoder.write( trueBytes );
+		}
+		else {
+			encoder.write( falseBytes );
+		}
+	}
+
+	@Override
 	public String toString() {
 		if ( b ) {
 			return "true";

@@ -205,7 +205,7 @@ public class JSONObjectMapper {
 		}
 	}
 
-	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws InstantiationException, IllegalAccessException, JSONException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;
@@ -296,16 +296,184 @@ public class JSONObjectMapper {
 				}
 			}
 			else {
+				if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field is not nullable." );
+				}
 			}
 		}
 
 		return dstObj;
 	}
 
-	/*
-	public JSONStructure toJSON() {
-		return null;
+	public <T> JSONStructure toJSON(T srcObj) throws JSONException, IllegalArgumentException, IllegalAccessException {
+		Boolean booleanVal;
+		Integer intVal;
+		Long longVal;
+		Float floatVal;
+		Double doubleVal;
+		BigInteger bigIntegerVal;
+		BigDecimal bigDecimalVal;
+		String strVal;
+		byte[] byteArray;
+		Object object;
+
+		JSONObjectMapping json_om = classMappings.get( srcObj.getClass().getName() );
+		if ( json_om == null ) {
+			throw new IllegalArgumentException( "Class not registered." );
+		}
+
+		JSONStructure json_struct = new JSONObject();
+
+		Iterator<JSONObjectFieldMapping> fieldMappingsIter = json_om.fieldMappingsList.iterator();
+		JSONObjectFieldMapping fieldMapping;
+		JSONValue json_value;
+		while ( fieldMappingsIter.hasNext() ) {
+			fieldMapping = fieldMappingsIter.next();
+			switch ( fieldMapping.type ) {
+			case T_PRIMITIVE_BOOLEAN:
+				booleanVal = fieldMapping.field.getBoolean( srcObj );
+				if ( booleanVal == null ) {
+					throw new JSONException( "Primitive types can not be null." );
+				}
+				json_value = JSONBoolean.Boolean( booleanVal );
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_PRIMITIVE_INTEGER:
+				intVal = fieldMapping.field.getInt( srcObj );
+				if ( intVal == null ) {
+					throw new JSONException( "Primitive types can not be null." );
+				}
+				json_value = JSONNumber.Integer( intVal );
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_PRIMITIVE_LONG:
+				longVal = fieldMapping.field.getLong( srcObj );
+				if ( longVal == null ) {
+					throw new JSONException( "Primitive types can not be null." );
+				}
+				json_value = JSONNumber.Long( longVal );
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_PRIMITIVE_FLOAT:
+				floatVal = fieldMapping.field.getFloat( srcObj );
+				if ( floatVal == null ) {
+					throw new JSONException( "Primitive types can not be null." );
+				}
+				json_value = JSONNumber.Float( floatVal );
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_PRIMITIVE_DOUBLE:
+				doubleVal = fieldMapping.field.getDouble( srcObj );
+				if ( doubleVal == null ) {
+					throw new JSONException( "Primitive types can not be null." );
+				}
+				json_value = JSONNumber.Double( doubleVal );
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_BOOLEAN:
+				booleanVal = (Boolean)fieldMapping.field.get( srcObj );
+				if ( booleanVal != null ) {
+					json_value = JSONBoolean.Boolean( booleanVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_INTEGER:
+				intVal = (Integer)fieldMapping.field.get( srcObj );
+				if ( intVal != null ) {
+					json_value = JSONNumber.Integer( intVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_LONG:
+				longVal = (Long)fieldMapping.field.get( srcObj );
+				if ( longVal != null ) {
+					json_value = JSONNumber.Long( longVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_FLOAT:
+				floatVal = (Float)fieldMapping.field.get( srcObj );
+				if ( floatVal != null ) {
+					json_value = JSONNumber.Float( floatVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_DOUBLE:
+				doubleVal = (Double)fieldMapping.field.get( srcObj );
+				if ( doubleVal != null ) {
+					json_value = JSONNumber.Double( doubleVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_BIGINTEGER:
+				bigIntegerVal = (BigInteger)fieldMapping.field.get( srcObj );
+				if ( bigIntegerVal != null ) {
+					json_value = JSONNumber.BigInteger( bigIntegerVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_BIGDECIMAL:
+				bigDecimalVal = (BigDecimal)fieldMapping.field.get( srcObj );
+				if ( bigDecimalVal != null ) {
+					json_value = JSONNumber.BigDecimal( bigDecimalVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_STRING:
+				strVal = (String)fieldMapping.field.get( srcObj );
+				if ( strVal != null ) {
+					json_value = JSONString.String( strVal );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_BYTEARRAY:
+				byteArray = (byte[])fieldMapping.field.get( srcObj );
+				if ( byteArray != null ) {
+					json_value = JSONString.String( byteArray );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			case T_OBJECT:
+				object = (Object)fieldMapping.field.get( srcObj );
+				if ( object != null ) {
+					json_value = toJSON( object );
+				}
+				else {
+					json_value = JSONNull.Null;
+				}
+				json_struct.put( fieldMapping.name, json_value );
+				break;
+			}
+		}
+
+		return json_struct;
 	}
-	*/
 
 }

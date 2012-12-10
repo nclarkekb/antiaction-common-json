@@ -74,7 +74,7 @@ public class TestJSONBoolean {
 			json_array.add( False );
 			json_array.add( True );
 
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );

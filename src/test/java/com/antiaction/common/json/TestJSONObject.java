@@ -94,7 +94,7 @@ public class TestJSONObject {
 			PushbackInputStream in;
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, out );
+			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );

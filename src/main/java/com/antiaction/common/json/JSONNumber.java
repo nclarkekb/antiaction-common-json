@@ -189,6 +189,11 @@ public class JSONNumber extends JSONValue {
 	}
 
 	@Override
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		encoder.write( numberBytes );
+	}
+
+	@Override
 	public String toString() {
 		return new String( numberBytes );
 	}

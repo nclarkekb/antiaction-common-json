@@ -8,6 +8,7 @@
 package com.antiaction.common.json;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.math.BigDecimal;
@@ -455,6 +456,145 @@ public class TestJSONObjectMapper {
 	public static class TestNullableField5Class {
 		@JSONNullable
 		double d1;
+	}
+
+	public static class TestJSONMapObject {
+
+		private boolean b1;
+
+		@JSONNullable
+		private Boolean b2;
+
+		private int i1;
+
+		@JSONNullable
+		private Integer i2;
+
+		private long l1;
+
+		@JSONNullable
+		private Long l2;
+
+		private float f1;
+
+		@JSONNullable
+		private Float f2;
+
+		private double d1;
+
+		@JSONNullable
+		private Double d2;
+
+		@JSONNullable
+		private BigInteger bi;
+
+		@JSONNullable
+		private BigDecimal bd;
+
+		@JSONNullable
+		private String s;
+
+		@JSONNullable
+		private byte[] b;
+
+		TestJSONMapObject obj;
+
+	}
+
+	@Test
+	public void test_jsonobjectmapper_tojson() {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JSONText json = new JSONText();
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		try {
+			try {
+				json_om.toJSON( new TestJSONMapObject() );
+				Assert.fail( "Exception expected!" );
+			}
+			catch (IllegalArgumentException e) {
+			}
+
+			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+
+			json_om.register( TestJSONMapObject.class );
+
+			TestJSONMapObject obj = new TestJSONMapObject();
+			obj.b1 = true;
+			obj.b2 = false;
+			obj.i1 = 42;
+			obj.i2 = 1234;
+			obj.l1 = 12345678901234L;
+			obj.l2 = 43210987654321L;
+			obj.f1 = 1.0F / 3.0F;
+			obj.f2 = 3.0F;
+			obj.d1 = 1.0 / 3.0;
+			obj.d2 = 3.0;
+			obj.bi = new BigInteger( "123456789012345678901234567890123456789012" );
+			obj.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" );
+			obj.s = "json";
+			obj.b = "bytes".getBytes();
+			TestJSONMapObject obj2 = new TestJSONMapObject();
+			obj.obj = obj2;
+			obj2.b1 = false;
+			obj2.b2 = true;
+			obj2.i1 = 4213;
+			obj2.i2 = 4321;
+			obj2.l1 = 12345678901234L * 2L;
+			obj2.l2 = 43210987654321L * 2L;
+			obj2.f1 = 1.0F / 5.0F;
+			obj2.f2 = 5.0F;
+			obj2.d1 = 1.0 / 5.0;
+			obj2.d2 = 5.0;
+			obj2.bi = new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) );
+			obj2.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) );
+			obj2.s = "JSON";
+			obj2.b = "BYTES".getBytes();
+			TestJSONMapObject obj3 = new TestJSONMapObject();
+			obj2.obj = obj3;
+			obj3.b1 = false;
+			obj3.b2 = null;
+			obj3.i1 = 4213;
+			obj3.i2 = null;
+			obj3.l1 = 12345678901234L * 2L;
+			obj3.l2 = null;
+			obj3.f1 = 1.0F / 5.0F;
+			obj3.f2 = null;
+			obj3.d1 = 1.0 / 5.0;
+			obj3.d2 = null;
+			obj3.bi = null;
+			obj3.bd = null;
+			obj3.s = null;
+			obj3.b = null;
+
+			JSONStructure json_struct = json_om.toJSON( obj );
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, false, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
 	}
 
 }

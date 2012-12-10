@@ -104,7 +104,7 @@ public class TestJSONArray {
 			//System.out.println( 16384 * 8 );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, out );
+			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );

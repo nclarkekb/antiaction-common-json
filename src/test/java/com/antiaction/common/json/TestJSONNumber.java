@@ -137,7 +137,7 @@ public class TestJSONNumber {
 			json_array.add( json_number_bigint );
 			json_array.add( json_number_bigdec );
 
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );

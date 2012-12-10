@@ -15,10 +15,15 @@ import java.util.LinkedList;
 
 public class JSONText {
 
-	public void encodeJSONtext(JSONStructure json_structure, JSONEncoder encoder, OutputStream out) throws IOException {
+	public void encodeJSONtext(JSONStructure json_structure, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException {
 		encoder.init( out );
 		if ( json_structure != null ) {
-			json_structure.encode( encoder );
+			if ( bPretty ) {
+				json_structure.encode( encoder, "", "  " );
+			}
+			else {
+				json_structure.encode( encoder );
+			}
 		}
 		else {
 			throw new IOException( "Invalid JSON structure!" );

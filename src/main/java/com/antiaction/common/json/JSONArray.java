@@ -45,6 +45,21 @@ public class JSONArray extends JSONStructure {
 		encoder.write( ']' );
 	}
 
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		encoder.write( "[\n" );
+		String innerIndentation = indentation + indent;
+		for (int i=0; i<values.size(); ++i) {
+			if ( i > 0 ) {
+				encoder.write( ", " );
+			}
+			encoder.write( innerIndentation );
+			values.get( i ).encode( encoder, innerIndentation, indent );
+		}
+		encoder.write( "\n" );
+		encoder.write( indentation );
+		encoder.write( ']' );
+	}
+
 	@Override
 	public JSONArray getArray() {
 		return this;

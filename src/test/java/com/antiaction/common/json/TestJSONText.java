@@ -107,7 +107,7 @@ public class TestJSONText {
 			Charset charset = Charset.forName( "UTF-8" );
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			json.encodeJSONtext( json_structure, json_encoder, out );
+			json.encodeJSONtext( json_structure, json_encoder, false, out );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (IOException e) {
@@ -156,7 +156,7 @@ public class TestJSONText {
 
 			json_array = new JSONArray();
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -187,7 +187,7 @@ public class TestJSONText {
 
 			json_object = new JSONObject();
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -234,7 +234,7 @@ public class TestJSONText {
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -289,7 +289,7 @@ public class TestJSONText {
 			json_object.put( JSONString.String( "14" ), JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_object.put( JSONString.String( "15" ), JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -344,7 +344,7 @@ public class TestJSONText {
 			json_object.put( "14", JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_object.put( "15", JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -403,7 +403,7 @@ public class TestJSONText {
 			json_array2.add( JSONNumber.BigInteger( new BigInteger( "123456789012345678901234567890123456789012" ) ) );
 			json_array2.add( JSONNumber.BigDecimal( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -458,7 +458,7 @@ public class TestJSONText {
 			json_object2 = new JSONObject();
 			json_array.add( json_object2 );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -514,7 +514,7 @@ public class TestJSONText {
 			json_array.add( JSONNumber.BigInteger( new BigInteger( "123456789012345678901234567890123456789012" ) ) );
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -565,7 +565,7 @@ public class TestJSONText {
 			json_object.put( new JSONString( "False" ), JSONBoolean.False );
 			json_object.put( new JSONString( "True" ), JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -603,7 +603,7 @@ public class TestJSONText {
 			json_array.add( JSONBoolean.False );
 			json_array.add( JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -642,7 +642,7 @@ public class TestJSONText {
 			json_array.add( JSONBoolean.False );
 			json_array.add( JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -680,7 +680,7 @@ public class TestJSONText {
 			json_object2.put( new JSONString( "False" ), JSONBoolean.False );
 			json_object2.put( new JSONString( "True" ), JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -717,7 +717,7 @@ public class TestJSONText {
 			json_array2 = new JSONArray();
 			json_object.put( new JSONString( "Array" ), json_array2 );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, out );
+			json.encodeJSONtext( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );

@@ -49,7 +49,7 @@ public class TestJSONNull {
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_null );
 
-			json.encodeJSONtext( json_array, json_encoder, out );
+			json.encodeJSONtext( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );

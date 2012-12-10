@@ -96,6 +96,11 @@ public class JSONNull extends JSONValue {
 	}
 
 	@Override
+	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
+		encoder.write( nullBytes );
+	}
+
+	@Override
 	public String toString() {
 		return "null";
 	}
