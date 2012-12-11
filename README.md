@@ -5,6 +5,13 @@ Java JSON library
 
 ## History ##
 
+### version 0.3.0 ###
+
+Work on the Object to JSON structure mapper.
+
+* Recursive Object to JSON structure mapping.
+* Pretty encoding option. (Linefeeds, indentation and spaces)
+
 ### version 0.2.0 ###
 
 Work on the JSON structure to Object mapper.
