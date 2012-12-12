@@ -22,6 +22,9 @@ public class JSONObjectFieldMapping {
 	/** JSON Java type identifier. */
 	public int type;
 
+	/** JSON Java array type identifier. */
+	public int arrayType;
+
 	/** Field class type name. */
 	public String className;
 

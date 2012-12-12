@@ -8,6 +8,7 @@
 package com.antiaction.common.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -35,11 +36,14 @@ public class JSONObjectMapper {
 	public static final int T_BIGDECIMAL = 107;
 	public static final int T_STRING = 108;
 	public static final int T_BYTEARRAY = 109;
+	public static final int T_ARRAY = 110;
 
 	// TODO maybe better not static.
 	protected static Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
 
 	protected static Map<String, Integer> typeMappings = new TreeMap<String, Integer>();
+
+	protected static Map<String, Integer> arrayTypeMappings = new TreeMap<String, Integer>();
 
 	static {
 		typeMappings.put( boolean.class.getName(), T_PRIMITIVE_BOOLEAN );
@@ -56,9 +60,23 @@ public class JSONObjectMapper {
 		typeMappings.put( BigDecimal.class.getName(), T_BIGDECIMAL );
 		typeMappings.put( String.class.getName(), T_STRING );
 		typeMappings.put( byte[].class.getName(), T_BYTEARRAY );
+
+		arrayTypeMappings.put( boolean[].class.getName(), T_PRIMITIVE_BOOLEAN );
+		arrayTypeMappings.put( int[].class.getName(), T_PRIMITIVE_INTEGER );
+		arrayTypeMappings.put( long[].class.getName(), T_PRIMITIVE_LONG );
+		arrayTypeMappings.put( float[].class.getName(), T_PRIMITIVE_FLOAT );
+		arrayTypeMappings.put( double[].class.getName(), T_PRIMITIVE_DOUBLE );
+		arrayTypeMappings.put( Boolean[].class.getName(), T_BOOLEAN );
+		arrayTypeMappings.put( Integer[].class.getName(), T_INTEGER );
+		arrayTypeMappings.put( Long[].class.getName(), T_LONG );
+		arrayTypeMappings.put( Float[].class.getName(), T_FLOAT );
+		arrayTypeMappings.put( Double[].class.getName(), T_DOUBLE );
+		arrayTypeMappings.put( BigInteger[].class.getName(), T_BIGINTEGER );
+		arrayTypeMappings.put( BigDecimal[].class.getName(), T_BIGDECIMAL );
+		arrayTypeMappings.put( String[].class.getName(), T_STRING );
 	}
 
-	public static final int INVALID_CLASS_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
+	public static final int CLASS_INVALID_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
 			| ClassTypeModifiers.CT_ANONYMOUSCLASS
 			| ClassTypeModifiers.CT_ARRAY
 			| ClassTypeModifiers.CT_ENUM
@@ -68,21 +86,23 @@ public class JSONObjectMapper {
 			| ClassTypeModifiers.CM_ABSTRACT
 			| ClassTypeModifiers.CM_NATIVE;
 
-	public static final int VALID_CLASS_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_MEMBERCLASS
+	public static final int CLASS_VALID_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_MEMBERCLASS
 			| ClassTypeModifiers.CT_CLASS
 			| ClassTypeModifiers.CM_STATIC;
 
 	public static final int VALID_CLASS = ClassTypeModifiers.CT_CLASS;
 
-	public static final int VALID_MEMBER_CLASS =  ClassTypeModifiers.CT_MEMBERCLASS | ClassTypeModifiers.CM_STATIC;
+	public static final int VALID_MEMBER_CLASS = ClassTypeModifiers.CT_MEMBERCLASS | ClassTypeModifiers.CM_STATIC;
+
+	public static final int VALID_ARRAY_CLASS = ClassTypeModifiers.CT_ARRAY | ClassTypeModifiers.CM_ABSTRACT;
 
 	// ClassNotFoundException, SecurityException, NoSuchFieldException
 	public void register(Class<?> clazz) throws JSONException {
 		int classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( clazz );
-		if ( (classTypeMask & INVALID_CLASS_TYPE_MODIFIERS_MASK) != 0 ) {
+		if ( (classTypeMask & CLASS_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
 			throw new JSONException( "Unsupported class type." );
 		}
-		classTypeMask &= VALID_CLASS_TYPE_MODIFIERS_MASK;
+		classTypeMask &= CLASS_VALID_TYPE_MODIFIERS_MASK;
 		if ( (classTypeMask != VALID_CLASS) && (classTypeMask != VALID_MEMBER_CLASS) ) {
 			throw new JSONException( "Unsupported class type." );
 		}
@@ -91,17 +111,22 @@ public class JSONObjectMapper {
 		}
 	}
 
-	public static final int IGNORE_FIELD_TYPE_MODIFIER = ClassTypeModifiers.CM_STATIC
+	public static final int FIELD_IGNORE_TYPE_MODIFIER = ClassTypeModifiers.CM_STATIC
 			| ClassTypeModifiers.CM_TRANSIENT;
 
-	public static final int INVALID_FIELD_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
+	// TODO support List/Set interface but required impl class annotation.
+	public static final int FIELD_INVALID_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
 			| ClassTypeModifiers.CT_ANONYMOUSCLASS
-			| ClassTypeModifiers.CT_ARRAY
 			| ClassTypeModifiers.CT_ENUM
 			| ClassTypeModifiers.CT_INTERFACE
 			| ClassTypeModifiers.CT_LOCALCLASS
-			| ClassTypeModifiers.CT_PRIMITIVE
-			| ClassTypeModifiers.CM_ABSTRACT;
+			| ClassTypeModifiers.CT_PRIMITIVE;
+
+	public static final int FIELD_VALID_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ARRAY
+			| ClassTypeModifiers.CT_MEMBERCLASS
+			| ClassTypeModifiers.CT_CLASS
+			| ClassTypeModifiers.CM_ABSTRACT
+			| ClassTypeModifiers.CM_STATIC;
 
 	// ClassNotFoundException, SecurityException, NoSuchFieldException
 	protected JSONObjectMapping mapClass(Class<?> clazz) throws JSONException {
@@ -127,8 +152,10 @@ public class JSONObjectMapper {
 			Field[] fields = clazz.getDeclaredFields();
 			Field field;
 			boolean bIgnore;
-			Integer type;
 			Class<?> fieldType = null;
+			String fieldTypeName;
+			Integer type;
+			Integer arrayType = 0;
 			int fieldModsMask = 0;
 			int classTypeMask = 0;
 			JSONObjectMapping fieldObjectMapping;
@@ -146,29 +173,50 @@ public class JSONObjectMapper {
 				if ( !bIgnore ) {
 					fieldModsMask = ClassTypeModifiers.getFieldModifiersMask( field );
 					// debug
-					//System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
-					bIgnore = (fieldModsMask & IGNORE_FIELD_TYPE_MODIFIER) != 0;
+					System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
+					bIgnore = (fieldModsMask & FIELD_IGNORE_TYPE_MODIFIER) != 0;
 				}
 				if ( !bIgnore ) {
 					fieldType = field.getType();
+					fieldTypeName = fieldType.getName();
 					classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
 					// debug
-					//System.out.println( fieldType.getName() + " " + ClassTypeModifiers.toString( classTypeMask ) );
+					System.out.println( fieldTypeName + " " + ClassTypeModifiers.toString( classTypeMask ) );
 
-					type = typeMappings.get( fieldType.getName() );
+					type = typeMappings.get( fieldTypeName );
 					fieldObjectMapping = null;
 					if ( type == null ) {
-						if ( (classTypeMask & INVALID_FIELD_TYPE_MODIFIERS_MASK) != 0 ) {
+						if ( (classTypeMask & FIELD_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
 							throw new JSONException( "Unsupported field class type." );
 						}
-						classTypeMask &= VALID_CLASS_TYPE_MODIFIERS_MASK;
-						if ( (classTypeMask != VALID_CLASS) && (classTypeMask != VALID_MEMBER_CLASS) ) {
-							throw new JSONException( "Unsupported field class type." );
+						classTypeMask &= FIELD_VALID_TYPE_MODIFIERS_MASK;
+						if ( (classTypeMask == VALID_CLASS) || (classTypeMask == VALID_MEMBER_CLASS) ) {
+							type = T_OBJECT;
+							fieldObjectMapping = classMappings.get( fieldTypeName );
+							if ( fieldObjectMapping == null ) {
+								fieldObjectMapping = mapClass( Class.forName( fieldTypeName, true, clazz.getClassLoader() ) );
+							}
+
+							Type tp = field.getGenericType();
+							System.out.println( "GT: " + tp );
 						}
-						type = T_OBJECT;
-						fieldObjectMapping = classMappings.get( fieldType.getName() );
-						if ( fieldObjectMapping == null ) {
-							fieldObjectMapping = mapClass( Class.forName( fieldType.getName(), true, clazz.getClassLoader() ) );
+						else if ( classTypeMask == VALID_ARRAY_CLASS ) {
+							type = T_ARRAY;
+							arrayType = arrayTypeMappings.get( fieldTypeName );
+							if ( arrayType == null ) {
+								/*
+								int level = 0;
+								while ( level < fieldTypeName.length() && fieldTypeName.charAt( level ) == '[' ) {
+									++level;
+								}
+								String typeStr = fieldTypeName.substring( level );
+								*/
+								throw new JSONException( "Unsupported array class type." );
+							}
+							System.out.println( "ARRAY!" );
+						}
+						else {
+							throw new JSONException( "Unsupported field class type." );
 						}
 					}
 					// debug
@@ -178,7 +226,8 @@ public class JSONObjectMapper {
 						json_fm = new JSONObjectFieldMapping();
 						json_fm.name = field.getName();
 						json_fm.type = type;
-						json_fm.className = fieldType.getName();
+						json_fm.arrayType = arrayType;
+						json_fm.className = fieldTypeName;
 						json_fm.clazz = fieldType;
 						json_fm.objectMapping = fieldObjectMapping;
 						json_fm.field = clazz.getDeclaredField( json_fm.name );
@@ -293,6 +342,8 @@ public class JSONObjectMapper {
 					object = toObject( json_value.getObject(), fieldMapping.clazz );
 					fieldMapping.field.set( dstObj, object );
 					break;
+				case T_ARRAY:
+					throw new UnsupportedOperationException( "Not implemented!" );
 				}
 			}
 			else {
@@ -332,41 +383,26 @@ public class JSONObjectMapper {
 			switch ( fieldMapping.type ) {
 			case T_PRIMITIVE_BOOLEAN:
 				booleanVal = fieldMapping.field.getBoolean( srcObj );
-				if ( booleanVal == null ) {
-					throw new JSONException( "Primitive types can not be null." );
-				}
 				json_value = JSONBoolean.Boolean( booleanVal );
 				json_struct.put( fieldMapping.name, json_value );
 				break;
 			case T_PRIMITIVE_INTEGER:
 				intVal = fieldMapping.field.getInt( srcObj );
-				if ( intVal == null ) {
-					throw new JSONException( "Primitive types can not be null." );
-				}
 				json_value = JSONNumber.Integer( intVal );
 				json_struct.put( fieldMapping.name, json_value );
 				break;
 			case T_PRIMITIVE_LONG:
 				longVal = fieldMapping.field.getLong( srcObj );
-				if ( longVal == null ) {
-					throw new JSONException( "Primitive types can not be null." );
-				}
 				json_value = JSONNumber.Long( longVal );
 				json_struct.put( fieldMapping.name, json_value );
 				break;
 			case T_PRIMITIVE_FLOAT:
 				floatVal = fieldMapping.field.getFloat( srcObj );
-				if ( floatVal == null ) {
-					throw new JSONException( "Primitive types can not be null." );
-				}
 				json_value = JSONNumber.Float( floatVal );
 				json_struct.put( fieldMapping.name, json_value );
 				break;
 			case T_PRIMITIVE_DOUBLE:
 				doubleVal = fieldMapping.field.getDouble( srcObj );
-				if ( doubleVal == null ) {
-					throw new JSONException( "Primitive types can not be null." );
-				}
 				json_value = JSONNumber.Double( doubleVal );
 				json_struct.put( fieldMapping.name, json_value );
 				break;
@@ -470,6 +506,8 @@ public class JSONObjectMapper {
 				}
 				json_struct.put( fieldMapping.name, json_value );
 				break;
+			case T_ARRAY:
+				throw new UnsupportedOperationException( "Not implemented!" );
 			}
 		}
 

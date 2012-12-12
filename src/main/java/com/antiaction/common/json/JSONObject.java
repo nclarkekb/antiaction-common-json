@@ -49,6 +49,7 @@ public class JSONObject extends JSONStructure {
 		encoder.write( '}' );
 	}
 
+	@Override
 	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
 		encoder.write( "{\n" );
 		Iterator<Entry<JSONString, JSONValue>> iter = values.entrySet().iterator();

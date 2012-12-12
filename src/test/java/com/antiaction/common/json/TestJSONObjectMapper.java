@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -592,6 +593,42 @@ public class TestJSONObjectMapper {
 			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	public static class TestJSONMapArrayObject {
+
+		public int[] a_int;
+
+		public ArrayList<? extends Object> fudge;
+
+		public ArrayList<String> fudge2;
+
+	}
+
+	@Test
+	public void test_jsonobjectmapper_arrays() {
+		System.out.println( boolean[].class.getName() );
+		System.out.println( int[].class.getName() );
+		System.out.println( long[].class.getName() );
+		System.out.println( float[].class.getName() );
+		System.out.println( double[].class.getName() );
+		System.out.println( Boolean[].class.getName() );
+		System.out.println( Integer[].class.getName() );
+		System.out.println( Long[].class.getName() );
+		System.out.println( Float[].class.getName() );
+		System.out.println( Double[].class.getName() );
+		System.out.println( BigInteger[].class.getName() );
+		System.out.println( BigDecimal[].class.getName() );
+		System.out.println( String[].class.getName() );
+
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		try {
+			json_om.register( TestJSONMapArrayObject.class );
+		}
+		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}

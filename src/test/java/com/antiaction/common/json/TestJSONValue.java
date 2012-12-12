@@ -23,8 +23,20 @@ public class TestJSONValue {
 		value = new JSONValue() {
 		};
 		Assert.assertEquals( 0, value.type );
+
 		try {
 			value.encode( null );
+			Assert.fail( "Exception expected !" );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			value.encode( null, null, null );
 			Assert.fail( "Exception expected !" );
 		}
 		catch (IOException e) {
