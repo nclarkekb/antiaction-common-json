@@ -20,10 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.antiaction.common.json.TestClassTypeModifiers.TestAbstractMemberClass;
-import com.antiaction.common.json.TestClassTypeModifiers.TestEnum;
-import com.antiaction.common.json.TestClassTypeModifiers.TestInterface;
-import com.antiaction.common.json.TestClassTypeModifiers.TestMemberClass;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -51,9 +47,9 @@ public class TestJSONObjectMapper {
 		*/
 
 		JSONStructure json_struct;
-		JSONArray json_array;
-		JSONObject json_object;
-		JSONObject json_object2;
+		//JSONArray json_array;
+		//JSONObject json_object;
+		//JSONObject json_object2;
 
 		try {
 			String text;
@@ -306,25 +302,25 @@ public class TestJSONObjectMapper {
 
 		private boolean b1;
 
+		private int i1;
+
+		private long l1;
+
+		private float f1;
+
+		private double d1;
+
 		@JSONNullable
 		private Boolean b2;
-
-		private int i1;
 
 		@JSONNullable
 		private Integer i2;
 
-		private long l1;
-
 		@JSONNullable
 		private Long l2;
 
-		private float f1;
-
 		@JSONNullable
 		private Float f2;
-
-		private double d1;
 
 		@JSONNullable
 		private Double d2;
@@ -340,165 +336,6 @@ public class TestJSONObjectMapper {
 
 		@JSONNullable
 		private byte[] b;
-
-	}
-
-	@Test
-	public void test_jsonobjectmapper_invalidfields() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
-		try {
-			json_om.register( InvalidField1.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( InvalidField2.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( InvalidField3.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( InvalidField4.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( ValidField1.class );
-		}
-		catch (JSONException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-	}
-
-	public static class InvalidField1 {
-		TestEnum enumse;
-	}
-
-	public static class InvalidField2 {
-		TestInterface interf;
-	}
-
-	public static class InvalidField3 {
-		TestAbstractMemberClass tabstract;
-	}
-
-	public static class InvalidField4 {
-		TestMemberClass memass;
-	}
-
-	public static class ValidField1 {
-		TestClassTypeModifiers normass;
-	}
-
-	@Test
-	public void test_jsonobjectmapper_nullable() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
-		try {
-			json_om.register( TestNullableField1Class.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( TestNullableField2Class.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( TestNullableField3Class.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( TestNullableField4Class.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_om.register( TestNullableField5Class.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-	}
-
-	public static class TestNullableField1Class {
-		@JSONNullable
-		boolean b1;
-	}
-
-	public static class TestNullableField2Class {
-		@JSONNullable
-		int i1;
-	}
-
-	public static class TestNullableField3Class {
-		@JSONNullable
-		long l1;
-	}
-
-	public static class TestNullableField4Class {
-		@JSONNullable
-		float f1;
-	}
-
-	public static class TestNullableField5Class {
-		@JSONNullable
-		double d1;
-	}
-
-	public static class TestJSONMapObject {
-
-		private boolean b1;
-
-		@JSONNullable
-		private Boolean b2;
-
-		private int i1;
-
-		@JSONNullable
-		private Integer i2;
-
-		private long l1;
-
-		@JSONNullable
-		private Long l2;
-
-		private float f1;
-
-		@JSONNullable
-		private Float f2;
-
-		private double d1;
-
-		@JSONNullable
-		private Double d2;
-
-		@JSONNullable
-		private BigInteger bi;
-
-		@JSONNullable
-		private BigDecimal bd;
-
-		@JSONNullable
-		private String s;
-
-		@JSONNullable
-		private byte[] b;
-
-		TestJSONMapObject obj;
 
 	}
 
@@ -569,16 +406,23 @@ public class TestJSONObjectMapper {
 			obj3.b = null;
 
 			JSONStructure json_struct = json_om.toJSON( obj );
+			TestJSONMapObject result;
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			System.out.println( new String( out.toByteArray() ) );
 
+			result = json_om.toObject( json_struct, TestJSONMapObject.class );
+			assert_result( result );
+
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
 			System.out.println( new String( out.toByteArray() ) );
+
+			result = json_om.toObject( json_struct, TestJSONMapObject.class );
+			assert_result( result );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
@@ -592,15 +436,114 @@ public class TestJSONObjectMapper {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
+		catch (InstantiationException e) {
+				e.printStackTrace();
+				Assert.fail( "Unexpected exception!" );
+		}
 		catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
+			Assert.fail( "Unexpected exception!" );		
 		}
+	}
+
+	public void assert_result(TestJSONMapObject result) {
+		Assert.assertNotNull( result );
+		Assert.assertEquals( true, result.b1 );
+		Assert.assertEquals( false, result.b2 );
+		Assert.assertEquals( 42, result.i1 );
+		Assert.assertEquals( new Integer( 1234 ), result.i2 );
+		Assert.assertEquals( 12345678901234L, result.l1 );
+		Assert.assertEquals( new Long( 43210987654321L ), result.l2 );
+		Assert.assertEquals( new Float( 1.0F / 3.0F ), (Float)result.f1 );
+		Assert.assertEquals( new Float( 3.0F ), result.f2 );
+		Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)result.d1 );
+		Assert.assertEquals( new Double( 3.0 ), result.d2 );
+		Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), result.bi );
+		Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), result.bd );
+		Assert.assertEquals( "json", result.s );
+		Assert.assertArrayEquals( "bytes".getBytes(), result.b );
+		Assert.assertNotNull( result.obj );
+		Assert.assertEquals( false, result.obj.b1 );
+		Assert.assertEquals( true, result.obj.b2 );
+		Assert.assertEquals( 4213, result.obj.i1 );
+		Assert.assertEquals( new Integer( 4321 ), result.obj.i2 );
+		Assert.assertEquals( 12345678901234L * 2L, result.obj.l1 );
+		Assert.assertEquals( new Long( 43210987654321L * 2L ), result.obj.l2 );
+		Assert.assertEquals( new Float( 1.0F / 5.0F ), (Float)result.obj.f1 );
+		Assert.assertEquals( new Float( 5.0F ), result.obj.f2 );
+		Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result.obj.d1 );
+		Assert.assertEquals( new Double( 5.0 ), result.obj.d2 );
+		Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) ), result.obj.bi );
+		Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ), result.obj.bd );
+		Assert.assertEquals( "JSON", result.obj.s );
+		Assert.assertArrayEquals( "BYTES".getBytes(), result.obj.b );
+		Assert.assertNotNull( result.obj.obj );
+		Assert.assertEquals( false, result.obj.obj.b1 );
+		Assert.assertNull( result.obj.obj.b2 );
+		Assert.assertEquals( 4213, result.obj.obj.i1 );
+		Assert.assertNull( result.obj.obj.i2 );
+		Assert.assertEquals( 12345678901234L * 2L, result.obj.obj.l1 );
+		Assert.assertNull( result.obj.obj.l2 );
+		Assert.assertEquals( new Float( 1.0F / 5.0F ), (Float)result.obj.obj.f1 );
+		Assert.assertNull( result.obj.obj.f2 );
+		Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result.obj.obj.d1 );
+		Assert.assertNull( result.obj.obj.d2 );
+		Assert.assertNull( result.obj.obj.bi );
+		Assert.assertNull( result.obj.obj.bd );
+		Assert.assertNull( result.obj.obj.s );
+		Assert.assertNull( result.obj.obj.b );
+		Assert.assertNull( result.obj.obj.obj );
+	}
+
+	public static class TestJSONMapObject {
+
+		private boolean b1;
+
+		@JSONNullable
+		private Boolean b2;
+
+		private int i1;
+
+		@JSONNullable
+		private Integer i2;
+
+		private long l1;
+
+		@JSONNullable
+		private Long l2;
+
+		private float f1;
+
+		@JSONNullable
+		private Float f2;
+
+		private double d1;
+
+		@JSONNullable
+		private Double d2;
+
+		@JSONNullable
+		private BigInteger bi;
+
+		@JSONNullable
+		private BigDecimal bd;
+
+		@JSONNullable
+		private String s;
+
+		@JSONNullable
+		private byte[] b;
+
+		@JSONNullable
+		private TestJSONMapObject obj;
+
 	}
 
 	public static class TestJSONMapArrayObject {
 
 		public int[] a_int;
+
+		public ArrayList fudge0;
 
 		public ArrayList<? extends Object> fudge;
 
@@ -608,8 +551,9 @@ public class TestJSONObjectMapper {
 
 	}
 
-	@Test
+	//@Test
 	public void test_jsonobjectmapper_arrays() {
+		/*
 		System.out.println( boolean[].class.getName() );
 		System.out.println( int[].class.getName() );
 		System.out.println( long[].class.getName() );
@@ -623,6 +567,7 @@ public class TestJSONObjectMapper {
 		System.out.println( BigInteger[].class.getName() );
 		System.out.println( BigDecimal[].class.getName() );
 		System.out.println( String[].class.getName() );
+		*/
 
 		JSONObjectMapper json_om = new JSONObjectMapper();
 		try {

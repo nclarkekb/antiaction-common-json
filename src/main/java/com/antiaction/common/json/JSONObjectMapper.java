@@ -8,6 +8,7 @@
 package com.antiaction.common.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -197,8 +198,17 @@ public class JSONObjectMapper {
 								fieldObjectMapping = mapClass( Class.forName( fieldTypeName, true, clazz.getClassLoader() ) );
 							}
 
-							Type tp = field.getGenericType();
-							System.out.println( "GT: " + tp );
+							Type genericType = field.getGenericType();
+							System.out.println( "GT: " + genericType + " " + genericType.getClass() );
+							if( genericType instanceof ParameterizedType ) {
+								ParameterizedType parameterizedType = (ParameterizedType)genericType;
+								Type[] typeArguments = parameterizedType.getActualTypeArguments();
+								for ( Type typeArgument : typeArguments ) {
+									Class<?> classType = ((Class<?>)typeArgument);
+									System.out.println( "Field " + field.getName() + " has a parameterized type of " + classType.getSimpleName() );
+								}
+							}
+
 						}
 						else if ( classTypeMask == VALID_ARRAY_CLASS ) {
 							type = T_ARRAY;
@@ -265,13 +275,14 @@ public class JSONObjectMapper {
 		String strVal;
 		byte[] byteArray;
 		Object object;
+		JSONObject json_object;
 
 		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
 		if ( json_om == null ) {
-			throw new IllegalArgumentException( "Class not registered." );
+			throw new IllegalArgumentException( "Class '" + clazz.getName() + "'not registered." );
 		}
 
-		JSONObject json_object = json_struct.getObject();
+		JSONObject srcJSONObject = json_struct.getObject();
 		T dstObj = clazz.newInstance();
 
 		Iterator<JSONObjectFieldMapping> fieldMappingsIter = json_om.fieldMappingsList.iterator();
@@ -279,67 +290,118 @@ public class JSONObjectMapper {
 		JSONValue json_value;
 		while ( fieldMappingsIter.hasNext() ) {
 			fieldMapping = fieldMappingsIter.next();
-			json_value = json_object.get( fieldMapping.name );
+			json_value = srcJSONObject.get( fieldMapping.name );
 			if ( json_value != null ) {
 				switch ( fieldMapping.type ) {
 				case T_PRIMITIVE_BOOLEAN:
 					booleanVal = json_value.getBoolean();
+					if ( booleanVal == null ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+					}
 					fieldMapping.field.setBoolean( dstObj, booleanVal );
 					break;
 				case T_PRIMITIVE_INTEGER:
 					intVal = json_value.getInteger();
+					if ( intVal == null ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+					}
 					fieldMapping.field.setInt( dstObj, intVal );
 					break;
 				case T_PRIMITIVE_LONG:
 					longVal = json_value.getLong();
+					if ( longVal == null ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+					}
 					fieldMapping.field.setLong( dstObj, longVal );
 					break;
 				case T_PRIMITIVE_FLOAT:
 					floatVal = json_value.getFloat();
+					if ( floatVal == null ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+					}
 					fieldMapping.field.setFloat( dstObj, floatVal );
 					break;
 				case T_PRIMITIVE_DOUBLE:
 					doubleVal = json_value.getDouble();
+					if ( doubleVal == null ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+					}
 					fieldMapping.field.setDouble( dstObj, doubleVal );
 					break;
 				case T_BOOLEAN:
 					booleanVal = json_value.getBoolean();
+					if ( booleanVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, booleanVal );
 					break;
 				case T_INTEGER:
 					intVal = json_value.getInteger();
+					if ( intVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, intVal );
 					break;
 				case T_LONG:
 					longVal = json_value.getLong();
+					if ( longVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, longVal );
 					break;
 				case T_FLOAT:
 					floatVal = json_value.getFloat();
+					if ( floatVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, floatVal );
 					break;
 				case T_DOUBLE:
 					doubleVal = json_value.getDouble();
+					if ( doubleVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, doubleVal );
 					break;
 				case T_BIGINTEGER:
 					bigIntegerVal = json_value.getBigInteger();
+					if ( bigIntegerVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, bigIntegerVal );
 					break;
 				case T_BIGDECIMAL:
 					bigDecimalVal = json_value.getBigDecimal();
+					if ( bigDecimalVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, bigDecimalVal );
 					break;
 				case T_STRING:
 					strVal = json_value.getString();
+					if ( strVal == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, strVal );
 					break;
 				case T_BYTEARRAY:
 					byteArray = json_value.getBytes();
+					if ( byteArray == null && !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
 					fieldMapping.field.set( dstObj, byteArray );
 					break;
 				case T_OBJECT:
-					object = toObject( json_value.getObject(), fieldMapping.clazz );
+					json_object = json_value.getObject();
+					if ( json_object != null ) {
+						object = toObject( json_object, fieldMapping.clazz );
+					}
+					else if ( !fieldMapping.nullable ) {
+						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					}
+					else {
+						object = null;
+					}
 					fieldMapping.field.set( dstObj, object );
 					break;
 				case T_ARRAY:
@@ -348,7 +410,7 @@ public class JSONObjectMapper {
 			}
 			else {
 				if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 			}
 		}
