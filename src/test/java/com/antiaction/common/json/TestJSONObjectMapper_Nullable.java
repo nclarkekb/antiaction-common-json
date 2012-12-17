@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullable;
 
 @RunWith(JUnit4.class)
@@ -371,80 +372,83 @@ public class TestJSONObjectMapper_Nullable {
 		TestJSONMapObjectNull moldObject;
 
 		try {
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.b1 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.b2 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.i1 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.i2 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.l1 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.l2 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.f1 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.f2 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.d1 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.d2 = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.bi = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.bd = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.s = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.b = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			moldObject = getMoldObject();
+			moldObject = get_toObject_MoldObject();
 			moldObject.obj = null;
-			assert_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
 
-			JSONStructure json_struct;
-			try {
-				json_struct = json_om.toJSON( moldObject );
-				((JSONObject)json_struct).values.remove( JSONString.String( "obj" ) );
-				out.reset();
-				json.encodeJSONtext( json_struct, json_encoder, true, out );
-				// debug
-				//System.out.println( new String( out.toByteArray() ) );
-				json_om.toObject( json_struct, TestJSONMapObject.class );
-				Assert.fail( "Exception expected!" );
-			}
-			catch (JSONException e) {
-				// debug
-				//e.printStackTrace();
+			String[] fields = { "b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj" };
+			for ( int i=0; i<fields.length; ++i ) {
+				JSONStructure json_struct;
+				try {
+					json_struct = json_om.toJSON( moldObject );
+					((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
+					out.reset();
+					json.encodeJSONtext( json_struct, json_encoder, true, out );
+					// debug
+					//System.out.println( new String( out.toByteArray() ) );
+					json_om.toObject( json_struct, TestJSONMapObject.class );
+					Assert.fail( "Exception expected!" );
+				}
+				catch (JSONException e) {
+					// debug
+					//e.printStackTrace();
+				}
 			}
 		}
 		catch (IOException e) {
@@ -465,14 +469,20 @@ public class TestJSONObjectMapper_Nullable {
 		}
 	}
 
-	public void assert_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMapper json_om) throws IOException, InstantiationException, IllegalAccessException {
-		JSONStructure json_struct;
+	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMapper json_om) throws IOException, InstantiationException, IllegalAccessException {
+		JSONStructure json_struct = null;
 		try {
 			json_struct = json_om.toJSON( moldObject );
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		try {
 			json_om.toObject( json_struct, TestJSONMapObject.class );
 			Assert.fail( "Exception expected!" );
 		}
@@ -482,7 +492,7 @@ public class TestJSONObjectMapper_Nullable {
 		}
 	}
 
-	public TestJSONMapObjectNull getMoldObject() {
+	public TestJSONMapObjectNull get_toObject_MoldObject() {
 		TestJSONMapObjectNull obj = new TestJSONMapObjectNull();
 		obj.b1 = true;
 		obj.b2 = false;
@@ -517,6 +527,7 @@ public class TestJSONObjectMapper_Nullable {
 		return obj;
 	}
 
+	@JSON(nullable={"b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj"})
 	public static class TestJSONMapObjectNull {
 
 		protected Boolean b1;
@@ -549,6 +560,107 @@ public class TestJSONObjectMapper_Nullable {
 
 		protected TestJSONMapObjectNullable obj;
 
+	}
+
+	@Test
+	public void test_jsonobjectmapper_tojson_nullable_invalid() {
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		TestJSONMapObject moldObject;
+		try {
+			moldObject = get_toJSON_MoldObject();
+			moldObject.b2 = null;
+			assert_toJSON_exception( json_om, moldObject );
+		
+			moldObject = get_toJSON_MoldObject();
+			moldObject.i2 = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.l2 = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.f2 = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.d2 = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.bi = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.bd = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.s = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.b = null;
+			assert_toJSON_exception( json_om, moldObject );
+			
+			moldObject = get_toJSON_MoldObject();
+			moldObject.obj = null;
+			assert_toJSON_exception( json_om, moldObject );
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	public void assert_toJSON_exception(JSONObjectMapper json_om, TestJSONMapObject moldObject) throws IllegalArgumentException, IllegalAccessException {
+		try {
+			json_om.toJSON( moldObject );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+			// debug
+			//e.printStackTrace();
+		}
+	}
+
+	public TestJSONMapObject get_toJSON_MoldObject() {
+		TestJSONMapObject obj = new TestJSONMapObject();
+		obj.b1 = false;
+		obj.b2 = true;
+		obj.i1 = 4213;
+		obj.i2 = 4321;
+		obj.l1 = 12345678901234L * 2L;
+		obj.l2 = 43210987654321L * 2L;
+		obj.f1 = 1.0F / 5.0F;
+		obj.f2 = 5.0F;
+		obj.d1 = 1.0 / 5.0;
+		obj.d2 = 5.0;
+		obj.bi = new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) );
+		obj.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) );
+		obj.s = "JSON";
+		obj.b = "BYTES".getBytes();
+		TestJSONMapObjectNullable obj2 = new TestJSONMapObjectNullable();
+		obj.obj = obj2;
+		obj2.b1 = true;
+		obj2.b2 = false;
+		obj2.i1 = 42;
+		obj2.i2 = 1234;
+		obj2.l1 = 12345678901234L;
+		obj2.l2 = 43210987654321L;
+		obj2.f1 = 1.0F / 3.0F;
+		obj2.f2 = 3.0F;
+		obj2.d1 = 1.0 / 3.0;
+		obj2.d2 = 3.0;
+		obj2.bi = new BigInteger( "123456789012345678901234567890123456789012" );
+		obj2.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" );
+		obj2.s = "json";
+		obj2.b = "bytes".getBytes();
+		return obj;
 	}
 
 }

@@ -14,7 +14,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
@@ -134,6 +136,7 @@ public class JSONObjectMapper {
 		try {
 			JSONObjectFieldMapping json_fm;
 			JSON json;
+			Set<String> nullableSet = new TreeSet<String>();
 			JSONIgnore ignore;
 			JSONNullable nullable;
 
@@ -148,6 +151,10 @@ public class JSONObjectMapper {
 				for ( int i=0; i<ignores.length; ++i) {
 					json_om.ignore.add( ignores[ i ] );
 				}
+				String [] nullables = json.nullable();
+				for ( int i=0; i<nullables.length; ++i ) {
+					nullableSet.add( nullables[ i ] );
+				}
 			}
 
 			Field[] fields = clazz.getDeclaredFields();
@@ -160,6 +167,7 @@ public class JSONObjectMapper {
 			int fieldModsMask = 0;
 			int classTypeMask = 0;
 			JSONObjectMapping fieldObjectMapping;
+			boolean bNullable;
 			for ( int i=0; i<fields.length; ++i ) {
 				field = fields[ i ];
 				// debug
@@ -245,8 +253,14 @@ public class JSONObjectMapper {
 						json_om.fieldMappingsMap.put( json_fm.name, json_fm );
 						json_om.fieldMappingsList.add( json_fm );
 
-						nullable = field.getAnnotation( JSONNullable.class );
-						if ( nullable != null ) {
+						bNullable = nullableSet.contains( json_fm.name );
+						if ( !bNullable ) {
+							nullable = field.getAnnotation( JSONNullable.class );
+							if ( nullable != null ) {
+								bNullable = true;
+							}
+						}
+						if ( bNullable ) {
 							if ( json_fm.type < T_OBJECT ) {
 								throw new JSONException( "Primitive types can not be nullable." );
 							}
@@ -473,6 +487,9 @@ public class JSONObjectMapper {
 				if ( booleanVal != null ) {
 					json_value = JSONBoolean.Boolean( booleanVal );
 				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+				}
 				else {
 					json_value = JSONNull.Null;
 				}
@@ -482,6 +499,9 @@ public class JSONObjectMapper {
 				intVal = (Integer)fieldMapping.field.get( srcObj );
 				if ( intVal != null ) {
 					json_value = JSONNumber.Integer( intVal );
+				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
@@ -493,6 +513,9 @@ public class JSONObjectMapper {
 				if ( longVal != null ) {
 					json_value = JSONNumber.Long( longVal );
 				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+				}
 				else {
 					json_value = JSONNull.Null;
 				}
@@ -502,6 +525,9 @@ public class JSONObjectMapper {
 				floatVal = (Float)fieldMapping.field.get( srcObj );
 				if ( floatVal != null ) {
 					json_value = JSONNumber.Float( floatVal );
+				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
@@ -513,6 +539,9 @@ public class JSONObjectMapper {
 				if ( doubleVal != null ) {
 					json_value = JSONNumber.Double( doubleVal );
 				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+				}
 				else {
 					json_value = JSONNull.Null;
 				}
@@ -522,6 +551,9 @@ public class JSONObjectMapper {
 				bigIntegerVal = (BigInteger)fieldMapping.field.get( srcObj );
 				if ( bigIntegerVal != null ) {
 					json_value = JSONNumber.BigInteger( bigIntegerVal );
+				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
@@ -533,6 +565,9 @@ public class JSONObjectMapper {
 				if ( bigDecimalVal != null ) {
 					json_value = JSONNumber.BigDecimal( bigDecimalVal );
 				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+				}
 				else {
 					json_value = JSONNull.Null;
 				}
@@ -542,6 +577,9 @@ public class JSONObjectMapper {
 				strVal = (String)fieldMapping.field.get( srcObj );
 				if ( strVal != null ) {
 					json_value = JSONString.String( strVal );
+				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
@@ -553,6 +591,9 @@ public class JSONObjectMapper {
 				if ( byteArray != null ) {
 					json_value = JSONString.String( byteArray );
 				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+				}
 				else {
 					json_value = JSONNull.Null;
 				}
@@ -562,6 +603,9 @@ public class JSONObjectMapper {
 				object = (Object)fieldMapping.field.get( srcObj );
 				if ( object != null ) {
 					json_value = toJSON( object );
+				}
+				else if ( !fieldMapping.nullable ) {
+					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;

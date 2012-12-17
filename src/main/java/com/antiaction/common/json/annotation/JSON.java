@@ -18,4 +18,6 @@ public @interface JSON {
 
 	String[] ignore() default {};
 
+	String[] nullable() default{};
+
 }
