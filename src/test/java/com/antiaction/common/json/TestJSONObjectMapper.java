@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,7 +27,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
 public class TestJSONObjectMapper {
 
 	@Test
-	public void test_jsonobjectmapper() {
+	public void test_jsonobjectmapper_toobject() {
 		/*
 		System.out.println( String.class.isPrimitive() + " - " + String.class.getName() );
 		System.out.println( boolean.class.isPrimitive() + " - " + boolean.class.getName() );
@@ -232,6 +231,10 @@ public class TestJSONObjectMapper {
 			/*
 			 */
 		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
@@ -241,10 +244,6 @@ public class TestJSONObjectMapper {
 			Assert.fail("Unexpected exception!");
 		}
 		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
-		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
@@ -414,7 +413,7 @@ public class TestJSONObjectMapper {
 			System.out.println( new String( out.toByteArray() ) );
 
 			result = json_om.toObject( json_struct, TestJSONMapObject.class );
-			assert_result( result );
+			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -422,11 +421,15 @@ public class TestJSONObjectMapper {
 			System.out.println( new String( out.toByteArray() ) );
 
 			result = json_om.toObject( json_struct, TestJSONMapObject.class );
-			assert_result( result );
+			assert_jsonobjectmapper_tojson_result( result );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -440,13 +443,9 @@ public class TestJSONObjectMapper {
 				e.printStackTrace();
 				Assert.fail( "Unexpected exception!" );
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
-		}
 	}
 
-	public void assert_result(TestJSONMapObject result) {
+	public void assert_jsonobjectmapper_tojson_result(TestJSONMapObject result) {
 		Assert.assertNotNull( result );
 		Assert.assertEquals( true, result.b1 );
 		Assert.assertEquals( false, result.b2 );
@@ -539,43 +538,238 @@ public class TestJSONObjectMapper {
 
 	}
 
-	public static class TestJSONMapArrayObject {
-
-		public int[] a_int;
-
-		public ArrayList fudge0;
-
-		public ArrayList<? extends Object> fudge;
-
-		public ArrayList<String> fudge2;
-
-	}
-
-	//@Test
-	public void test_jsonobjectmapper_arrays() {
-		/*
-		System.out.println( boolean[].class.getName() );
-		System.out.println( int[].class.getName() );
-		System.out.println( long[].class.getName() );
-		System.out.println( float[].class.getName() );
-		System.out.println( double[].class.getName() );
-		System.out.println( Boolean[].class.getName() );
-		System.out.println( Integer[].class.getName() );
-		System.out.println( Long[].class.getName() );
-		System.out.println( Float[].class.getName() );
-		System.out.println( Double[].class.getName() );
-		System.out.println( BigInteger[].class.getName() );
-		System.out.println( BigDecimal[].class.getName() );
-		System.out.println( String[].class.getName() );
-		*/
-
+	@Test
+	public void test_jsonobjectmapper_array() {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JSONText json = new JSONText();
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMapper json_om = new JSONObjectMapper();
 		try {
-			json_om.register( TestJSONMapArrayObject.class );
+			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+
+			json_om.register( TestJSONMapObjectArrays.class );
+
+			TestJSONMapObjectArrays obj = new TestJSONMapObjectArrays();
+			obj.b1_arr = new boolean[] { true, false };
+			obj.i1_arr = new int[] { 42, 4213 };
+			obj.l1_arr = new long[] { 12345678901234L, 12345678901234L * 2L };
+			obj.f1_arr = new float[] { 1.0F / 3.0F, 1.0F / 5.0F };
+			obj.d1_arr = new double[] { 1.0 / 3.0, 1.0 / 5.0 };
+			obj.b2_arr = new Boolean[] { false, true };
+			obj.i2_arr = new Integer[] { 1234, 4321 };
+			obj.l2_arr = new Long[] { 43210987654321L, 43210987654321L * 2L };
+			obj.f2_arr = new Float[] { 3.0F, 5.0F };
+			obj.d2_arr = new Double[] { 3.0, 5.0 };
+			obj.bi_arr = new BigInteger[] { new BigInteger( "123456789012345678901234567890123456789012" ), new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) ) };
+			obj.bd_arr = new BigDecimal[] { new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ) };
+			obj.s_arr = new String[] { "json", "JSON" };
+			//obj.b = "bytes".getBytes();
+			TestJSONMapObjectArrays obj2 = new TestJSONMapObjectArrays();
+			obj.obj_arr = new TestJSONMapObjectArrays[] { obj2 };
+			obj2.b1_arr = new boolean[] {};
+			obj2.i1_arr = new int[] {};
+			obj2.l1_arr = new long[] {};
+			obj2.f1_arr = new float[] {};
+			obj2.d1_arr = new double[] {};
+			obj2.b2_arr = new Boolean[] {};
+			obj2.i2_arr = new Integer[] {};
+			obj2.l2_arr = new Long[] {};
+			obj2.f2_arr = new Float[] {};
+			obj2.d2_arr = new Double[] {};
+			obj2.bi_arr = new BigInteger[] {};
+			obj2.bd_arr = new BigDecimal[] {};
+			obj2.s_arr = new String[] {};
+			//obj2.b = "BYTES".getBytes();
+			obj2.obj_arr = new TestJSONMapObjectArrays[] { new TestJSONMapObjectArrays() };
+
+			JSONStructure json_struct = json_om.toJSON( obj );
+
+			TestJSONMapObjectArrays result;
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, false, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+
+			result = json_om.toObject( json_struct, TestJSONMapObjectArrays.class );
+			assert_jsonobjectmapper_array_result( result );
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+
+			result = json_om.toObject( json_struct, TestJSONMapObjectArrays.class );
+			assert_jsonobjectmapper_array_result( result );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
+			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (InstantiationException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
+		}
+	}
+
+	public static class TestJSONMapObjectArrays {
+
+		@JSONNullable
+		public boolean[] b1_arr;
+
+		@JSONNullable
+		public int[] i1_arr;
+
+		@JSONNullable
+		public long[] l1_arr;
+
+		@JSONNullable
+		public float[] f1_arr;
+
+		@JSONNullable
+		public double[] d1_arr;
+
+		@JSONNullable
+		public Boolean[] b2_arr;
+
+		@JSONNullable
+		public Integer[] i2_arr;
+
+		@JSONNullable
+		public Long[] l2_arr;
+
+		@JSONNullable
+		public Float[] f2_arr;
+
+		@JSONNullable
+		public Double[] d2_arr;
+
+		@JSONNullable
+		public BigInteger[] bi_arr;
+
+		@JSONNullable
+		public BigDecimal[] bd_arr;
+
+		@JSONNullable
+		public String[] s_arr;
+
+		@JSONNullable
+		public TestJSONMapObjectArrays[] obj_arr;
+
+	}
+
+	public void assert_jsonobjectmapper_array_result(TestJSONMapObjectArrays result) {
+		boolean[] b1_arr = new boolean[] { true, false };
+		int[] i1_arr = new int[] { 42, 4213 };
+		long[] l1_arr = new long[] { 12345678901234L, 12345678901234L * 2L };
+		float[] f1_arr = new float[] { 1.0F / 3.0F, 1.0F / 5.0F };
+		double[] d1_arr = new double[] { 1.0 / 3.0, 1.0 / 5.0 };
+		Boolean[] b2_arr = new Boolean[] { false, true };
+		Integer[] i2_arr = new Integer[] { 1234, 4321 };
+		Long[] l2_arr = new Long[] { 43210987654321L, 43210987654321L * 2L };
+		Float[] f2_arr = new Float[] { 3.0F, 5.0F };
+		Double[] d2_arr = new Double[] { 3.0, 5.0 };
+		BigInteger[] bi_arr = new BigInteger[] { new BigInteger( "123456789012345678901234567890123456789012" ), new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) ) };
+		BigDecimal[] bd_arr = new BigDecimal[] { new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ) };
+		String[] s_arr = new String[] { "json", "JSON" };
+
+		Assert.assertNotNull( result );
+		assertArrayEquals( b1_arr, result.b1_arr );
+		Assert.assertArrayEquals( i1_arr, result.i1_arr );
+		Assert.assertArrayEquals( l1_arr, result.l1_arr );
+		assertArrayEquals( f1_arr, result.f1_arr );
+		assertArrayEquals( d1_arr, result.d1_arr );
+		Assert.assertArrayEquals( b2_arr, result.b2_arr );
+		Assert.assertArrayEquals( i2_arr, result.i2_arr );
+		Assert.assertArrayEquals( l2_arr, result.l2_arr );
+		Assert.assertArrayEquals( f2_arr, result.f2_arr );
+		Assert.assertArrayEquals( d2_arr, result.d2_arr );
+		Assert.assertArrayEquals( bi_arr, result.bi_arr );
+		Assert.assertArrayEquals( bd_arr, result.bd_arr );
+		Assert.assertArrayEquals( s_arr, result.s_arr );
+
+		b1_arr = new boolean[] {};
+		i1_arr = new int[] {};
+		l1_arr = new long[] {};
+		f1_arr = new float[] {};
+		d1_arr = new double[] {};
+		b2_arr = new Boolean[] {};
+		i2_arr = new Integer[] {};
+		l2_arr = new Long[] {};
+		f2_arr = new Float[] {};
+		d2_arr = new Double[] {};
+		bi_arr = new BigInteger[] {};
+		bd_arr = new BigDecimal[] {};
+		s_arr = new String[] {};
+
+		Assert.assertNotNull( result.obj_arr );
+		Assert.assertEquals( 1, result.obj_arr.length );
+		result = result.obj_arr[ 0 ];
+
+		assertArrayEquals( b1_arr, result.b1_arr );
+		Assert.assertArrayEquals( i1_arr, result.i1_arr );
+		Assert.assertArrayEquals( l1_arr, result.l1_arr );
+		assertArrayEquals( f1_arr, result.f1_arr );
+		assertArrayEquals( d1_arr, result.d1_arr );
+		Assert.assertArrayEquals( b2_arr, result.b2_arr );
+		Assert.assertArrayEquals( i2_arr, result.i2_arr );
+		Assert.assertArrayEquals( l2_arr, result.l2_arr );
+		Assert.assertArrayEquals( f2_arr, result.f2_arr );
+		Assert.assertArrayEquals( d2_arr, result.d2_arr );
+		Assert.assertArrayEquals( bi_arr, result.bi_arr );
+		Assert.assertArrayEquals( bd_arr, result.bd_arr );
+		Assert.assertArrayEquals( s_arr, result.s_arr );
+
+		Assert.assertNotNull( result.obj_arr );
+		Assert.assertEquals( 1, result.obj_arr.length );
+		result = result.obj_arr[ 0 ];
+
+		Assert.assertNull( result.b1_arr );
+		Assert.assertNull( result.i1_arr );
+		Assert.assertNull( result.l1_arr );
+		Assert.assertNull( result.f1_arr );
+		Assert.assertNull( result.d1_arr );
+		Assert.assertNull( result.b2_arr );
+		Assert.assertNull( result.i2_arr );
+		Assert.assertNull( result.l2_arr );
+		Assert.assertNull( result.f2_arr );
+		Assert.assertNull( result.d2_arr );
+		Assert.assertNull( result.bi_arr );
+		Assert.assertNull( result.bd_arr );
+		Assert.assertNull( result.s_arr );
+		Assert.assertNull( result.obj_arr );
+	}
+
+	public static void assertArrayEquals(boolean[] expecteds, boolean[] actuals) {
+		Assert.assertEquals( expecteds.length, actuals.length );
+		for ( int i=0; i<expecteds.length; ++i ) {
+			Assert.assertEquals( expecteds[ i ], actuals[ i ] );
+		}
+	}
+
+	public static void assertArrayEquals(float[] expecteds, float[] actuals) {
+		Assert.assertEquals( expecteds.length, actuals.length );
+		for ( int i=0; i<expecteds.length; ++i ) {
+			Assert.assertEquals( (Float)expecteds[ i ], (Float)actuals[ i ] );
+		}
+	}
+
+	public static void assertArrayEquals(double[] expecteds, double[] actuals) {
+		Assert.assertEquals( expecteds.length, actuals.length );
+		for ( int i=0; i<expecteds.length; ++i ) {
+			Assert.assertEquals( (Double)expecteds[ i ], (Double)actuals[ i ] );
 		}
 	}
 

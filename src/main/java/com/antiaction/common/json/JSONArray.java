@@ -51,7 +51,7 @@ public class JSONArray extends JSONStructure {
 		String innerIndentation = indentation + indent;
 		for (int i=0; i<values.size(); ++i) {
 			if ( i > 0 ) {
-				encoder.write( ", " );
+				encoder.write( ",\n" );
 			}
 			encoder.write( innerIndentation );
 			values.get( i ).encode( encoder, innerIndentation, indent );
