@@ -119,6 +119,7 @@ public class JSONObjectMapper {
 			| ClassTypeModifiers.CM_TRANSIENT;
 
 	// TODO support List/Set interface but required impl class annotation.
+	// TODO byte array mapping
 	public static final int FIELD_INVALID_TYPE_MODIFIERS_MASK = ClassTypeModifiers.CT_ANNOTATION
 			| ClassTypeModifiers.CT_ANONYMOUSCLASS
 			| ClassTypeModifiers.CT_ENUM
@@ -338,7 +339,7 @@ public class JSONObjectMapper {
 
 		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
 		if ( json_om == null ) {
-			throw new IllegalArgumentException( "Class '" + clazz.getName() + "'not registered." );
+			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
 		}
 
 		JSONObject srcJSONObject = json_struct.getObject();
@@ -658,7 +659,6 @@ public class JSONObjectMapper {
 						default:
 							throw new JSONException( "Field '" + fieldMapping.name + "' has an unsupported array type." );
 						}
-						//throw new UnsupportedOperationException( "Not implemented!" );
 					}
 					else if ( !fieldMapping.nullable ) {
 						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
@@ -709,7 +709,7 @@ public class JSONObjectMapper {
 
 		JSONObjectMapping json_om = classMappings.get( srcObj.getClass().getName() );
 		if ( json_om == null ) {
-			throw new IllegalArgumentException( "Class not registered." );
+			throw new IllegalArgumentException( "Class '" + srcObj.getClass().getName() + "' not registered." );
 		}
 
 		JSONStructure json_struct = new JSONObject();
