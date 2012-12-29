@@ -16,4 +16,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface JSONIgnore {
 
+	boolean value() default true;
+
 }

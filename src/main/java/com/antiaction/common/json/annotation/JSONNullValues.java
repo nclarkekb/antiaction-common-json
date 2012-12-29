@@ -1,5 +1,5 @@
 /*
- * Created on 11/11/2012
+ * Created on 26/12/2012
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface JSONNullable {
+public @interface JSONNullValues {
 
 	boolean value() default true;
 

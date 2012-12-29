@@ -37,7 +37,10 @@ public class JSONObjectFieldMapping {
 	/** Reflection field. */
 	public Field field;
 
-	/** Nullable. */
+	/** Is field nullable. */
 	public boolean nullable;
+
+	/** Allow null values in array. */
+	public boolean nullValues;
 
 }

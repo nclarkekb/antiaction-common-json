@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A JSON object mapping description.
@@ -23,6 +24,12 @@ public class JSONObjectMapping {
 
 	/** Field names to ignore when mapping objects. */
 	public Set<String> ignore = new HashSet<String>();
+
+	/** Field names which can be null. */
+	public Set<String> nullableSet = new TreeSet<String>();
+
+	/** Field names which can have null values. */
+	public Set<String> nullValuesSet = new TreeSet<String>();
 
 	/** Map of mapped fields. */
 	public Map<String, JSONObjectFieldMapping> fieldMappingsMap = new TreeMap<String, JSONObjectFieldMapping>();

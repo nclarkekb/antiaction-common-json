@@ -353,6 +353,295 @@ public class TestJSONObjectMapper_Nullable {
 	}
 
 	@Test
+	public void test_jsonobjectmapper_toobject_nullable_annotation_value() {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JSONText json = new JSONText();
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONObjectMapper json_om = new JSONObjectMapper();
+		try {
+			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+
+			json_om.register( TestJSONMapObjectNullableWithAV.class );
+			json_om.register( TestJSONMapObjectWithAV.class );
+
+			JSONStructure json_struct;
+
+			/*
+			 * Nullable valid.
+			 */
+
+			TestJSONMapObjectNullableWithAV obj = new TestJSONMapObjectNullableWithAV();
+			obj.b1 = true;
+			obj.b2 = false;
+			obj.i1 = 42;
+			obj.i2 = 1234;
+			obj.l1 = 12345678901234L;
+			obj.l2 = 43210987654321L;
+			obj.f1 = 1.0F / 3.0F;
+			obj.f2 = 3.0F;
+			obj.d1 = 1.0 / 3.0;
+			obj.d2 = 3.0;
+			obj.bi = new BigInteger( "123456789012345678901234567890123456789012" );
+			obj.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" );
+			obj.s = "json";
+			obj.b = "bytes".getBytes();
+
+			TestJSONMapObjectNullableWithAV obj3 = new TestJSONMapObjectNullableWithAV();
+			obj.obj = obj3;
+			obj3.b1 = false;
+			obj3.b2 = null;
+			obj3.i1 = 4213;
+			obj3.i2 = null;
+			obj3.l1 = 12345678901234L * 2L;
+			obj3.l2 = null;
+			obj3.f1 = 1.0F / 5.0F;
+			obj3.f2 = null;
+			obj3.d1 = 1.0 / 5.0;
+			obj3.d2 = null;
+			obj3.bi = null;
+			obj3.bd = null;
+			obj3.s = null;
+			obj3.b = null;
+
+			json_struct = json_om.toJSON( obj );
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+
+			TestJSONMapObjectNullableWithAV result = json_om.toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
+
+			Assert.assertNotNull( result );
+			Assert.assertEquals( true, result.b1 );
+			Assert.assertEquals( false, result.b2 );
+			Assert.assertEquals( 42, result.i1 );
+			Assert.assertEquals( new Integer( 1234 ), result.i2 );
+			Assert.assertEquals( 12345678901234L, result.l1 );
+			Assert.assertEquals( new Long( 43210987654321L ), result.l2 );
+			Assert.assertEquals( new Float( 1.0F / 3.0F ), (Float)result.f1 );
+			Assert.assertEquals( new Float( 3.0F ), result.f2 );
+			Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)result.d1 );
+			Assert.assertEquals( new Double( 3.0 ), result.d2 );
+			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), result.bi );
+			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), result.bd );
+			Assert.assertEquals( "json", result.s );
+			Assert.assertArrayEquals( "bytes".getBytes(), result.b );
+			Assert.assertNotNull( result.obj );
+			Assert.assertEquals( false, result.obj.b1 );
+			Assert.assertNull( result.obj.b2 );
+			Assert.assertEquals( 4213, result.obj.i1 );
+			Assert.assertNull( result.obj.i2 );
+			Assert.assertEquals( 12345678901234L * 2L, result.obj.l1 );
+			Assert.assertNull( result.obj.l2 );
+			Assert.assertEquals( new Float( 1.0F / 5.0F ), (Float)result.obj.f1 );
+			Assert.assertNull( result.obj.f2 );
+			Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result.obj.d1 );
+			Assert.assertNull( result.obj.d2 );
+			Assert.assertNull( result.obj.bi );
+			Assert.assertNull( result.obj.bd );
+			Assert.assertNull( result.obj.s );
+			Assert.assertNull( result.obj.b );
+			Assert.assertNull( result.obj.obj );
+
+			/*
+			 * Non nullable valid.
+			 */
+
+			TestJSONMapObjectWithAV obj2 = new TestJSONMapObjectWithAV();
+			obj2.b1 = false;
+			obj2.b2 = true;
+			obj2.i1 = 4213;
+			obj2.i2 = 4321;
+			obj2.l1 = 12345678901234L * 2L;
+			obj2.l2 = 43210987654321L * 2L;
+			obj2.f1 = 1.0F / 5.0F;
+			obj2.f2 = 5.0F;
+			obj2.d1 = 1.0 / 5.0;
+			obj2.d2 = 5.0;
+			obj2.bi = new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) );
+			obj2.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) );
+			obj2.s = "JSON";
+			obj2.b = "BYTES".getBytes();
+			obj2.obj = obj;
+
+			json_struct = json_om.toJSON( obj2 );
+
+			out.reset();
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
+
+			System.out.println( new String( out.toByteArray() ) );
+
+			TestJSONMapObjectWithAV result2 = json_om.toObject( json_struct, TestJSONMapObjectWithAV.class );
+
+			Assert.assertNotNull( result2 );
+			Assert.assertEquals( false, result2.b1 );
+			Assert.assertEquals( true, result2.b2 );
+			Assert.assertEquals( 4213, result2.i1 );
+			Assert.assertEquals( new Integer( 4321 ), result2.i2 );
+			Assert.assertEquals( 12345678901234L * 2L, result2.l1 );
+			Assert.assertEquals( new Long( 43210987654321L * 2L ), result2.l2 );
+			Assert.assertEquals( new Float( 1.0F / 5.0F ), (Float)result2.f1 );
+			Assert.assertEquals( new Float( 5.0F ), result2.f2 );
+			Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result2.d1 );
+			Assert.assertEquals( new Double( 5.0 ), result2.d2 );
+			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) ), result2.bi );
+			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ), result2.bd );
+			Assert.assertEquals( "JSON", result2.s );
+			Assert.assertArrayEquals( "BYTES".getBytes(), result2.b );
+			Assert.assertNotNull( result2.obj );
+			Assert.assertEquals( true, result2.obj.b1 );
+			Assert.assertEquals( false, result2.obj.b2 );
+			Assert.assertEquals( 42, result2.obj.i1 );
+			Assert.assertEquals( new Integer( 1234 ), result2.obj.i2 );
+			Assert.assertEquals( 12345678901234L, result2.obj.l1 );
+			Assert.assertEquals( new Long( 43210987654321L ), result2.obj.l2 );
+			Assert.assertEquals( new Float( 1.0F / 3.0F ), (Float)result2.obj.f1 );
+			Assert.assertEquals( new Float( 3.0F ), result2.obj.f2 );
+			Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)result2.obj.d1 );
+			Assert.assertEquals( new Double( 3.0 ), result2.obj.d2 );
+			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), result2.obj.bi );
+			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), result2.obj.bd );
+			Assert.assertEquals( "json", result2.obj.s );
+			Assert.assertArrayEquals( "bytes".getBytes(), result2.obj.b );
+			Assert.assertNotNull( result2.obj.obj );
+			Assert.assertEquals( false, result2.obj.obj.b1 );
+			Assert.assertNull( result2.obj.obj.b2 );
+			Assert.assertEquals( 4213, result2.obj.obj.i1 );
+			Assert.assertNull( result2.obj.obj.i2 );
+			Assert.assertEquals( 12345678901234L * 2L, result2.obj.obj.l1 );
+			Assert.assertNull( result2.obj.obj.l2 );
+			Assert.assertEquals( new Float( 1.0F / 5.0F ), (Float)result2.obj.obj.f1 );
+			Assert.assertNull( result2.obj.obj.f2 );
+			Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result2.obj.obj.d1 );
+			Assert.assertNull( result2.obj.obj.d2 );
+			Assert.assertNull( result2.obj.obj.bi );
+			Assert.assertNull( result2.obj.obj.bd );
+			Assert.assertNull( result2.obj.obj.s );
+			Assert.assertNull( result2.obj.obj.b );
+			Assert.assertNull( result2.obj.obj.obj );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (InstantiationException e) {
+				e.printStackTrace();
+				Assert.fail( "Unexpected exception!" );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );		
+		}
+	}
+
+	public static class TestJSONMapObjectNullableWithAV {
+
+		@JSONNullable(false)
+		protected boolean b1;
+
+		@JSONNullable(false)
+		protected int i1;
+
+		@JSONNullable(false)
+		protected long l1;
+
+		@JSONNullable(false)
+		protected float f1;
+
+		@JSONNullable(false)
+		protected double d1;
+
+		@JSONNullable(true)
+		protected Boolean b2;
+
+		@JSONNullable(true)
+		protected Integer i2;
+
+		@JSONNullable(true)
+		protected Long l2;
+
+		@JSONNullable(true)
+		protected Float f2;
+
+		@JSONNullable(true)
+		protected Double d2;
+
+		@JSONNullable(true)
+		protected BigInteger bi;
+
+		@JSONNullable(true)
+		protected BigDecimal bd;
+
+		@JSONNullable(true)
+		protected String s;
+
+		@JSONNullable(true)
+		protected byte[] b;
+
+		@JSONNullable(true)
+		protected TestJSONMapObjectNullableWithAV obj;
+
+	}
+
+	public static class TestJSONMapObjectWithAV {
+
+		@JSONNullable(false)
+		protected boolean b1;
+
+		@JSONNullable(false)
+		protected int i1;
+
+		@JSONNullable(false)
+		protected long l1;
+
+		@JSONNullable(false)
+		protected float f1;
+
+		@JSONNullable(false)
+		protected double d1;
+
+		@JSONNullable(false)
+		protected Boolean b2;
+
+		@JSONNullable(false)
+		protected Integer i2;
+
+		@JSONNullable(false)
+		protected Long l2;
+
+		@JSONNullable(false)
+		protected Float f2;
+
+		@JSONNullable(false)
+		protected Double d2;
+
+		@JSONNullable(false)
+		protected BigInteger bi;
+
+		@JSONNullable(false)
+		protected BigDecimal bd;
+
+		@JSONNullable(false)
+		protected String s;
+
+		@JSONNullable(false)
+		protected byte[] b;
+
+		@JSONNullable(false)
+		protected TestJSONMapObjectNullableWithAV obj;
+
+	}
+
+	@Test
 	public void test_jsonboejctmapper_toobject_nullable_invalid() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JSONText json = new JSONText();
@@ -372,6 +661,9 @@ public class TestJSONObjectMapper_Nullable {
 		TestJSONMapObjectNull moldObject;
 
 		try {
+			/*
+			 * DefaultAV.
+			 */
 			moldObject = get_toObject_MoldObject();
 			moldObject.b1 = null;
 			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
@@ -450,6 +742,9 @@ public class TestJSONObjectMapper_Nullable {
 					//e.printStackTrace();
 				}
 			}
+			/*
+			 * WithAV.
+			 */
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -566,7 +861,11 @@ public class TestJSONObjectMapper_Nullable {
 	public void test_jsonobjectmapper_tojson_nullable_invalid() {
 		JSONObjectMapper json_om = new JSONObjectMapper();
 		TestJSONMapObject moldObject;
+		TestJSONMapObjectWithAV moldObjectWithAV;
 		try {
+			/*
+			 * DefaultAV.
+			 */
 			moldObject = get_toJSON_MoldObject();
 			moldObject.b2 = null;
 			assert_toJSON_exception( json_om, moldObject );
@@ -606,6 +905,48 @@ public class TestJSONObjectMapper_Nullable {
 			moldObject = get_toJSON_MoldObject();
 			moldObject.obj = null;
 			assert_toJSON_exception( json_om, moldObject );
+			/*
+			 * WithAV.
+			 */
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.b2 = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+		
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.i2 = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.l2 = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.f2 = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.d2 = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.bi = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.bd = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.s = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.b = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			
+			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
+			moldObjectWithAV.obj = null;
+			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -645,6 +986,52 @@ public class TestJSONObjectMapper_Nullable {
 		obj.s = "JSON";
 		obj.b = "BYTES".getBytes();
 		TestJSONMapObjectNullable obj2 = new TestJSONMapObjectNullable();
+		obj.obj = obj2;
+		obj2.b1 = true;
+		obj2.b2 = false;
+		obj2.i1 = 42;
+		obj2.i2 = 1234;
+		obj2.l1 = 12345678901234L;
+		obj2.l2 = 43210987654321L;
+		obj2.f1 = 1.0F / 3.0F;
+		obj2.f2 = 3.0F;
+		obj2.d1 = 1.0 / 3.0;
+		obj2.d2 = 3.0;
+		obj2.bi = new BigInteger( "123456789012345678901234567890123456789012" );
+		obj2.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" );
+		obj2.s = "json";
+		obj2.b = "bytes".getBytes();
+		return obj;
+	}
+
+	public void assert_toJSONWithAV_exception(JSONObjectMapper json_om, TestJSONMapObjectWithAV moldObject) throws IllegalArgumentException, IllegalAccessException {
+		try {
+			json_om.toJSON( moldObject );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+			// debug
+			//e.printStackTrace();
+		}
+	}
+
+	public TestJSONMapObjectWithAV get_toJSON_MoldObjectWithAV() {
+		TestJSONMapObjectWithAV obj = new TestJSONMapObjectWithAV();
+		obj.b1 = false;
+		obj.b2 = true;
+		obj.i1 = 4213;
+		obj.i2 = 4321;
+		obj.l1 = 12345678901234L * 2L;
+		obj.l2 = 43210987654321L * 2L;
+		obj.f1 = 1.0F / 5.0F;
+		obj.f2 = 5.0F;
+		obj.d1 = 1.0 / 5.0;
+		obj.d2 = 5.0;
+		obj.bi = new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) );
+		obj.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) );
+		obj.s = "JSON";
+		obj.b = "BYTES".getBytes();
+		TestJSONMapObjectNullableWithAV obj2 = new TestJSONMapObjectNullableWithAV();
 		obj.obj = obj2;
 		obj2.b1 = true;
 		obj2.b2 = false;
