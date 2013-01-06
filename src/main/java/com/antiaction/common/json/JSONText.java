@@ -94,6 +94,9 @@ public class JSONText {
 		JSONString json_name = null;
 		JSONValue json_value = null;
 
+		int y = 1;
+		int x = 1;
+
 		int state = S_START;
 		int rstate = -1;
 		boolean bLoop = true;
@@ -101,14 +104,18 @@ public class JSONText {
 		while ( bLoop ) {
 			while ( pos < limit ) {
 				c = charArray[ pos ];
+				++x;
 				switch ( state ) {
 				case S_START:
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case '{':
 						current = new JSONObject();
@@ -121,7 +128,7 @@ public class JSONText {
 						state = S_ARRAY;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -129,14 +136,17 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case '}':
 						/*
 						if ( stack.size() == 0 ) {
-							throw new IOException( "Invalid JSON structure!" );
+							throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
 						entry = stack.removeLast();
@@ -162,7 +172,7 @@ public class JSONText {
 						rstate = S_OBJECT_NAME;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -175,16 +185,19 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case ':':
 						state = S_VALUE_START;
 						rstate = S_OBJECT_VALUE;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -197,14 +210,17 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case '}':
 						/*
 						if ( stack.size() == 0 ) {
-							throw new IOException( "Invalid JSON structure!" );
+							throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
 						entry = stack.removeLast();
@@ -228,7 +244,7 @@ public class JSONText {
 						state = S_OBJECT_NAME_NEXT;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -236,9 +252,12 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case '"':
 						sbStr.setLength( 0 );
@@ -246,7 +265,7 @@ public class JSONText {
 						rstate = S_OBJECT_NAME;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -254,14 +273,17 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case ']':
 						/*
 						if ( stack.size() == 0 ) {
-							throw new IOException( "Invalid JSON structure!" );
+							throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
 						entry = stack.removeLast();
@@ -331,7 +353,7 @@ public class JSONText {
 						rstate = S_ARRAY_VALUE;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -344,14 +366,17 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case ']':
 						/*
 						if ( stack.size() == 0 ) {
-							throw new IOException( "Invalid JSON structure!" );
+							throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
 						entry = stack.removeLast();
@@ -376,7 +401,7 @@ public class JSONText {
 						rstate = S_ARRAY_VALUE;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -385,9 +410,12 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
+						break;
+					case 0x0A:
+						++y;
+						x = 1;
 						break;
 					case '{':
 						current = new JSONObject();
@@ -434,7 +462,7 @@ public class JSONText {
 						state = S_NUMBER_INTEGER;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -450,7 +478,7 @@ public class JSONText {
 						break;
 					default:
 						if ( c < 32 ) {
-							throw new IOException( "Invalid JSON structure!" );
+							throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						sbStr.append( c );
 						break;
@@ -497,17 +525,17 @@ public class JSONText {
 						state = S_STRING_UNHEX;
 						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
 				case S_STRING_UNHEX:
 					if ( c > 255 ) {
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					i = asciiHexTab[ c ];
 					if ( i == -1 ) {
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					hexValue <<= 4;
 					hexValue |= i;
@@ -541,7 +569,7 @@ public class JSONText {
 							json_value = JSONBoolean.True;
 						}
 						else {
-							throw new IOException( "Invalid JSON constant: '" + constant + "'!" );
+							throw new IOException( "Invalid JSON constant: '" + constant + "' at (" + y + ":" + x + ")!" );
 						}
 						state = rstate;
 						break;
@@ -566,7 +594,7 @@ public class JSONText {
 						state = S_NUMBER_INTEGER;
 						break;
 					default:
-						throw new IOException( "Invalid JSON number structure!" );
+						throw new IOException( "Invalid JSON number structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -646,7 +674,7 @@ public class JSONText {
 						++pos;
 						break;
 					default:
-						throw new IOException( "Invalid JSON number structure!" );
+						throw new IOException( "Invalid JSON number structure at (" + y + ":" + x + ")!" );
 					}
 					break;
 				case S_NUMBER_DECIMALS:
@@ -703,7 +731,7 @@ public class JSONText {
 						state = S_NUMBER_EXPONENTS;
 						break;
 					default:
-						throw new IOException( "Invalid JSON number structure!" );
+						throw new IOException( "Invalid JSON number structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 					break;
@@ -724,7 +752,7 @@ public class JSONText {
 						++pos;
 						break;
 					default:
-						throw new IOException( "Invalid JSON number structure!" );
+						throw new IOException( "Invalid JSON number structure at (" + y + ":" + x + ")!" );
 					}
 					break;
 				case S_NUMBER_EXPONENTS:
@@ -751,12 +779,15 @@ public class JSONText {
 					switch ( c ) {
 					case 0x20:
 					case 0x09:
-					case 0x0A:
 					case 0x0D:
 						// Whitespace.
 						break;
+					case 0x0A:
+						++y;
+						x = 1;
+						break;
 					default:
-						throw new IOException( "Invalid JSON structure!" );
+						throw new IOException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 					}
 					++pos;
 				}
