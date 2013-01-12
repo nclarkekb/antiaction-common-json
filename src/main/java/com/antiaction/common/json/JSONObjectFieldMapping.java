@@ -17,7 +17,10 @@ import java.lang.reflect.Field;
 public class JSONObjectFieldMapping {
 
 	/** Field name. */
-	public String name;
+	public String fieldName;
+
+	/** JSON name. */
+	public String jsonName;
 
 	/** JSON Java type identifier. */
 	public int type;
@@ -42,5 +45,11 @@ public class JSONObjectFieldMapping {
 
 	/** Allow null values in array. */
 	public boolean nullValues;
+
+	/** Name of desired field data converter. */
+	public String converterName;
+
+	/** Id of desired field data converter. */
+	public int converterId = -1;
 
 }

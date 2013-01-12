@@ -8,6 +8,7 @@
 package com.antiaction.common.json;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -19,6 +20,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.antiaction.common.json.annotation.JSON;
+import com.antiaction.common.json.annotation.JSONName;
+import com.antiaction.common.json.annotation.JSONConverter;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -44,6 +47,10 @@ public class JSONObjectMapper {
 
 	// TODO maybe better not static.
 	protected static Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
+
+	public static Map<String, Integer> converterNameIdMap = new TreeMap<String, Integer>();
+
+	public static int converterIds = 0;
 
 	protected static Map<String, Integer> typeMappings = new TreeMap<String, Integer>();
 
@@ -133,6 +140,8 @@ public class JSONObjectMapper {
 			| ClassTypeModifiers.CM_ABSTRACT
 			| ClassTypeModifiers.CM_STATIC;
 
+	protected Class<?>[] zeroArgsParameterTypes = new Class[ 0 ];
+
 	// ClassNotFoundException, SecurityException, NoSuchFieldException
 	protected JSONObjectMapping mapClass(Class<?> clazz) throws JSONException {
 		try {
@@ -142,6 +151,16 @@ public class JSONObjectMapper {
 
 			JSONObjectMapping json_om = new JSONObjectMapping();
 			classMappings.put( clazz.getName(), json_om );
+
+			Constructor<?> constructor = null;
+			try {
+				constructor = clazz.getConstructor( zeroArgsParameterTypes );
+			}
+			catch (NoSuchMethodException e) {
+			}
+			if ( constructor == null ) {
+				throw new JSONException( clazz.getName() + " does not have a zero argument contructor!" );
+			}
 
 			json = clazz.getAnnotation( JSON.class );
 			if ( json != null ) {
@@ -176,6 +195,8 @@ public class JSONObjectMapper {
 			boolean bNullable;
 			JSONNullValues nullValues;
 			boolean bNullValues;
+			JSONConverter converter;
+			JSONName jsonName;
 			for ( int i=0; i<fields.length; ++i ) {
 				field = fields[ i ];
 				// debug
@@ -260,18 +281,16 @@ public class JSONObjectMapper {
 
 					if ( type != null ) {
 						json_fm = new JSONObjectFieldMapping();
-						json_fm.name = field.getName();
+						json_fm.fieldName = field.getName();
 						json_fm.type = type;
 						json_fm.arrayType = arrayType;
 						json_fm.className = fieldTypeName;
 						json_fm.clazz = fieldType;
 						json_fm.objectMapping = fieldObjectMapping;
-						json_fm.field = clazz.getDeclaredField( json_fm.name );
+						json_fm.field = clazz.getDeclaredField( json_fm.fieldName );
 						json_fm.field.setAccessible( true );
-						json_om.fieldMappingsMap.put( json_fm.name, json_fm );
-						json_om.fieldMappingsList.add( json_fm );
 
-						bNullable = json_om.nullableSet.contains( json_fm.name );
+						bNullable = json_om.nullableSet.contains( json_fm.fieldName );
 						if ( !bNullable ) {
 							nullable = field.getAnnotation( JSONNullable.class );
 							if ( nullable != null ) {
@@ -284,7 +303,7 @@ public class JSONObjectMapper {
 							}
 							json_fm.nullable = true;
 						}
-						bNullValues = json_om.nullValuesSet.contains( json_fm.name );
+						bNullValues = json_om.nullValuesSet.contains( json_fm.fieldName );
 						if ( !bNullValues) {
 							nullValues = field.getAnnotation( JSONNullValues.class );
 							if ( nullValues != null ) {
@@ -297,6 +316,27 @@ public class JSONObjectMapper {
 							}
 							json_fm.nullValues = true;
 						}
+						converter = field.getAnnotation( JSONConverter.class );
+						if ( converter != null ) {
+							json_fm.converterName = converter.name();
+							Integer converterId = converterNameIdMap.get( json_fm.converterName );
+							if ( converterId == null ) {
+								converterId = converterIds++;
+								converterNameIdMap.put( json_fm.converterName, converterId );
+							}
+							json_fm.converterId = converterId;
+							json_om.converters = true;
+						}
+						jsonName = field.getAnnotation( JSONName.class );
+						if ( jsonName != null ) {
+							json_fm.jsonName = jsonName.value();
+						}
+						else {
+							json_fm.jsonName = json_fm.fieldName;
+						}
+
+						json_om.fieldMappingsMap.put( json_fm.jsonName, json_fm );
+						json_om.fieldMappingsList.add( json_fm );
 					}
 				}
 			}
@@ -308,6 +348,10 @@ public class JSONObjectMapper {
 	}
 
 	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws InstantiationException, IllegalAccessException, JSONException {
+		return toObject( json_struct, clazz, null );
+	}
+
+	public <T> T toObject(JSONStructure json_struct, Class<T> clazz, JSONConverterAbstract[] converters) throws InstantiationException, IllegalAccessException, JSONException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;
@@ -341,6 +385,9 @@ public class JSONObjectMapper {
 		if ( json_om == null ) {
 			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
 		}
+		if ( json_om.converters == true && converters == null ) {
+			throw new JSONException( "Class '" + clazz.getName() + "' may required converters!" );
+		}
 
 		JSONObject srcJSONObject = json_struct.getObject();
 		T dstObj = clazz.newInstance();
@@ -350,114 +397,184 @@ public class JSONObjectMapper {
 		JSONValue json_value;
 		while ( fieldMappingsIter.hasNext() ) {
 			fieldMapping = fieldMappingsIter.next();
-			json_value = srcJSONObject.get( fieldMapping.name );
+			json_value = srcJSONObject.get( fieldMapping.jsonName );
 			if ( json_value != null ) {
 				switch ( fieldMapping.type ) {
 				case T_PRIMITIVE_BOOLEAN:
-					booleanVal = json_value.getBoolean();
+					if ( fieldMapping.converterId == -1 ) {
+						booleanVal = json_value.getBoolean();
+					}
+					else {
+						booleanVal = converters[ fieldMapping.converterId ].getBoolean( json_value );
+					}
 					if ( booleanVal == null ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 					}
 					fieldMapping.field.setBoolean( dstObj, booleanVal );
 					break;
 				case T_PRIMITIVE_INTEGER:
-					intVal = json_value.getInteger();
+					if ( fieldMapping.converterId == -1 ) {
+						intVal = json_value.getInteger();
+					}
+					else {
+						intVal = converters[ fieldMapping.converterId ].getInteger( json_value );
+					}
 					if ( intVal == null ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 					}
 					fieldMapping.field.setInt( dstObj, intVal );
 					break;
 				case T_PRIMITIVE_LONG:
-					longVal = json_value.getLong();
+					if ( fieldMapping.converterId == -1 ) {
+						longVal = json_value.getLong();
+					}
+					else {
+						longVal = converters[ fieldMapping.converterId ].getLong( json_value );
+					}
 					if ( longVal == null ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 					}
 					fieldMapping.field.setLong( dstObj, longVal );
 					break;
 				case T_PRIMITIVE_FLOAT:
-					floatVal = json_value.getFloat();
+					if ( fieldMapping.converterId == -1 ) {
+						floatVal = json_value.getFloat();
+					}
+					else {
+						floatVal = converters[ fieldMapping.converterId ].getFloat( json_value );
+					}
 					if ( floatVal == null ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 					}
 					fieldMapping.field.setFloat( dstObj, floatVal );
 					break;
 				case T_PRIMITIVE_DOUBLE:
-					doubleVal = json_value.getDouble();
+					if ( fieldMapping.converterId == -1 ) {
+						doubleVal = json_value.getDouble();
+					}
+					else {
+						doubleVal = converters[ fieldMapping.converterId ].getDouble( json_value );
+					}
 					if ( doubleVal == null ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 					}
 					fieldMapping.field.setDouble( dstObj, doubleVal );
 					break;
 				case T_BOOLEAN:
-					booleanVal = json_value.getBoolean();
+					if ( fieldMapping.converterId == -1 ) {
+						booleanVal = json_value.getBoolean();
+					}
+					else {
+						booleanVal = converters[ fieldMapping.converterId ].getBoolean( json_value );
+					}
 					if ( booleanVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, booleanVal );
 					break;
 				case T_INTEGER:
-					intVal = json_value.getInteger();
+					if ( fieldMapping.converterId == -1 ) {
+						intVal = json_value.getInteger();
+					}
+					else {
+						intVal = converters[ fieldMapping.converterId ].getInteger( json_value );
+					}
 					if ( intVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, intVal );
 					break;
 				case T_LONG:
-					longVal = json_value.getLong();
+					if ( fieldMapping.converterId == -1 ) {
+						longVal = json_value.getLong();
+					}
+					else {
+						longVal = converters[ fieldMapping.converterId ].getLong( json_value );
+					}
 					if ( longVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, longVal );
 					break;
 				case T_FLOAT:
-					floatVal = json_value.getFloat();
+					if ( fieldMapping.converterId == -1 ) {
+						floatVal = json_value.getFloat();
+					}
+					else {
+						floatVal = converters[ fieldMapping.converterId ].getFloat( json_value );
+					}
 					if ( floatVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, floatVal );
 					break;
 				case T_DOUBLE:
-					doubleVal = json_value.getDouble();
+					if ( fieldMapping.converterId == -1 ) {
+						doubleVal = json_value.getDouble();
+					}
+					else {
+						doubleVal = converters[ fieldMapping.converterId ].getDouble( json_value );
+					}
 					if ( doubleVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, doubleVal );
 					break;
 				case T_BIGINTEGER:
-					bigIntegerVal = json_value.getBigInteger();
+					if ( fieldMapping.converterId == -1 ) {
+						bigIntegerVal = json_value.getBigInteger();
+					}
+					else {
+						bigIntegerVal = converters[ fieldMapping.converterId ].getBigInteger( json_value );
+					}
 					if ( bigIntegerVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, bigIntegerVal );
 					break;
 				case T_BIGDECIMAL:
-					bigDecimalVal = json_value.getBigDecimal();
+					if ( fieldMapping.converterId == -1 ) {
+						bigDecimalVal = json_value.getBigDecimal();
+					}
+					else {
+						bigDecimalVal = converters[ fieldMapping.converterId ].getBigDecimal( json_value );
+					}
 					if ( bigDecimalVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, bigDecimalVal );
 					break;
 				case T_STRING:
-					strVal = json_value.getString();
+					if ( fieldMapping.converterId == -1 ) {
+						strVal = json_value.getString();
+					}
+					else {
+						strVal = converters[ fieldMapping.converterId ].getString( json_value );
+					}
 					if ( strVal == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, strVal );
 					break;
 				case T_BYTEARRAY:
-					byteArray = json_value.getBytes();
+					if ( fieldMapping.converterId == -1 ) {
+						byteArray = json_value.getBytes();
+					}
+					else {
+						byteArray = converters[ fieldMapping.converterId ].getBytes( json_value );
+					}
 					if ( byteArray == null && !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					fieldMapping.field.set( dstObj, byteArray );
 					break;
 				case T_OBJECT:
 					json_object = json_value.getObject();
 					if ( json_object != null ) {
-						object = toObject( json_object, fieldMapping.clazz );
+						object = toObject( json_object, fieldMapping.clazz, converters );
 					}
 					else if ( !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					else {
 						object = null;
@@ -473,9 +590,14 @@ public class JSONObjectMapper {
 							arrayOf_boolean = new boolean[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								booleanVal = json_value.getBoolean();
+								if ( fieldMapping.converterId == -1 ) {
+									booleanVal = json_value.getBoolean();
+								}
+								else {
+									booleanVal = converters[ fieldMapping.converterId ].getBoolean( json_value );
+								}
 								if ( booleanVal == null ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 								}
 								arrayOf_boolean[ i ] = booleanVal;
 							}
@@ -486,9 +608,14 @@ public class JSONObjectMapper {
 							arrayOf_int = new int[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								intVal = json_value.getInteger();
+								if ( fieldMapping.converterId == -1 ) {
+									intVal = json_value.getInteger();
+								}
+								else {
+									intVal = converters[ fieldMapping.converterId ].getInteger( json_value );
+								}
 								if ( intVal == null ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 								}
 								arrayOf_int[ i ] = intVal;
 							}
@@ -499,9 +626,14 @@ public class JSONObjectMapper {
 							arrayOf_long = new long[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								longVal = json_value.getLong();
+								if ( fieldMapping.converterId == -1 ) {
+									longVal = json_value.getLong();
+								}
+								else {
+									longVal = converters[ fieldMapping.converterId ].getLong( json_value );
+								}
 								if ( longVal == null ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 								}
 								arrayOf_long[ i ] = longVal;
 							}
@@ -512,9 +644,14 @@ public class JSONObjectMapper {
 							arrayOf_float = new float[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								floatVal = json_value.getFloat();
+								if ( fieldMapping.converterId == -1 ) {
+									floatVal = json_value.getFloat();
+								}
+								else {
+									floatVal = converters[ fieldMapping.converterId ].getFloat( json_value );
+								}
 								if ( floatVal == null ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 								}
 								arrayOf_float[ i ] = floatVal;
 							}
@@ -525,9 +662,14 @@ public class JSONObjectMapper {
 							arrayOf_double = new double[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								doubleVal = json_value.getDouble();
+								if ( fieldMapping.converterId == -1 ) {
+									doubleVal = json_value.getDouble();
+								}
+								else {
+									doubleVal = converters[ fieldMapping.converterId ].getDouble( json_value );
+								}
 								if ( doubleVal == null ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' is primitive and can not be null." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 								}
 								arrayOf_double[ i ] =  doubleVal;
 							}
@@ -538,9 +680,14 @@ public class JSONObjectMapper {
 							arrayOf_Boolean = new Boolean[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								booleanVal = json_value.getBoolean();
+								if ( fieldMapping.converterId == -1 ) {
+									booleanVal = json_value.getBoolean();
+								}
+								else {
+									booleanVal = converters[ fieldMapping.converterId ].getBoolean( json_value );
+								}
 								if ( booleanVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_Boolean[ i ] = booleanVal;
 							}
@@ -551,9 +698,14 @@ public class JSONObjectMapper {
 							arrayOf_Integer = new Integer[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								intVal = json_value.getInteger();
+								if ( fieldMapping.converterId == -1 ) {
+									intVal = json_value.getInteger();
+								}
+								else {
+									intVal = converters[ fieldMapping.converterId ].getInteger( json_value );
+								}
 								if ( intVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_Integer[ i ] = intVal;
 							}
@@ -564,9 +716,14 @@ public class JSONObjectMapper {
 							arrayOf_Long = new Long[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								longVal = json_value.getLong();
+								if ( fieldMapping.converterId == -1 ) {
+									longVal = json_value.getLong();
+								}
+								else {
+									longVal = converters[ fieldMapping.converterId ].getLong( json_value );
+								}
 								if ( longVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_Long[ i ] = longVal;
 							}
@@ -577,9 +734,14 @@ public class JSONObjectMapper {
 							arrayOf_Float = new Float[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								floatVal = json_value.getFloat();
+								if ( fieldMapping.converterId == -1 ) {
+									floatVal = json_value.getFloat();
+								}
+								else {
+									floatVal = converters[ fieldMapping.converterId ].getFloat( json_value );
+								}
 								if ( floatVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_Float[ i ] = floatVal;
 							}
@@ -590,9 +752,14 @@ public class JSONObjectMapper {
 							arrayOf_Double = new Double[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								doubleVal = json_value.getDouble();
+								if ( fieldMapping.converterId == -1 ) {
+									doubleVal = json_value.getDouble();
+								}
+								else {
+									doubleVal = converters[ fieldMapping.converterId ].getDouble( json_value );
+								}
 								if ( doubleVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_Double[ i ] = doubleVal;
 							}
@@ -603,9 +770,14 @@ public class JSONObjectMapper {
 							arrayOf_BigInteger = new BigInteger[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								bigIntegerVal = json_value.getBigInteger();
+								if ( fieldMapping.converterId == -1 ) {
+									bigIntegerVal = json_value.getBigInteger();
+								}
+								else {
+									bigIntegerVal = converters[ fieldMapping.converterId ].getBigInteger( json_value );
+								}
 								if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_BigInteger[ i ] = bigIntegerVal;
 							}
@@ -616,9 +788,14 @@ public class JSONObjectMapper {
 							arrayOf_BigDecimal = new BigDecimal[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								bigDecimalVal = json_value.getBigDecimal();
+								if ( fieldMapping.converterId == -1 ) {
+									bigDecimalVal = json_value.getBigDecimal();
+								}
+								else {
+									bigDecimalVal = converters[ fieldMapping.converterId ].getBigDecimal( json_value );
+								}
 								if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_BigDecimal[ i ] = bigDecimalVal;
 							}
@@ -629,9 +806,14 @@ public class JSONObjectMapper {
 							arrayOf_String = new String[ json_values.size() ];
 							for ( int i=0; i<json_values.size(); ++i ) {
 								json_value = json_values.get( i );
-								strVal = json_value.getString();
+								if ( fieldMapping.converterId == -1 ) {
+									strVal = json_value.getString();
+								}
+								else {
+									strVal = converters[ fieldMapping.converterId ].getString( json_value );
+								}
 								if ( strVal == null && !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								arrayOf_String[ i ] = strVal;
 							}
@@ -644,10 +826,10 @@ public class JSONObjectMapper {
 								json_value = json_values.get( i );
 								json_object = json_value.getObject();
 								if ( json_object != null ) {
-									object = toObject( json_object, fieldMapping.clazz );
+									object = toObject( json_object, fieldMapping.clazz, converters );
 								}
 								else if ( !fieldMapping.nullValues ) {
-									throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 								}
 								else {
 									object = null;
@@ -657,11 +839,11 @@ public class JSONObjectMapper {
 							object = arrayOf_Object;
 							break;
 						default:
-							throw new JSONException( "Field '" + fieldMapping.name + "' has an unsupported array type." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
 						}
 					}
 					else if ( !fieldMapping.nullable ) {
-						throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 					}
 					else {
 						object = null;
@@ -671,7 +853,7 @@ public class JSONObjectMapper {
 			}
 			else {
 				if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "'/'" + fieldMapping.jsonName + "' is not nullable." );
 				}
 			}
 		}
@@ -680,6 +862,10 @@ public class JSONObjectMapper {
 	}
 
 	public <T> JSONStructure toJSON(T srcObj) throws JSONException, IllegalArgumentException, IllegalAccessException {
+		return toJSON( srcObj, null );
+	}
+
+	public <T> JSONStructure toJSON(T srcObj, JSONConverterAbstract[] converters) throws JSONException, IllegalArgumentException, IllegalAccessException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;
@@ -711,6 +897,9 @@ public class JSONObjectMapper {
 		if ( json_om == null ) {
 			throw new IllegalArgumentException( "Class '" + srcObj.getClass().getName() + "' not registered." );
 		}
+		if ( json_om.converters == true && converters == null ) {
+			throw new JSONException( "Class '" + srcObj.getClass().getName() + "' may required converters!" );
+		}
 
 		JSONStructure json_struct = new JSONObject();
 		JSONArray json_array;
@@ -725,27 +914,27 @@ public class JSONObjectMapper {
 			case T_PRIMITIVE_BOOLEAN:
 				booleanVal = fieldMapping.field.getBoolean( srcObj );
 				json_value = JSONBoolean.Boolean( booleanVal );
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_PRIMITIVE_INTEGER:
 				intVal = fieldMapping.field.getInt( srcObj );
 				json_value = JSONNumber.Integer( intVal );
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_PRIMITIVE_LONG:
 				longVal = fieldMapping.field.getLong( srcObj );
 				json_value = JSONNumber.Long( longVal );
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_PRIMITIVE_FLOAT:
 				floatVal = fieldMapping.field.getFloat( srcObj );
 				json_value = JSONNumber.Float( floatVal );
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_PRIMITIVE_DOUBLE:
 				doubleVal = fieldMapping.field.getDouble( srcObj );
 				json_value = JSONNumber.Double( doubleVal );
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_BOOLEAN:
 				booleanVal = (Boolean)fieldMapping.field.get( srcObj );
@@ -753,12 +942,12 @@ public class JSONObjectMapper {
 					json_value = JSONBoolean.Boolean( booleanVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_INTEGER:
 				intVal = (Integer)fieldMapping.field.get( srcObj );
@@ -766,12 +955,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.Integer( intVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_LONG:
 				longVal = (Long)fieldMapping.field.get( srcObj );
@@ -779,12 +968,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.Long( longVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_FLOAT:
 				floatVal = (Float)fieldMapping.field.get( srcObj );
@@ -792,12 +981,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.Float( floatVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_DOUBLE:
 				doubleVal = (Double)fieldMapping.field.get( srcObj );
@@ -805,12 +994,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.Double( doubleVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_BIGINTEGER:
 				bigIntegerVal = (BigInteger)fieldMapping.field.get( srcObj );
@@ -818,12 +1007,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.BigInteger( bigIntegerVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_BIGDECIMAL:
 				bigDecimalVal = (BigDecimal)fieldMapping.field.get( srcObj );
@@ -831,12 +1020,12 @@ public class JSONObjectMapper {
 					json_value = JSONNumber.BigDecimal( bigDecimalVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_STRING:
 				strVal = (String)fieldMapping.field.get( srcObj );
@@ -844,12 +1033,12 @@ public class JSONObjectMapper {
 					json_value = JSONString.String( strVal );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_BYTEARRAY:
 				byteArray = (byte[])fieldMapping.field.get( srcObj );
@@ -857,25 +1046,25 @@ public class JSONObjectMapper {
 					json_value = JSONString.String( byteArray );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_OBJECT:
 				objectVal = (Object)fieldMapping.field.get( srcObj );
 				if ( objectVal != null ) {
-					json_value = toJSON( objectVal );
+					json_value = toJSON( objectVal, converters );
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 				break;
 			case T_ARRAY:
 				array_object = fieldMapping.field.get( srcObj );
@@ -931,7 +1120,7 @@ public class JSONObjectMapper {
 								json_value = JSONBoolean.Boolean( booleanVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -947,7 +1136,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.Integer( intVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -963,7 +1152,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.Long( longVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -979,7 +1168,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.Float( floatVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -995,7 +1184,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.Double( doubleVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -1011,7 +1200,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.BigInteger( bigIntegerVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -1027,7 +1216,7 @@ public class JSONObjectMapper {
 								json_value = JSONNumber.BigDecimal( bigDecimalVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -1043,7 +1232,7 @@ public class JSONObjectMapper {
 								json_value = JSONString.String( strVal );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -1056,10 +1245,10 @@ public class JSONObjectMapper {
 						for ( int i=0; i<len; ++i ) {
 							objectVal = arrayOf_Object[ i ];
 							if ( objectVal != null ) {
-								json_value = toJSON( objectVal );
+								json_value = toJSON( objectVal, converters );
 							}
 							else if ( !fieldMapping.nullValues ) {
-								throw new JSONException( "Field '" + fieldMapping.name + "' does not allow null values." );
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 							}
 							else {
 								json_value = JSONNull.Null;
@@ -1068,17 +1257,17 @@ public class JSONObjectMapper {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.name + "' has an unsupported array type." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
 					}
 					json_value = json_array;
 				}
 				else if ( !fieldMapping.nullable ) {
-					throw new JSONException( "Field '" + fieldMapping.name + "' is not nullable." );
+					throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 				}
 				else {
 					json_value = JSONNull.Null;
 				}
-				json_struct.put( fieldMapping.name, json_value );
+				json_struct.put( fieldMapping.jsonName, json_value );
 			}
 		}
 
