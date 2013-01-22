@@ -408,7 +408,7 @@ public class TestJSONObjectMapper {
 			TestJSONMapObject result;
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
 			System.out.println( new String( out.toByteArray() ) );
 
@@ -416,7 +416,7 @@ public class TestJSONObjectMapper {
 			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json.encodeJSONtext( json_struct, json_encoder, false, out );
 
 			System.out.println( new String( out.toByteArray() ) );
 
