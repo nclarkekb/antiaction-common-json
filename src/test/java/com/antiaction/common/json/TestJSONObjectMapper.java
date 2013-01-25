@@ -166,12 +166,6 @@ public class TestJSONObjectMapper {
 			}
 			catch (JSONException e) {
 			}
-			try {
-				json_om.register( byte[].class );
-				Assert.fail( "Exception expected!" );
-			}
-			catch (JSONException e) {
-			}
 
 			json_om.register( TestClass.class );
 			JSONObjectMapping objMapping = JSONObjectMapper.classMappings.get( TestClass.class.getName() );
@@ -236,14 +230,6 @@ public class TestJSONObjectMapper {
 			Assert.fail("Unexpected exception!");
 		}
 		catch (IOException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
-		catch (InstantiationException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
-		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
@@ -434,14 +420,6 @@ public class TestJSONObjectMapper {
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (InstantiationException e) {
-				e.printStackTrace();
-				Assert.fail( "Unexpected exception!" );
 		}
 	}
 

@@ -256,21 +256,13 @@ public class TestJSONObjectMapper_Nullable {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (InstantiationException e) {
-				e.printStackTrace();
-				Assert.fail( "Unexpected exception!" );
-		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 
@@ -525,21 +517,13 @@ public class TestJSONObjectMapper_Nullable {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (InstantiationException e) {
-				e.printStackTrace();
-				Assert.fail( "Unexpected exception!" );
-		}
 		catch (IOException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );		
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 

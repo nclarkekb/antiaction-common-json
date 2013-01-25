@@ -100,14 +100,6 @@ public class TestJSONObjectMapper_Name {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
-		catch (InstantiationException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail("Unexpected exception!");
-		}
 	}
 
 	public static class TestZeroConstructor {

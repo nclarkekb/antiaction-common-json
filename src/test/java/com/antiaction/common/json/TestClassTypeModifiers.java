@@ -59,7 +59,7 @@ public class TestClassTypeModifiers {
 		}
 
 		/*
-		 * Array.
+		 * Array (unsupported primitive).
 		 */
 
 		Assert.assertEquals( ClassTypeModifiers.CT_ARRAY | ClassTypeModifiers.CM_ABSTRACT | ClassTypeModifiers.CM_FINAL | ClassTypeModifiers.CM_PUBLIC, ClassTypeModifiers.getClassTypeModifiersMask( byte[].class ) );
@@ -70,7 +70,7 @@ public class TestClassTypeModifiers {
 		}
 		catch (JSONException e) {
 			//e.printStackTrace();
-			Assert.assertEquals( "Unsupported class type.", e.getMessage() );
+			Assert.assertEquals( "Unsupported array type '[B'.", e.getMessage() );
 		}
 
 		/*
@@ -195,6 +195,21 @@ public class TestClassTypeModifiers {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
+
+		/*
+		 * Array (unsupported primitive).
+		 */
+
+		Assert.assertEquals( ClassTypeModifiers.CT_ARRAY | ClassTypeModifiers.CM_ABSTRACT | ClassTypeModifiers.CM_FINAL | ClassTypeModifiers.CM_PUBLIC, ClassTypeModifiers.getClassTypeModifiersMask( byte[].class ) );
+
+		try {
+			json_om.register( int[].class );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+
 	}
 
 	public enum TestEnum {

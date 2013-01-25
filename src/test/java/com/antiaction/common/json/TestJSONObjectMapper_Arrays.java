@@ -131,10 +131,6 @@ public class TestJSONObjectMapper_Arrays {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );		
 		}
-		catch (InstantiationException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
-		}
 	}
 
 	public TestJSONMapObjectArrays getTestJSONMapObjectArraysObjectMold() {
@@ -417,10 +413,6 @@ public class TestJSONObjectMapper_Arrays {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );		
 		}
-		catch (InstantiationException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
-		}
 	}
 
 	public TestJSONMapObjectArraysWithAV getTestJSONMapObjectArraysWithAVObjectMold() {
@@ -686,14 +678,6 @@ public class TestJSONObjectMapper_Arrays {
 			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		catch (InstantiationException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
@@ -986,10 +970,6 @@ public class TestJSONObjectMapper_Arrays {
 			Assert.fail( "Unexpected exception!" );		
 		}
 		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
-		}
-		catch (InstantiationException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );		
 		}
