@@ -72,6 +72,36 @@ public class JSONObject extends JSONStructure {
 		encoder.write( "}" );
 	}
 
+	@Override
+	public JSONObject addObject(String name) {
+		JSONObject json_object = new JSONObject();
+		JSONString json_string = JSONString.String( name );
+		values.put( json_string, json_object );
+		return json_object;
+	}
+
+	@Override
+	public JSONObject addObject(JSONString name) {
+		JSONObject json_object = new JSONObject();
+		values.put( name, json_object );
+		return json_object;
+	}
+
+	@Override
+	public JSONArray addArray(String name) {
+		JSONArray json_array = new JSONArray();
+		JSONString json_string = JSONString.String( name );
+		values.put( json_string, json_array );
+		return json_array;
+	}
+
+	@Override
+	public JSONArray addArray(JSONString name) {
+		JSONArray json_array = new JSONArray();
+		values.put( name, json_array );
+		return json_array;
+	}
+
 	@Override 
 	public JSONString put(String name, JSONValue value) {
 		JSONString json_string = JSONString.String( name );
@@ -81,7 +111,7 @@ public class JSONObject extends JSONStructure {
 
 	@Override
 	public void put(JSONString name, JSONValue value) {
-		values.put(name, value);
+		values.put( name, value );
 	}
 
 	@Override

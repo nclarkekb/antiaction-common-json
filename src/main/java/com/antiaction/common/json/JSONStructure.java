@@ -15,6 +15,36 @@ package com.antiaction.common.json;
  */
 public abstract class JSONStructure extends JSONValue {
 
+	// TODO
+	public JSONObject addObject() {
+		throw new UnsupportedOperationException();
+	}
+
+	// TODO
+	public JSONObject addObject(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	// TODO
+	public JSONObject addObject(JSONString name) {
+		throw new UnsupportedOperationException();
+	}
+
+	// TODO
+	public JSONArray addArray() {
+		throw new UnsupportedOperationException();
+	}
+
+	// TODO
+	public JSONArray addArray(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	// TODO
+	public JSONArray addArray(JSONString name) {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
 	 * Add a JSON value to an array.
 	 * @param value JSON value

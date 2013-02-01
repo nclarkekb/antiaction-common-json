@@ -29,11 +29,6 @@ public class JSONArray extends JSONStructure {
 	}
 
 	@Override
-	public void add(JSONValue value) {
-		values.add(value);
-	}
-
-	@Override
 	public void encode(JSONEncoder encoder) throws IOException {
 		encoder.write( '[' );
 		for (int i=0; i<values.size(); ++i) {
@@ -59,6 +54,25 @@ public class JSONArray extends JSONStructure {
 		encoder.write( "\n" );
 		encoder.write( indentation );
 		encoder.write( ']' );
+	}
+
+	@Override
+	public JSONObject addObject() {
+		JSONObject json_object = new JSONObject();
+		values.add( json_object );
+		return json_object;
+	}
+
+	@Override
+	public JSONArray addArray() {
+		JSONArray json_array = new JSONArray();
+		values.add( json_array );
+		return json_array;
+	}
+
+	@Override
+	public void add(JSONValue value) {
+		values.add(value);
 	}
 
 	@Override

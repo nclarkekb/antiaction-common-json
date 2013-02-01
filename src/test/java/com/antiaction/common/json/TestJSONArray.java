@@ -195,6 +195,16 @@ public class TestJSONArray {
 		}
 		catch (UnsupportedOperationException e) {
 		}
+
+		Assert.assertEquals( 0, json_array.values.size() );
+
+		JSONArray json_array_added = json_array.addArray();
+		Assert.assertNotNull( json_array_added );
+		Assert.assertEquals( 1, json_array.values.size() );
+
+		JSONObject json_object_added = json_array.addObject();
+		Assert.assertNotNull( json_object_added );
+		Assert.assertEquals( 2, json_array.values.size() );
 	}
 
 }

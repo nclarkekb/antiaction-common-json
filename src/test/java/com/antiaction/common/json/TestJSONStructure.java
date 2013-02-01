@@ -20,6 +20,48 @@ public class TestJSONStructure {
 		};
 
 		try {
+			json_structure.addObject();
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			json_structure.addObject( "name" );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			json_structure.addObject( JSONString.String( "name" ) );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			json_structure.addArray();
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			json_structure.addArray( "name" );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
+			json_structure.addArray( JSONString.String( "name" ) );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (UnsupportedOperationException e) {
+		}
+
+		try {
 			json_structure.add( JSONNull.Null );
 			Assert.fail( "Exception expected!" );
 		}

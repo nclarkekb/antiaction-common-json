@@ -654,7 +654,7 @@ public class JSONObjectMapper {
 										booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
 									}
 									if ( booleanVal == null ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 									arrayOf_boolean[ i ] = booleanVal;
 								}
@@ -672,7 +672,7 @@ public class JSONObjectMapper {
 										intVal = converters[ fieldMapping.converterId ].getInteger( fieldMapping.fieldName, json_value );
 									}
 									if ( intVal == null ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 									arrayOf_int[ i ] = intVal;
 								}
@@ -690,7 +690,7 @@ public class JSONObjectMapper {
 										longVal = converters[ fieldMapping.converterId ].getLong( fieldMapping.fieldName, json_value );
 									}
 									if ( longVal == null ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 									arrayOf_long[ i ] = longVal;
 								}
@@ -708,7 +708,7 @@ public class JSONObjectMapper {
 										floatVal = converters[ fieldMapping.converterId ].getFloat( fieldMapping.fieldName, json_value );
 									}
 									if ( floatVal == null ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 									arrayOf_float[ i ] = floatVal;
 								}
@@ -726,7 +726,7 @@ public class JSONObjectMapper {
 										doubleVal = converters[ fieldMapping.converterId ].getDouble( fieldMapping.fieldName, json_value );
 									}
 									if ( doubleVal == null ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 									arrayOf_double[ i ] =  doubleVal;
 								}
