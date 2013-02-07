@@ -983,7 +983,7 @@ public class JSONObjectMapper {
 					else {
 						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
 						if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 						}
 					}
 					json_struct.put( fieldMapping.jsonName, json_value );
@@ -996,7 +996,7 @@ public class JSONObjectMapper {
 					else {
 						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
 						if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 						}
 					}
 					json_struct.put( fieldMapping.jsonName, json_value );
@@ -1009,7 +1009,7 @@ public class JSONObjectMapper {
 					else {
 						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
 						if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 						}
 					}
 					json_struct.put( fieldMapping.jsonName, json_value );
@@ -1022,7 +1022,7 @@ public class JSONObjectMapper {
 					else {
 						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
 						if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 						}
 					}
 					json_struct.put( fieldMapping.jsonName, json_value );
@@ -1035,7 +1035,7 @@ public class JSONObjectMapper {
 					else {
 						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
 						if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 						}
 					}
 					json_struct.put( fieldMapping.jsonName, json_value );
@@ -1276,7 +1276,7 @@ public class JSONObjectMapper {
 								else {
 									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
 									if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 								}
 								json_array.add( json_value );
@@ -1292,7 +1292,7 @@ public class JSONObjectMapper {
 								else {
 									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
 									if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 								}
 								json_array.add( json_value );
@@ -1308,7 +1308,7 @@ public class JSONObjectMapper {
 								else {
 									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
 									if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 								}
 								json_array.add( json_value );
@@ -1324,7 +1324,7 @@ public class JSONObjectMapper {
 								else {
 									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
 									if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 								}
 								json_array.add( json_value );
@@ -1340,7 +1340,7 @@ public class JSONObjectMapper {
 								else {
 									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
 									if ( json_value == null || json_value.type == JSONConstants.VT_NULL ) {
-										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 									}
 								}
 								json_array.add( json_value );
