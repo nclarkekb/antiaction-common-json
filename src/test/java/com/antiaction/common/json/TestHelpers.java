@@ -7,6 +7,8 @@
 
 package com.antiaction.common.json;
 
+import java.io.ByteArrayOutputStream;
+
 import org.junit.Assert;
 
 public class TestHelpers {
@@ -30,6 +32,25 @@ public class TestHelpers {
 		for ( int i=0; i<expecteds.length; ++i ) {
 			Assert.assertEquals( (Double)expecteds[ i ], (Double)actuals[ i ] );
 		}
+	}
+
+	public static byte[] filterWhitespaces(byte[] in) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		int c;
+		for (int i=0; i<in.length; ++ i) {
+			c = in[ i ] & 255;
+			switch ( c ) {
+			case ' ':
+			case '\t':
+			case '\r':
+			case '\n':
+				break;
+			default:
+				out.write( c );
+				break;
+			}
+		}
+		return out.toByteArray();
 	}
 
 }

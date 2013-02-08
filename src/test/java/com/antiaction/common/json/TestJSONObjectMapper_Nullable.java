@@ -139,7 +139,8 @@ public class TestJSONObjectMapper_Nullable {
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
 
 			TestJSONMapObjectNullable result = json_om.toObject( json_struct, TestJSONMapObjectNullable.class );
 
@@ -201,7 +202,8 @@ public class TestJSONObjectMapper_Nullable {
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
 
 			TestJSONMapObject result2 = json_om.toObject( json_struct, TestJSONMapObject.class );
 
@@ -400,7 +402,8 @@ public class TestJSONObjectMapper_Nullable {
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
 
 			TestJSONMapObjectNullableWithAV result = json_om.toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
 
@@ -462,7 +465,8 @@ public class TestJSONObjectMapper_Nullable {
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
 
 			TestJSONMapObjectWithAV result2 = json_om.toObject( json_struct, TestJSONMapObjectWithAV.class );
 

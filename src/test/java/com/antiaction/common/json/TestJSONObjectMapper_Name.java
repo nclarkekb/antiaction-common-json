@@ -74,7 +74,8 @@ public class TestJSONObjectMapper_Name {
 			json_struct = json_om.toJSON( obj );
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( out.toString( "ISO-8859-1" ) );
+			// debug
+			//System.out.println( out.toString( "ISO-8859-1" ) );
 
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 

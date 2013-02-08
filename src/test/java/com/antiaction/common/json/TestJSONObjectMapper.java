@@ -7,6 +7,10 @@
 
 package com.antiaction.common.json;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -394,20 +398,31 @@ public class TestJSONObjectMapper {
 			TestJSONMapObject result;
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json.encodeJSONtext( json_struct, json_encoder, false, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			byte[] json_compact = out.toByteArray();
+			// debug
+			//System.out.println( new String( json_compact ) );
 
 			result = json_om.toObject( json_struct, TestJSONMapObject.class );
 			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
-			System.out.println( new String( out.toByteArray() ) );
+			byte[] json_pretty = out.toByteArray();
+			// debug
+			//System.out.println( new String( json_pretty ) );
 
 			result = json_om.toObject( json_struct, TestJSONMapObject.class );
 			assert_jsonobjectmapper_tojson_result( result );
+
+            Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
+
+            json_pretty = TestHelpers.filterWhitespaces( json_pretty );
+
+            Assert.assertEquals( json_compact.length, json_pretty.length );
+            Assert.assertArrayEquals( json_compact, json_pretty );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();

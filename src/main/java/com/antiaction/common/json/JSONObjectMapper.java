@@ -158,11 +158,11 @@ public class JSONObjectMapper {
 
 		String typeName = clazz.getName();
 		// debug
-		System.out.println( typeName );
+		//System.out.println( typeName );
 		Integer arrayType = 0;
 		arrayType = arrayTypeMappings.get( typeName );
 		// debug
-		System.out.println( arrayType );
+		//System.out.println( arrayType );
 		if ( arrayType == null ) {
 			level = 0;
 			while ( level < typeName.length() && typeName.charAt( level ) == '[' ) {
@@ -211,8 +211,6 @@ public class JSONObjectMapper {
 
 		json = clazz.getAnnotation( JSON.class );
 		if ( json != null ) {
-			// debug
-			//System.out.println( "json" );
 			String[] ignores = json.ignore();
 			for ( int i=0; i<ignores.length; ++i) {
 				json_om.ignore.add( ignores[ i ] );
@@ -259,7 +257,7 @@ public class JSONObjectMapper {
 				if ( !bIgnore ) {
 					fieldModsMask = ClassTypeModifiers.getFieldModifiersMask( field );
 					// debug
-					System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
+					//System.out.println( field.getName() + " - " + ClassTypeModifiers.toString( fieldModsMask ) );
 					bIgnore = (fieldModsMask & FIELD_IGNORE_TYPE_MODIFIER) != 0;
 				}
 				if ( !bIgnore ) {
@@ -267,7 +265,7 @@ public class JSONObjectMapper {
 					fieldTypeName = fieldType.getName();
 					classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
 					// debug
-					System.out.println( fieldTypeName + " " + ClassTypeModifiers.toString( classTypeMask ) );
+					//System.out.println( fieldTypeName + " " + ClassTypeModifiers.toString( classTypeMask ) );
 
 					type = typeMappings.get( fieldTypeName );
 					fieldObjectMapping = null;
@@ -278,7 +276,7 @@ public class JSONObjectMapper {
 						classTypeMask &= FIELD_VALID_TYPE_MODIFIERS_MASK;
 						if ( (classTypeMask == VALID_CLASS) || (classTypeMask == VALID_MEMBER_CLASS) ) {
 							Type genericType = field.getGenericType();
-							System.out.println( "GT: " + genericType + " " + genericType.getClass() );
+							//System.out.println( "GT: " + genericType + " " + genericType.getClass() );
 
 							type = T_OBJECT;
 							// Cache
@@ -292,7 +290,7 @@ public class JSONObjectMapper {
 								Type[] typeArguments = parameterizedType.getActualTypeArguments();
 								for ( Type typeArgument : typeArguments ) {
 									Class<?> classType = ((Class<?>)typeArgument);
-									System.out.println( "Field " + field.getName() + " has a parameterized type of " + classType.getSimpleName() );
+									//System.out.println( "Field " + field.getName() + " has a parameterized type of " + classType.getSimpleName() );
 								}
 							}
 						}
