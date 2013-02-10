@@ -5,6 +5,17 @@ Java JSON library
 
 ## History ##
 
+### version 0.4.0 ###
+
+Work on improving JSON object mapper for array fields.
+
+* Support for array fields in object mapper.
+* Improved JSON decoder exceptions including (x, y) in source stream.
+* Name annotation to map object field to/from differently named JSON kay.
+* NullValues annotation to allow null values in arrays.
+* Converter annotation and support for callbacks in object mapper.
+* Work in progress for top level array and native collection types object mapping.
+
 ### version 0.3.0 ###
 
 Work on the Object to JSON structure mapper.
