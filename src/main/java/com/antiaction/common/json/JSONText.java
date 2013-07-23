@@ -59,10 +59,10 @@ public class JSONText {
 	/** Temporary <code>StringBuilder</code> used to store JSON strings and values. */
 	protected StringBuilder sbStr = new StringBuilder();
 
-	protected static class StackEntry {
-		JSONStructure json_structure;
-		JSONString json_name;
-		StackEntry(	JSONStructure json_structure, JSONString json_name) {
+	public static final class StackEntry {
+		public JSONStructure json_structure;
+		public JSONString json_name;
+		public StackEntry(JSONStructure json_structure, JSONString json_name) {
 			this.json_structure = json_structure;
 			this.json_name = json_name;
 		}

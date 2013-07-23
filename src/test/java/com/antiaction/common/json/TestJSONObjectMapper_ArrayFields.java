@@ -26,7 +26,7 @@ import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
 
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper_Arrays {
+public class TestJSONObjectMapper_ArrayFields {
 
 	@Test
 	public void test_jsonobjectmapper_array_tojson() {

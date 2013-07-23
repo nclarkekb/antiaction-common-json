@@ -22,10 +22,17 @@ import java.util.TreeSet;
  */
 public class JSONObjectMapping {
 
+	/** Object mapping type. */
 	public static final int OMT_OBJECT = 1;
+	/** Array mapping type. */
 	public static final int OMT_ARRAY = 2;
 
+	/** Mapping type, object or array. */
 	public int type;
+
+	/*
+	 * Object.
+	 */
 
 	/** Field names to ignore when mapping objects. */
 	public Set<String> ignore = new HashSet<String>();
@@ -44,6 +51,22 @@ public class JSONObjectMapping {
 
 	/** Boolean indicating if one or more field mapping(s) requires a converter. */
 	public boolean converters;
+
+	/*
+	 * Array.
+	 */
+
+	/** JSON Java array type identifier. */
+	public int arrayType;
+
+	/** Field class type name. */
+	public String className;
+
+	/** Field class. */
+	public Class<?> clazz;
+
+	/** Field object mapping, if object type. */
+	public JSONObjectMapping objectMapping;
 
 	private JSONObjectMapping() {
 	}

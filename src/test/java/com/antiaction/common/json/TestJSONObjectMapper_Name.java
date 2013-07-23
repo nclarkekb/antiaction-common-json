@@ -60,7 +60,7 @@ public class TestJSONObjectMapper_Name {
 				// debug
 				//System.out.println( e.getMessage() );
 				//System.out.println( e.getMessage().indexOf( " does not have a zero argument contructor!" ) );
-                Assert.assertThat( e.getMessage().indexOf( " does not have a zero argument contructor!" ), is( not( equalTo( -1 ) ) ) );
+                Assert.assertThat( e.getMessage().indexOf( " does not have a zero argument constructor!" ), is( not( equalTo( -1 ) ) ) );
 			}
 
 			json_om.register( TestJsonName.class );

@@ -13,6 +13,7 @@ import java.nio.CharBuffer;
 
 /**
  * Interface for JSON decoders to implement.
+ * Implementations will most likely not be thread safe!
  *
  * @author Nicholas
  */

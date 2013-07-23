@@ -18,6 +18,8 @@ import java.nio.charset.Charset;
  * the encoding identifier.
  * For performance issues this class uses <code>ThreadLocal</code> instances to
  * add concurrency support.
+ * This class uses <code>ThreadLocal</code> and is thread safe to the point
+ * that the same instance is returned to the same thread.
  *
  * BOM
  * 00 00 FE FF  UTF-32, big-endian

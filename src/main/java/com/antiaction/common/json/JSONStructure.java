@@ -15,32 +15,54 @@ package com.antiaction.common.json;
  */
 public abstract class JSONStructure extends JSONValue {
 
-	// TODO
+	/**
+	 * Create a new JSON object, add it to this array and return it to caller.
+	 * @return JSON object added to this array
+	 */
 	public JSONObject addObject() {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO
+	/**
+	 * Create a new JSON object, add to this object using the supplied name and return it to caller.
+	 * @param name object name used when adding the newly created object to this object
+	 * @return JSON object added to this object
+	 */
 	public JSONObject addObject(String name) {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO
+	/**
+	 * Create a new JSON object, add to this object using the supplied name and return it to caller.
+	 * @param name object name used when adding the newly created object to this object
+	 * @return JSON object added to this object
+	 */
 	public JSONObject addObject(JSONString name) {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO
+	/**
+	 * Create a new JSON array, add it to this array and return it to caller.
+	 * @return JSON array added to this array
+	 */
 	public JSONArray addArray() {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO
+	/**
+	 * Create a new JSON array, add to this object using the supplied name and return it to caller.
+	 * @param name object name used when adding the newly created array to this object
+	 * @return JSON array added to this object
+	 */
 	public JSONArray addArray(String name) {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO
+	/**
+	 * Create a new JSON array, add to this object using the supplied name and return it to caller.
+	 * @param name object name used when adding the newly created array to this object
+	 * @return JSON array added to this object
+	 */
 	public JSONArray addArray(JSONString name) {
 		throw new UnsupportedOperationException();
 	}

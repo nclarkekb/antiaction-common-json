@@ -156,39 +156,41 @@ public class JSONObjectMapper {
 		JSONObjectMapping json_om = JSONObjectMapping.getArrayMapping();
 		classMappings.put( clazz.getName(), json_om );
 
-		String typeName = clazz.getName();
-		// debug
-		//System.out.println( typeName );
-		Integer arrayType = 0;
-		arrayType = arrayTypeMappings.get( typeName );
-		// debug
-		//System.out.println( arrayType );
-		if ( arrayType == null ) {
-			level = 0;
-			while ( level < typeName.length() && typeName.charAt( level ) == '[' ) {
-				++level;
-			}
-			// [L<class>;
-			if ( level == 1 && level < typeName.length() && typeName.charAt( level ) == 'L' && typeName.endsWith( ";" ) ) {
-				arrayType = T_OBJECT;
-				typeName = typeName.substring( level + 1, typeName.length() - 1 );
-				try {
-					fieldType = Class.forName( typeName, true, clazz.getClassLoader() );
-				} catch (ClassNotFoundException e) {
-					new JSONException( e );
+		try {
+			String arrayTypeName = clazz.getName();
+			// debug
+			//System.out.println( typeName );
+			Integer arrayType = arrayTypeMappings.get( arrayTypeName );
+			// debug
+			//System.out.println( arrayType );
+			if ( arrayType == null ) {
+				level = 0;
+				while ( level < arrayTypeName.length() && arrayTypeName.charAt( level ) == '[' ) {
+					++level;
 				}
-				// Cache
-				fieldObjectMapping = classMappings.get( typeName );
-				if ( fieldObjectMapping == null ) {
-					fieldObjectMapping = mapClass( fieldType );
+				// [L<class>;
+				if ( level == 1 && level < arrayTypeName.length() && arrayTypeName.charAt( level ) == 'L' && arrayTypeName.endsWith( ";" ) ) {
+					arrayType = T_OBJECT;
+					arrayTypeName = arrayTypeName.substring( level + 1, arrayTypeName.length() - 1 );
+					fieldType = Class.forName( arrayTypeName, true, clazz.getClassLoader() );
+					// Cache
+					fieldObjectMapping = classMappings.get( arrayTypeName );
+					if ( fieldObjectMapping == null ) {
+						fieldObjectMapping = mapClass( fieldType );
+					}
 				}
+				else {
+					throw new JSONException( "Unsupported array type '" + arrayTypeName + "'." );
+				}
+				json_om.arrayType = arrayType;
+				json_om.className = arrayTypeName;
+				json_om.clazz = fieldType;
+				json_om.objectMapping = fieldObjectMapping;
 			}
-			else {
-				throw new JSONException( "Unsupported array type '" + typeName + "'." );
-			}
+		} catch (ClassNotFoundException e) {
+			new JSONException( e );
 		}
-
-		return null;
+		return json_om;
 	}
 
 	protected JSONObjectMapping mapClass(Class<?> clazz) throws JSONException {
@@ -206,7 +208,7 @@ public class JSONObjectMapper {
 		catch (NoSuchMethodException e) {
 		}
 		if ( constructor == null ) {
-			throw new JSONException( clazz.getName() + " does not have a zero argument contructor!" );
+			throw new JSONException( clazz.getName() + " does not have a zero argument constructor!" );
 		}
 
 		json = clazz.getAnnotation( JSON.class );

@@ -18,6 +18,7 @@ import java.nio.charset.CodingErrorAction;
 
 /**
  * JSON Encoder implementation using a given <code>Charset</code>.
+ * This implementation is not thread safe!
  *
  * @author Nicholas
  */

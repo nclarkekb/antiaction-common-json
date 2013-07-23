@@ -12,6 +12,7 @@ import java.io.OutputStream;
 
 /**
  * Interface for JSON encoders to implement.
+ * Implementations will most likely not be thread safe!
  *
  * @author Nicholas
  */
