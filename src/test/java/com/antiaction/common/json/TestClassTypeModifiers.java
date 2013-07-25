@@ -21,7 +21,7 @@ public class TestClassTypeModifiers {
 
 	@Test
 	public void test_jsonobjectmapper_classtypemask() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_om = new JSONObjectMappings();
 
 		/*
 		 * Annotation.

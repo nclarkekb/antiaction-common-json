@@ -64,10 +64,10 @@ public class TestJSONObjectMapper {
 			JSONDecoder json_decoder;
 			JSONText json = new JSONText();
 
-			JSONObjectMapper json_om = new JSONObjectMapper();
+			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 
-			json_om.register( SFSResult.class );
-			json_om.register( SFSResult.class );
+			json_objectmappings.register( SFSResult.class );
+			json_objectmappings.register( SFSResult.class );
 
 			SFSResult result;
 
@@ -86,7 +86,7 @@ public class TestJSONObjectMapper {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
-			result = json_om.toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getUnmarshaller().toObject( json_struct, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertTrue( result.success );
 			Assert.assertNull( result.error );
@@ -121,7 +121,7 @@ public class TestJSONObjectMapper {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
-			result = json_om.toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getUnmarshaller().toObject( json_struct, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertTrue( result.success );
 			Assert.assertNull( result.error );
@@ -156,7 +156,7 @@ public class TestJSONObjectMapper {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
-			result = json_om.toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getUnmarshaller().toObject( json_struct, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertFalse( result.success );
 			Assert.assertEquals( "rate limit exceeded", result.error );
@@ -165,14 +165,14 @@ public class TestJSONObjectMapper {
 			Assert.assertNull( result.username );
 
 			try {
-				json_om.register( boolean.class );
+				json_objectmappings.register( boolean.class );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (JSONException e) {
 			}
 
-			json_om.register( TestClass.class );
-			JSONObjectMapping objMapping = JSONObjectMapper.classMappings.get( TestClass.class.getName() );
+			json_objectmappings.register( TestClass.class );
+			JSONObjectMapping objMapping = json_objectmappings.classMappings.get( TestClass.class.getName() );
 			Assert.assertEquals( 0, objMapping.fieldMappingsList.size() );
 
 			/*
@@ -182,12 +182,12 @@ public class TestJSONObjectMapper {
 			TestTypesClass testTypes;
 
 			try {
-				testTypes = json_om.toObject( json_struct, TestTypesClass.class );
+				testTypes = json_objectmappings.getUnmarshaller().toObject( json_struct, TestTypesClass.class );
 			}
 			catch (IllegalArgumentException e) {
 			}
 
-			json_om.register( TestTypesClass.class );
+			json_objectmappings.register( TestTypesClass.class );
 
 			text = "{"
 					+ "\"b1\":true, \"b2\":false,"
@@ -210,7 +210,7 @@ public class TestJSONObjectMapper {
 			json_struct = json.decodeJSONtext( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
-			testTypes = json_om.toObject( json_struct, TestTypesClass.class );
+			testTypes = json_objectmappings.getUnmarshaller().toObject( json_struct, TestTypesClass.class );
 			Assert.assertTrue( testTypes.b1 );
 			Assert.assertFalse( testTypes.b2 );
 			Assert.assertEquals( 1234, testTypes.i1 );
@@ -333,10 +333,10 @@ public class TestJSONObjectMapper {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
 			try {
-				json_om.toJSON( new TestJSONMapObject() );
+				json_objectmappings.getMarshaller().toJSON( new TestJSONMapObject() );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (IllegalArgumentException e) {
@@ -344,7 +344,7 @@ public class TestJSONObjectMapper {
 
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 
-			json_om.register( TestJSONMapObject.class );
+			json_objectmappings.register( TestJSONMapObject.class );
 
 			TestJSONMapObject obj = new TestJSONMapObject();
 			obj.b1 = true;
@@ -394,7 +394,7 @@ public class TestJSONObjectMapper {
 			obj3.s = null;
 			obj3.b = null;
 
-			JSONStructure json_struct = json_om.toJSON( obj );
+			JSONStructure json_struct = json_objectmappings.getMarshaller().toJSON( obj );
 			TestJSONMapObject result;
 
 			out.reset();
@@ -404,7 +404,7 @@ public class TestJSONObjectMapper {
 			// debug
 			//System.out.println( new String( json_compact ) );
 
-			result = json_om.toObject( json_struct, TestJSONMapObject.class );
+			result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
@@ -414,7 +414,7 @@ public class TestJSONObjectMapper {
 			// debug
 			//System.out.println( new String( json_pretty ) );
 
-			result = json_om.toObject( json_struct, TestJSONMapObject.class );
+			result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 			assert_jsonobjectmapper_tojson_result( result );
 
             Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );

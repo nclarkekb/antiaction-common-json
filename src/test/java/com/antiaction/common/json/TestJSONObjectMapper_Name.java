@@ -47,14 +47,14 @@ public class TestJSONObjectMapper_Name {
 			JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
 			JSONText json = new JSONText();
 
-			JSONObjectMapper json_om = new JSONObjectMapper();
+			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 
 			/*
 			 * Missing zero argument constructor.
 			 */
 
 			try {
-				json_om.register( TestZeroConstructor.class );
+				json_objectmappings.register( TestZeroConstructor.class );
 			}
 			catch (JSONException e) {
 				// debug
@@ -63,7 +63,7 @@ public class TestJSONObjectMapper_Name {
                 Assert.assertThat( e.getMessage().indexOf( " does not have a zero argument constructor!" ), is( not( equalTo( -1 ) ) ) );
 			}
 
-			json_om.register( TestJsonName.class );
+			json_objectmappings.register( TestJsonName.class );
 
 			TestJsonName obj = new TestJsonName();
 			obj.i_value = 42;
@@ -71,7 +71,7 @@ public class TestJSONObjectMapper_Name {
 			obj.i = 1234;
 			obj.s = "one two three four";
 
-			json_struct = json_om.toJSON( obj );
+			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
 			// debug
@@ -86,7 +86,7 @@ public class TestJSONObjectMapper_Name {
 			Assert.assertEquals( JSONNumber.Integer( 1234 ), json_object.get( "s" ) );
 			Assert.assertEquals( JSONString.String( "one two three four" ), json_object.get( "i" ) );
 
-			TestJsonName result = json_om.toObject( json_struct, TestJsonName.class );
+			TestJsonName result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJsonName.class );
 
 			Assert.assertEquals( 42, result.i_value );
 			Assert.assertEquals( "meaning of life", result.s_value );

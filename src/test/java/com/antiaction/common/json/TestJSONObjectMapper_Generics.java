@@ -19,7 +19,7 @@ public class TestJSONObjectMapper_Generics {
 
 	@Test
 	public void test_jsonobjectmapper_generics() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( TestJSONMapObjectGenerics.class );
 		}
@@ -79,7 +79,7 @@ public class TestJSONObjectMapper_Generics {
 		System.out.println( String[].class.getName() );
 		*/
 
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( TestJSONMapArrayObject.class );
 		}

@@ -22,7 +22,7 @@ public class TestJSONObjectMapper_InvalidField {
 
 	@Test
 	public void test_jsonobjectmapper_invalidfields() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( InvalidField1.class );
 			Assert.fail( "Exception expected!" );

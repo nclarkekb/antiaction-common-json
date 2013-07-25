@@ -25,7 +25,7 @@ public class TestJSONObjectMapper_Nullable {
 
 	@Test
 	public void test_jsonobjectmapper_register_nullable_invalid() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( TestNullableField1Class.class );
 			Assert.fail( "Exception expected!" );
@@ -88,12 +88,12 @@ public class TestJSONObjectMapper_Nullable {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 
-			json_om.register( TestJSONMapObjectNullable.class );
-			json_om.register( TestJSONMapObject.class );
+			json_objectmappings.register( TestJSONMapObjectNullable.class );
+			json_objectmappings.register( TestJSONMapObject.class );
 
 			JSONStructure json_struct;
 
@@ -134,7 +134,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_om.toJSON( obj );
+			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -142,7 +142,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectNullable result = json_om.toObject( json_struct, TestJSONMapObjectNullable.class );
+			TestJSONMapObjectNullable result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectNullable.class );
 
 			Assert.assertNotNull( result );
 			Assert.assertEquals( true, result.b1 );
@@ -197,7 +197,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_om.toJSON( obj2 );
+			json_struct = json_objectmappings.getMarshaller().toJSON( obj2 );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -205,7 +205,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObject result2 = json_om.toObject( json_struct, TestJSONMapObject.class );
+			TestJSONMapObject result2 = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 
 			Assert.assertNotNull( result2 );
 			Assert.assertEquals( false, result2.b1 );
@@ -351,12 +351,12 @@ public class TestJSONObjectMapper_Nullable {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 
-			json_om.register( TestJSONMapObjectNullableWithAV.class );
-			json_om.register( TestJSONMapObjectWithAV.class );
+			json_objectmappings.register( TestJSONMapObjectNullableWithAV.class );
+			json_objectmappings.register( TestJSONMapObjectWithAV.class );
 
 			JSONStructure json_struct;
 
@@ -397,7 +397,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_om.toJSON( obj );
+			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -405,7 +405,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectNullableWithAV result = json_om.toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
+			TestJSONMapObjectNullableWithAV result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
 
 			Assert.assertNotNull( result );
 			Assert.assertEquals( true, result.b1 );
@@ -460,7 +460,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_om.toJSON( obj2 );
+			json_struct = json_objectmappings.getMarshaller().toJSON( obj2 );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -468,7 +468,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectWithAV result2 = json_om.toObject( json_struct, TestJSONMapObjectWithAV.class );
+			TestJSONMapObjectWithAV result2 = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectWithAV.class );
 
 			Assert.assertNotNull( result2 );
 			Assert.assertEquals( false, result2.b1 );
@@ -634,12 +634,12 @@ public class TestJSONObjectMapper_Nullable {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		try {
-			json_om.register( TestJSONMapObjectNull.class );
-			json_om.register( TestJSONMapObjectNullable.class );
-			json_om.register( TestJSONMapObject.class );
+			json_objectmappings.register( TestJSONMapObjectNull.class );
+			json_objectmappings.register( TestJSONMapObjectNullable.class );
+			json_objectmappings.register( TestJSONMapObject.class );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
@@ -654,75 +654,75 @@ public class TestJSONObjectMapper_Nullable {
 			 */
 			moldObject = get_toObject_MoldObject();
 			moldObject.b1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.b2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.i1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.i2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.l1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.l2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.f1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.f2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.d1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.d2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.bi = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.bd = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.s = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.b = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.obj = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_om );
+			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
 
 			String[] fields = { "b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj" };
 			for ( int i=0; i<fields.length; ++i ) {
 				JSONStructure json_struct;
 				try {
-					json_struct = json_om.toJSON( moldObject );
+					json_struct = json_objectmappings.getMarshaller().toJSON( moldObject );
 					((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
 					out.reset();
 					json.encodeJSONtext( json_struct, json_encoder, true, out );
 					// debug
 					//System.out.println( new String( out.toByteArray() ) );
-					json_om.toObject( json_struct, TestJSONMapObject.class );
+					json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 					Assert.fail( "Exception expected!" );
 				}
 				catch (JSONException e) {
@@ -752,10 +752,10 @@ public class TestJSONObjectMapper_Nullable {
 		}
 	}
 
-	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMapper json_om) throws IOException, InstantiationException, IllegalAccessException {
+	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMappings json_objectmappings) throws IOException, InstantiationException, IllegalAccessException {
 		JSONStructure json_struct = null;
 		try {
-			json_struct = json_om.toJSON( moldObject );
+			json_struct = json_objectmappings.getMarshaller().toJSON( moldObject );
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 			// debug
@@ -766,7 +766,7 @@ public class TestJSONObjectMapper_Nullable {
 			Assert.fail( "Unexpected exception!" );
 		}
 		try {
-			json_om.toObject( json_struct, TestJSONMapObject.class );
+			json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -847,94 +847,100 @@ public class TestJSONObjectMapper_Nullable {
 
 	@Test
 	public void test_jsonobjectmapper_tojson_nullable_invalid() {
-		JSONObjectMapper json_om = new JSONObjectMapper();
+		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		TestJSONMapObject moldObject;
 		TestJSONMapObjectWithAV moldObjectWithAV;
 		try {
+			json_objectmappings.register( TestJSONMapObject.class );
+			json_objectmappings.register( TestJSONMapObjectWithAV.class );
 			/*
 			 * DefaultAV.
 			 */
 			moldObject = get_toJSON_MoldObject();
 			moldObject.b2 = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 		
 			moldObject = get_toJSON_MoldObject();
 			moldObject.i2 = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.l2 = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.f2 = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.d2 = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.bi = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.bd = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.s = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.b = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			
 			moldObject = get_toJSON_MoldObject();
 			moldObject.obj = null;
-			assert_toJSON_exception( json_om, moldObject );
+			assert_toJSON_exception( json_objectmappings, moldObject );
 			/*
 			 * WithAV.
 			 */
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.b2 = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 		
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.i2 = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.l2 = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.f2 = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.d2 = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.bi = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.bd = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.s = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.b = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
 			
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.obj = null;
-			assert_toJSONWithAV_exception( json_om, moldObjectWithAV );
+			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -946,9 +952,9 @@ public class TestJSONObjectMapper_Nullable {
 		}
 	}
 
-	public void assert_toJSON_exception(JSONObjectMapper json_om, TestJSONMapObject moldObject) throws IllegalArgumentException, IllegalAccessException {
+	public void assert_toJSON_exception(JSONObjectMappings json_objectmappings, TestJSONMapObject moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_om.toJSON( moldObject );
+			json_objectmappings.getMarshaller().toJSON( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -992,9 +998,9 @@ public class TestJSONObjectMapper_Nullable {
 		return obj;
 	}
 
-	public void assert_toJSONWithAV_exception(JSONObjectMapper json_om, TestJSONMapObjectWithAV moldObject) throws IllegalArgumentException, IllegalAccessException {
+	public void assert_toJSONWithAV_exception(JSONObjectMappings json_objectmappings, TestJSONMapObjectWithAV moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_om.toJSON( moldObject );
+			json_objectmappings.getMarshaller().toJSON( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
