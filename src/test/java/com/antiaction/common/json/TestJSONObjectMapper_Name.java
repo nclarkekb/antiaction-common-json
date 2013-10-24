@@ -71,7 +71,7 @@ public class TestJSONObjectMapper_Name {
 			obj.i = 1234;
 			obj.s = "one two three four";
 
-			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 
 			// debug
@@ -86,7 +86,7 @@ public class TestJSONObjectMapper_Name {
 			Assert.assertEquals( JSONNumber.Integer( 1234 ), json_object.get( "s" ) );
 			Assert.assertEquals( JSONString.String( "one two three four" ), json_object.get( "i" ) );
 
-			TestJsonName result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJsonName.class );
+			TestJsonName result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJsonName.class );
 
 			Assert.assertEquals( 42, result.i_value );
 			Assert.assertEquals( "meaning of life", result.s_value );

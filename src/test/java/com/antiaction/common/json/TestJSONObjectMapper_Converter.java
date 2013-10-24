@@ -127,8 +127,8 @@ public class TestJSONObjectMapper_Converter {
 	public void test_jsonobjectmapper_converter_toobject() {
 		JSONConverterAbstract[] converters;
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		JSONStructure json_struct;
 
 		try {
@@ -1280,8 +1280,8 @@ public class TestJSONObjectMapper_Converter {
 	public void test_jsonobjectmapper_converter_tojson() {
 		JSONConverterAbstract[] converters;
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 
 		try {
 			json_objectmappings.register( TestBoolean1Conversion.class );

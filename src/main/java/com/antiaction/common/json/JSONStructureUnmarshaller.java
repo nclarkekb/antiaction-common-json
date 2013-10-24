@@ -19,13 +19,13 @@ import java.util.Map;
  *
  * @author Nicholas
  */
-public class JSONObjectUnmarshaller {
+public class JSONStructureUnmarshaller {
 
 	protected JSONObjectMappings objectMappings;
 
 	protected Map<String, JSONObjectMapping> classMappings;
 
-	public JSONObjectUnmarshaller(JSONObjectMappings objectMappings) {
+	public JSONStructureUnmarshaller(JSONObjectMappings objectMappings) {
 		this.objectMappings = objectMappings;
 		this.classMappings = objectMappings.classMappings;
 	}

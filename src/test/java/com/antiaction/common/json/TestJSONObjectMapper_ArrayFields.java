@@ -35,8 +35,8 @@ public class TestJSONObjectMapper_ArrayFields {
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
 			json_objectmappings.register( TestJSONMapObjectArrays.class );
 
@@ -314,7 +314,7 @@ public class TestJSONObjectMapper_ArrayFields {
 		Assert.assertNull( result.obj_arr );
 	}
 
-	public void assert_tojson_exception(JSONObjectMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public void assert_tojson_exception(JSONStructureMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
 		try {
 			marshaller.toJSON( obj );
 			Assert.fail( "Exception expected!" );
@@ -330,8 +330,8 @@ public class TestJSONObjectMapper_ArrayFields {
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
 			json_objectmappings.register( TestJSONMapObjectArraysWithAV.class );
 
@@ -630,8 +630,8 @@ public class TestJSONObjectMapper_ArrayFields {
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
 			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid1.class );
 			Assert.fail( "Exception expected!" );
@@ -857,8 +857,8 @@ public class TestJSONObjectMapper_ArrayFields {
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		*/
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-		JSONObjectMarshaller marshaller = json_objectmappings.getMarshaller();
-		JSONObjectUnmarshaller unmarshaller = json_objectmappings.getUnmarshaller();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
 			json_objectmappings.register( TestJSONMapObjectArrays.class );
 			json_objectmappings.register( TestJSONMapObjectArraysWithAV.class );
@@ -1168,7 +1168,7 @@ public class TestJSONObjectMapper_ArrayFields {
 		return obj;
 	}
 
-	public void assert_JSONMapObjectArraysNotNullableNullValuesGlobal_exception(JSONObjectMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public void assert_JSONMapObjectArraysNotNullableNullValuesGlobal_exception(JSONStructureMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
 		try {
 			marshaller.toJSON( obj );
 		}

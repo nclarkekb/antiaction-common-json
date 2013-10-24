@@ -1,5 +1,5 @@
 /*
- * Created on 11/11/2012
+ * Created on 21/10/2013
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -28,7 +28,7 @@ import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
 
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper {
+public class TestJSONStreamMarshaller {
 
 	@Test
 	public void test_jsonobjectmapper_toobject() {
@@ -391,30 +391,28 @@ public class TestJSONObjectMapper {
 			obj3.s = null;
 			obj3.b = null;
 
-			JSONStructure json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
-			TestJSONMapObject result;
-
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, false, out );
+			TestJSONMapObject result;
 
 			byte[] json_compact = out.toByteArray();
 			// debug
-			//System.out.println( new String( json_compact ) );
+			System.out.println( new String( json_compact ) );
 
-			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
-			assert_jsonobjectmapper_tojson_result( result );
+			//result = json_objectmappings.getStreamUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			//assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
-			//System.out.println( new String( json_pretty ) );
+			System.out.println( new String( json_pretty ) );
 
-			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
-			assert_jsonobjectmapper_tojson_result( result );
+			//result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			//assert_jsonobjectmapper_tojson_result( result );
 
-            Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
+            //Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
 
             json_pretty = TestHelpers.filterWhitespaces( json_pretty );
 

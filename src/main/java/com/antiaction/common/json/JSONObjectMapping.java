@@ -49,6 +49,9 @@ public class JSONObjectMapping {
 	/** List of mapped fields. */
 	public List<JSONObjectFieldMapping> fieldMappingsList = new LinkedList<JSONObjectFieldMapping>();
 
+	/** Array of mapped fields. */
+	public JSONObjectFieldMapping[] fieldMappingsArr;
+
 	/** Boolean indicating if one or more field mapping(s) requires a converter. */
 	public boolean converters;
 

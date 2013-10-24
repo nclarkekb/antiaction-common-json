@@ -14,17 +14,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Serialize Java Object(s) into JSON data.
+ * Serialize Java Object(s) into a JSON structure.
  *
  * @author Nicholas
  */
-public class JSONObjectMarshaller {
+public class JSONStructureMarshaller {
 
 	protected JSONObjectMappings objectMappings;
 
 	protected Map<String, JSONObjectMapping> classMappings;
 
-	public JSONObjectMarshaller(JSONObjectMappings objectMappings) {
+	public JSONStructureMarshaller(JSONObjectMappings objectMappings) {
 		this.objectMappings = objectMappings;
 		this.classMappings = objectMappings.classMappings;
 	}

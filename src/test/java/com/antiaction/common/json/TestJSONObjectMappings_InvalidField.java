@@ -18,10 +18,13 @@ import com.antiaction.common.json.TestClassTypeModifiers.TestInterface;
 import com.antiaction.common.json.TestClassTypeModifiers.TestMemberClass;
 
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper_InvalidField {
+public class TestJSONObjectMappings_InvalidField {
 
 	@Test
 	public void test_jsonobjectmapper_invalidfields() {
+		JSONObjectMappingConstants json_omc = new JSONObjectMappingConstants();
+		Assert.assertNotNull( json_omc );
+
 		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( InvalidField1.class );

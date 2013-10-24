@@ -134,7 +134,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -142,7 +142,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectNullable result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectNullable.class );
+			TestJSONMapObjectNullable result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObjectNullable.class );
 
 			Assert.assertNotNull( result );
 			Assert.assertEquals( true, result.b1 );
@@ -197,7 +197,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_objectmappings.getMarshaller().toJSON( obj2 );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj2 );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -205,7 +205,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObject result2 = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			TestJSONMapObject result2 = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 
 			Assert.assertNotNull( result2 );
 			Assert.assertEquals( false, result2.b1 );
@@ -397,7 +397,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_objectmappings.getMarshaller().toJSON( obj );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -405,7 +405,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectNullableWithAV result = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
+			TestJSONMapObjectNullableWithAV result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObjectNullableWithAV.class );
 
 			Assert.assertNotNull( result );
 			Assert.assertEquals( true, result.b1 );
@@ -460,7 +460,7 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_objectmappings.getMarshaller().toJSON( obj2 );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj2 );
 
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
@@ -468,7 +468,7 @@ public class TestJSONObjectMapper_Nullable {
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 
-			TestJSONMapObjectWithAV result2 = json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObjectWithAV.class );
+			TestJSONMapObjectWithAV result2 = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObjectWithAV.class );
 
 			Assert.assertNotNull( result2 );
 			Assert.assertEquals( false, result2.b1 );
@@ -716,13 +716,13 @@ public class TestJSONObjectMapper_Nullable {
 			for ( int i=0; i<fields.length; ++i ) {
 				JSONStructure json_struct;
 				try {
-					json_struct = json_objectmappings.getMarshaller().toJSON( moldObject );
+					json_struct = json_objectmappings.getStructureMarshaller().toJSON( moldObject );
 					((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
 					out.reset();
 					json.encodeJSONtext( json_struct, json_encoder, true, out );
 					// debug
 					//System.out.println( new String( out.toByteArray() ) );
-					json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+					json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 					Assert.fail( "Exception expected!" );
 				}
 				catch (JSONException e) {
@@ -755,7 +755,7 @@ public class TestJSONObjectMapper_Nullable {
 	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMappings json_objectmappings) throws IOException, InstantiationException, IllegalAccessException {
 		JSONStructure json_struct = null;
 		try {
-			json_struct = json_objectmappings.getMarshaller().toJSON( moldObject );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSON( moldObject );
 			out.reset();
 			json.encodeJSONtext( json_struct, json_encoder, true, out );
 			// debug
@@ -766,7 +766,7 @@ public class TestJSONObjectMapper_Nullable {
 			Assert.fail( "Unexpected exception!" );
 		}
 		try {
-			json_objectmappings.getUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -954,7 +954,7 @@ public class TestJSONObjectMapper_Nullable {
 
 	public void assert_toJSON_exception(JSONObjectMappings json_objectmappings, TestJSONMapObject moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_objectmappings.getMarshaller().toJSON( moldObject );
+			json_objectmappings.getStructureMarshaller().toJSON( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -1000,7 +1000,7 @@ public class TestJSONObjectMapper_Nullable {
 
 	public void assert_toJSONWithAV_exception(JSONObjectMappings json_objectmappings, TestJSONMapObjectWithAV moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_objectmappings.getMarshaller().toJSON( moldObject );
+			json_objectmappings.getStructureMarshaller().toJSON( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {

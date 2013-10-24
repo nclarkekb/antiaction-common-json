@@ -31,21 +31,35 @@ public class JSONObjectMappings {
 
 	protected int converterIds = 0;
 
-	protected final JSONObjectMarshaller marshaller;
+	protected final JSONStructureMarshaller structureMarshaller;
 
-	protected final JSONObjectUnmarshaller unmarshaller;
+	protected final JSONStructureUnmarshaller structureUnmarshaller;
+
+	protected final JSONStreamMarshaller streamMarshaller;
+
+	protected final JSONStreamUnmarshaller streamUnmarshaller;
 
 	public JSONObjectMappings() {
-		marshaller = new JSONObjectMarshaller( this );
-		unmarshaller = new JSONObjectUnmarshaller( this );
+		structureMarshaller = new JSONStructureMarshaller( this );
+		structureUnmarshaller = new JSONStructureUnmarshaller( this );
+		streamMarshaller = new JSONStreamMarshaller( this );
+		streamUnmarshaller = new JSONStreamUnmarshaller( this );
 	}
 
-	public JSONObjectMarshaller getMarshaller() {
-		return marshaller;
+	public JSONStructureMarshaller getStructureMarshaller() {
+		return structureMarshaller;
 	}
 
-	public JSONObjectUnmarshaller getUnmarshaller() {
-		return unmarshaller;
+	public JSONStructureUnmarshaller getStructureUnmarshaller() {
+		return structureUnmarshaller;
+	}
+
+	public JSONStreamMarshaller getStreamMarshaller() {
+		return streamMarshaller;
+	}
+
+	public JSONStreamUnmarshaller getStreamUnmarshaller() {
+		return streamUnmarshaller;
 	}
 
 	public int getConverterNameId(String converterName) throws JSONException {
@@ -319,6 +333,7 @@ public class JSONObjectMappings {
 					}
 				}
 			}
+			json_om.fieldMappingsArr = json_om.fieldMappingsList.toArray( new JSONObjectFieldMapping[ 0 ] );
 		}
 		catch (ClassNotFoundException e) {
 			throw new JSONException( e );

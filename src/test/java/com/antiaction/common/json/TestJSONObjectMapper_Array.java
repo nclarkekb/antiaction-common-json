@@ -35,7 +35,11 @@ public class TestJSONObjectMapper_Array {
 		BigDecimal[] bd_arr = new BigDecimal[] { new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ) };
 		String[] s_arr = new String[] { "json", "JSON" };
 
+		JSONStructure json_struct;
+
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
+		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
+		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
 			json_objectmappings.register( b1_arr.getClass() );
 			json_objectmappings.register( i1_arr.getClass() );
@@ -51,8 +55,13 @@ public class TestJSONObjectMapper_Array {
 			json_objectmappings.register( bd_arr.getClass() );
 			json_objectmappings.register( s_arr.getClass() );
 
-			JSONStructure json_struct = json_objectmappings.getMarshaller().toJSON( b1_arr );
+			json_struct = marshaller.toJSON( b1_arr );
 			Assert.assertNotNull( json_struct );
+
+			json_struct = marshaller.toJSON( i1_arr );
+			json_struct = marshaller.toJSON( l1_arr );
+			json_struct = marshaller.toJSON( f1_arr );
+			json_struct = marshaller.toJSON( d1_arr );
 
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -14,6 +14,9 @@ import java.util.TreeMap;
 
 public class JSONObjectMappingConstants {
 
+	protected JSONObjectMappingConstants() {
+	}
+
 	/*
 	 * Type.
 	 */
