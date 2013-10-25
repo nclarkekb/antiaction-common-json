@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nclarkekb/antiaction-common-json.png?branch=master)](https://travis-ci.org/nclarkekb/antiaction-common-json)
+
 antiaction-common-json
 ======================
 
