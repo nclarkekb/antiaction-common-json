@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * De-serialize JSON data into Java Object(s).
+ * De-serialize a JSON structure into Java Object(s).
  *
  * @author Nicholas
  */

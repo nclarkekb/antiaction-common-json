@@ -21,7 +21,7 @@ import com.antiaction.common.json.TestClassTypeModifiers.TestMemberClass;
 public class TestJSONObjectMappings_InvalidField {
 
 	@Test
-	public void test_jsonobjectmapper_invalidfields() {
+	public void test_jsonobjectmapper_register_invalidfields() {
 		JSONObjectMappingConstants json_omc = new JSONObjectMappingConstants();
 		Assert.assertNotNull( json_omc );
 
