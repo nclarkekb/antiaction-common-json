@@ -114,6 +114,8 @@ public class TestJSONText {
 		}
 		catch (IOException e) {
 		}
+		catch (JSONException e) {
+		}
 	}
 
 	@Test

@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 public class JSONText {
 
-	public void encodeJSONtext(JSONStructure json_structure, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException {
+	public void encodeJSONtext(JSONStructure json_structure, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
 		encoder.init( out );
 		if ( json_structure != null ) {
 			if ( bPretty ) {
@@ -26,7 +26,7 @@ public class JSONText {
 			}
 		}
 		else {
-			throw new IOException( "Invalid JSON structure!" );
+			throw new JSONException( "Invalid JSON structure!" );
 		}
 		encoder.close();
 	}
