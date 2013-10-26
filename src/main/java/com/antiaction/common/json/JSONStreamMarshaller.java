@@ -68,11 +68,11 @@ public class JSONStreamMarshaller {
 		Arrays.fill( indentationArr, (byte)' ' );
 	}
 
-	public <T> void toJSON(T srcObj, JSONEncoder encoder, boolean bPretty, OutputStream out) throws JSONException, IOException {
+	public <T> void toJSON(T srcObj, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
 		toJSON( srcObj, null, encoder, bPretty, out );
 	}
 
-	public <T> void toJSON(T srcObj, JSONConverterAbstract[] converters, JSONEncoder encoder, boolean bPretty, OutputStream out) throws JSONException, IOException {
+	public <T> void toJSON(T srcObj, JSONConverterAbstract[] converters, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;

@@ -162,6 +162,10 @@ public class TestJSONNumber {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
 	}
 
 	@Test
@@ -284,7 +288,10 @@ public class TestJSONNumber {
 			e.printStackTrace();
 			Assert.fail( "Unexpected expection!" );
 		}
-
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected expection!" );
+		}
 
 		JSONNumber json_number = JSONNumber.Integer( 0 );
 		Assert.assertFalse( json_number.getBoolean() );

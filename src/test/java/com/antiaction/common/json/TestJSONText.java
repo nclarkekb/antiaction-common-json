@@ -95,6 +95,8 @@ public class TestJSONText {
 			}
 			catch (IOException e) {
 			}
+			catch (JSONException e) {
+			}
 		}
 
 	}
@@ -745,6 +747,10 @@ public class TestJSONText {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
 		catch (IllegalCharsetNameException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
@@ -832,6 +838,10 @@ public class TestJSONText {
 			Assert.assertEquals( JSONString.String( "str" ), json_object.get( "v3" ) );
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
+		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
@@ -949,6 +959,10 @@ public class TestJSONText {
 			Assert.assertEquals( JSONString.String( "US" ), json_object.get( "Country" ) );
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
+		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}

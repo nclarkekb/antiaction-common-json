@@ -69,6 +69,10 @@ public class TestJSONNull {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
 	}
 
 	@Test

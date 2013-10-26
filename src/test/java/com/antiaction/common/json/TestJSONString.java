@@ -84,6 +84,10 @@ public class TestJSONString {
 			e.printStackTrace();
 			Assert.fail("Unexpected exception!");
 		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception!");
+		}
 	}
 
 	@Test
@@ -182,6 +186,10 @@ public class TestJSONString {
 			}
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (JSONException e) {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
