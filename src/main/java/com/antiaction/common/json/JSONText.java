@@ -59,7 +59,7 @@ public class JSONText {
 	/** Temporary <code>StringBuilder</code> used to store JSON strings and values. */
 	protected StringBuilder sbStr = new StringBuilder();
 
-	public static final class StackEntry {
+	private static final class StackEntry {
 		public JSONStructure json_structure;
 		public JSONString json_name;
 		public StackEntry(JSONStructure json_structure, JSONString json_name) {
@@ -70,7 +70,7 @@ public class JSONText {
 
 	public JSONStructure decodeJSONtext(InputStream in, JSONDecoder decoder) throws IOException, JSONException {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
-		StackEntry entry = null;
+		StackEntry stackEntry = null;
 		JSONStructure current = null;
 
 		char[] charArray = new char[ 1024 ];
@@ -149,9 +149,9 @@ public class JSONText {
 							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
-						entry = stack.removeLast();
-						current = entry.json_structure;
-						json_name = entry.json_name;
+						stackEntry = stack.removeLast();
+						current = stackEntry.json_structure;
+						json_name = stackEntry.json_name;
 						json_value = current;
 						if ( stack.size() > 0 ) {
 							current = stack.getLast().json_structure;
@@ -223,9 +223,9 @@ public class JSONText {
 							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
-						entry = stack.removeLast();
-						current = entry.json_structure;
-						json_name = entry.json_name;
+						stackEntry = stack.removeLast();
+						current = stackEntry.json_structure;
+						json_name = stackEntry.json_name;
 						json_value = current;
 						if ( stack.size() > 0 ) {
 							current = stack.getLast().json_structure;
@@ -286,9 +286,9 @@ public class JSONText {
 							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
-						entry = stack.removeLast();
-						current = entry.json_structure;
-						json_name = entry.json_name;
+						stackEntry = stack.removeLast();
+						current = stackEntry.json_structure;
+						json_name = stackEntry.json_name;
 						json_value = current;
 						if ( stack.size() > 0 ) {
 							current = stack.getLast().json_structure;
@@ -379,9 +379,9 @@ public class JSONText {
 							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
 						}
 						*/
-						entry = stack.removeLast();
-						current = entry.json_structure;
-						json_name = entry.json_name;
+						stackEntry = stack.removeLast();
+						current = stackEntry.json_structure;
+						json_name = stackEntry.json_name;
 						json_value = current;
 						if ( stack.size() > 0 ) {
 							current = stack.getLast().json_structure;
@@ -809,11 +809,11 @@ public class JSONText {
 		return current;
 	}
 
-	/** Hex char to integer conversion table. */
-	public static int[] asciiHexTab = new int[256];
-
 	/** Integer to hex char conversion table. */
-	public static char[] hexTab = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	//private static char[] hexTab = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+	/** Hex char to integer conversion table. */
+	private static int[] asciiHexTab = new int[256];
 
 	/*
 	 * Initialize ASCII hex table.

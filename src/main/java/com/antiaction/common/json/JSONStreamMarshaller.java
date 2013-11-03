@@ -13,8 +13,8 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Serialize Java Object(s) into a JSON data stream.
@@ -50,7 +50,7 @@ public class JSONStreamMarshaller {
 
 	protected Map<String, JSONObjectMapping> classMappings;
 
-	private static class StackEntry {
+	private static final class StackEntry {
 		Object object;
 		JSONObjectMapping objectMapping;
 		int state;
@@ -118,7 +118,7 @@ public class JSONStreamMarshaller {
 		JSONObjectFieldMapping fieldMapping;
 		int len = 0;
 
-		Stack<StackEntry> stack = new Stack<StackEntry>();
+		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry;
 
 		boolean bLoop = true;
@@ -151,7 +151,7 @@ public class JSONStreamMarshaller {
 					}
 					encoder.write( "}" );
 					if ( stack.size() > 0 ) {
-						stackEntry = stack.pop();
+						stackEntry = stack.removeLast();
 						object = stackEntry.object;
 						objectMapping = stackEntry.objectMapping;
 						state = stackEntry.state;
@@ -204,7 +204,9 @@ public class JSONStreamMarshaller {
 								encoder.write( indentationArr, 0, indentation );
 							}
 							fieldMapping = fieldMappingsArr[ fieldMappingIdx++ ];
+							encoder.write( '"' );
 							encoder.write( fieldMapping.jsonName );
+							encoder.write( '"' );
 							if ( bPretty ) {
 								encoder.write( ": " );
 							}
@@ -444,7 +446,7 @@ public class JSONStreamMarshaller {
 									stackEntry.fieldMappingIdx = fieldMappingIdx;
 									//stackEntry.fieldMapping = fieldMapping;
 									len = stackEntry.len;
-									stack.push( stackEntry );
+									stack.add( stackEntry );
 									object = objectVal;
 									objectMapping = classMappings.get( object.getClass().getName() );
 									if ( objectMapping == null ) {

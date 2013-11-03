@@ -328,6 +328,7 @@ public class TestJSONStreamMarshaller {
 	@Test
 	public void test_jsonobjectmapper_tojson() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
 		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
@@ -340,6 +341,7 @@ public class TestJSONStreamMarshaller {
 			}
 
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+			JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
 
 			json_objectmappings.register( TestJSONMapObject.class );
 
@@ -399,7 +401,9 @@ public class TestJSONStreamMarshaller {
 			// debug
 			System.out.println( new String( json_compact ) );
 
-			//result = json_objectmappings.getStreamUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			in = new ByteArrayInputStream( json_compact );
+
+			result = json_objectmappings.getStreamUnmarshaller().toObject( in, json_decoder, TestJSONMapObject.class );
 			//assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
@@ -409,10 +413,12 @@ public class TestJSONStreamMarshaller {
 			// debug
 			System.out.println( new String( json_pretty ) );
 
-			//result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
+			in = new ByteArrayInputStream( json_pretty );
+
+			result = json_objectmappings.getStreamUnmarshaller().toObject( in, json_decoder, TestJSONMapObject.class );
 			//assert_jsonobjectmapper_tojson_result( result );
 
-            //Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
+            Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
 
             json_pretty = TestHelpers.filterWhitespaces( json_pretty );
 
