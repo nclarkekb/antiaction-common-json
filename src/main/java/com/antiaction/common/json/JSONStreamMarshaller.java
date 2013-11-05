@@ -80,7 +80,7 @@ public class JSONStreamMarshaller {
 		Double doubleVal;
 		BigInteger bigIntegerVal;
 		BigDecimal bigDecimalVal;
-		String strVal;
+		String stringVal;
 		byte[] byteArray;
 		Object objectVal;
 
@@ -392,17 +392,17 @@ public class JSONStreamMarshaller {
 								}
 								break;
 							case JSONObjectMappingConstants.T_STRING:
-								strVal = (String)fieldMapping.field.get( object );
+								stringVal = (String)fieldMapping.field.get( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
 								}
-								if ( strVal == null && !fieldMapping.nullable ) {
+								if ( stringVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
-								if ( strVal != null ) {
+								if ( stringVal != null ) {
 									encoder.write( '"' );
-									encoder.write( strVal );
+									encoder.write( stringVal );
 									encoder.write( '"' );
 								}
 								else {
@@ -711,20 +711,20 @@ public class JSONStreamMarshaller {
 									case JSONObjectMappingConstants.T_STRING:
 										arrayOf_String = (String[])array_object;
 										for ( int i=0; i<len; ++i ) {
-											strVal = arrayOf_String[ i ];
+											stringVal = arrayOf_String[ i ];
 											if ( fieldMapping.converterId != -1 ) {
 												// TODO
 												//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
 											}
-											if ( strVal == null && !fieldMapping.nullValues ) {
+											if ( stringVal == null && !fieldMapping.nullValues ) {
 												throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 											}
 											if ( i > 0 ) {
 												encoder.write( ',' );
 											}
-											if ( strVal != null ) {
+											if ( stringVal != null ) {
 												encoder.write( '"' );
-												encoder.write( strVal );
+												encoder.write( stringVal );
 												encoder.write( '"' );
 											}
 											else {

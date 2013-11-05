@@ -86,8 +86,8 @@ public class JSONStreamUnmarshaller {
 		Double doubleVal = null;
 		BigInteger bigIntegerVal = null;
 		BigDecimal bigDecimalVal = null;
-		String strVal;
-		byte[] byteArray;
+		String stringVal = null;
+		byte[] byteArray = null;
 		Object object = null;
 
 		JSONArray json_array;
@@ -141,8 +141,6 @@ public class JSONStreamUnmarshaller {
 		int x = 1;
 
 		int json_value_type = 0;
-		String json_string = null;
-		String json_name;
 
 		Object curObj = null;
 		Map<String, JSONObjectFieldMapping> fieldMappingsMap;
@@ -239,12 +237,10 @@ public class JSONStreamUnmarshaller {
 						++pos;
 						break;
 					case S_OBJECT_NAME:
-						fieldMapping = fieldMappingsMap.get( json_string );
-						// TODO
-						//json_name = json_string;
+						fieldMapping = fieldMappingsMap.get( stringVal );
 						state = S_OBJECT_COLON;
 						// debug
-						//System.out.println( json_value.toString() );
+						//System.out.println( stringVal );
 					case S_OBJECT_COLON:
 						switch ( c ) {
 						case 0x20:
@@ -299,22 +295,95 @@ public class JSONStreamUnmarshaller {
 							}
 							break;
 						case T_STRING:
+							switch ( fieldMapping.type ) {
+							case JSONObjectMappingConstants.T_STRING:
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//strVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_string );
+								}
+								if ( stringVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, stringVal );
+								break;
+							case JSONObjectMappingConstants.T_BYTEARRAY:
+								if ( fieldMapping.converterId == -1 ) {
+									byteArray = stringVal.getBytes();
+								}
+								else {
+									// TODO
+									//byteArray = converters[ fieldMapping.converterId ].getBytes( fieldMapping.fieldName, json_string );
+								}
+								if ( byteArray == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, byteArray );
+								break;
+							default:
+								throw new JSONException( "Wrong type." );
+							}
 							break;
 						case T_OBJECT:
-							if ( object != null ) {
-								// TODO
-								//object = toObject( object, fieldMapping.clazz, converters );
+							switch ( fieldMapping.type ) {
+							case JSONObjectMappingConstants.T_OBJECT:
+								if ( object != null ) {
+									// TODO
+									//object = toObject( object, fieldMapping.clazz, converters );
+								}
+								if ( object == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, object );
+								break;
+							default:
+								throw new JSONException( "Wrong type." );
 							}
-							if ( object == null && !fieldMapping.nullable ) {
-								throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
-							}
-							fieldMapping.field.set( curObj, object );
 							break;
 						case T_NUMBER:
 							switch ( fieldMapping.type ) {
+							case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
+								if ( "1".equals( stringVal ) ) {
+									booleanVal = true;
+								}
+								else if ( "0".equals( stringVal ) ) {
+									booleanVal = false;
+								}
+								else {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is a boolean and can not be '" + stringVal + "'." );
+								}
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+									booleanVal = null;
+								}
+								if ( booleanVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								fieldMapping.field.setBoolean( curObj, booleanVal );
+								break;
+							case JSONObjectMappingConstants.T_BOOLEAN:
+								if ( "1".equals( stringVal ) ) {
+									booleanVal = true;
+								}
+								else if ( "0".equals( stringVal ) ) {
+									booleanVal = false;
+								}
+								else {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is a boolean and can not be '" + stringVal + "'." );
+								}
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+									booleanVal = null;
+								}
+								if ( booleanVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, booleanVal );
+								break;
 							case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
 								if ( fieldMapping.converterId == -1 ) {
-									intVal = Integer.parseInt( json_string );
+									intVal = Integer.parseInt( stringVal );
 								}
 								else {
 									// TODO
@@ -327,7 +396,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_PRIMITIVE_LONG:
 								if ( fieldMapping.converterId == -1 ) {
-									longVal = Long.parseLong( json_string );
+									longVal = Long.parseLong( stringVal );
 								}
 								else {
 									// TODO
@@ -340,7 +409,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_PRIMITIVE_FLOAT:
 								if ( fieldMapping.converterId == -1 ) {
-									floatVal = Float.parseFloat( json_string );
+									floatVal = Float.parseFloat( stringVal );
 								}
 								else {
 									// TODO
@@ -353,7 +422,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_PRIMITIVE_DOUBLE:
 								if ( fieldMapping.converterId == -1 ) {
-									doubleVal = Double.parseDouble( json_string );
+									doubleVal = Double.parseDouble( stringVal );
 								}
 								else {
 									// TODO
@@ -366,7 +435,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_INTEGER:
 								if ( fieldMapping.converterId == -1 ) {
-									intVal = Integer.parseInt( json_string );
+									intVal = Integer.parseInt( stringVal );
 								}
 								else {
 									// TODO
@@ -379,7 +448,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_LONG:
 								if ( fieldMapping.converterId == -1 ) {
-									longVal = Long.parseLong( json_string );
+									longVal = Long.parseLong( stringVal );
 								}
 								else {
 									// TODO
@@ -392,7 +461,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_FLOAT:
 								if ( fieldMapping.converterId == -1 ) {
-									floatVal = Float.parseFloat( json_string );
+									floatVal = Float.parseFloat( stringVal );
 								}
 								else {
 									// TODO
@@ -405,7 +474,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_DOUBLE:
 								if ( fieldMapping.converterId == -1 ) {
-									doubleVal = Double.parseDouble( json_string );
+									doubleVal = Double.parseDouble( stringVal );
 								}
 								else {
 									// TODO
@@ -418,7 +487,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_BIGINTEGER:
 								if ( fieldMapping.converterId == -1 ) {
-									bigIntegerVal = new BigInteger( json_string );
+									bigIntegerVal = new BigInteger( stringVal );
 								}
 								else {
 									// TODO
@@ -431,7 +500,7 @@ public class JSONStreamUnmarshaller {
 								break;
 							case JSONObjectMappingConstants.T_BIGDECIMAL:
 								if ( fieldMapping.converterId == -1 ) {
-									bigDecimalVal = new BigDecimal( json_string );
+									bigDecimalVal = new BigDecimal( stringVal );
 								}
 								else {
 									// TODO
@@ -688,7 +757,7 @@ public class JSONStreamUnmarshaller {
 							stackEntry.rstate = rstate;
 							stack.add( stackEntry );
 
-							curObj = clazz.newInstance();
+							curObj = fieldMapping.clazz.newInstance();
 							json_om = classMappings.get( fieldMapping.clazz.getName() );
 							if ( json_om == null ) {
 								throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
@@ -749,7 +818,7 @@ public class JSONStreamUnmarshaller {
 						switch ( c ) {
 						case '"':
 							json_value_type = T_STRING;
-							json_string = sbStr.toString();
+							stringVal = sbStr.toString();
 							state = rstate;
 							break;
 						case '\\':
@@ -911,7 +980,7 @@ public class JSONStreamUnmarshaller {
 							break;
 						default:
 							json_value_type = T_NUMBER;
-							json_string = sbStr.toString();
+							stringVal = sbStr.toString();
 							state = rstate;
 							break;
 						}
@@ -935,7 +1004,7 @@ public class JSONStreamUnmarshaller {
 							break;
 						default:
 							json_value_type = T_NUMBER;
-							json_string = sbStr.toString();
+							stringVal = sbStr.toString();
 							state = rstate;
 							break;
 						}
@@ -987,7 +1056,7 @@ public class JSONStreamUnmarshaller {
 							break;
 						default:
 							json_value_type = T_NUMBER;
-							json_string = sbStr.toString();
+							stringVal = sbStr.toString();
 							state = rstate;
 						}
 						break;
@@ -1056,7 +1125,7 @@ public class JSONStreamUnmarshaller {
 							break;
 						default:
 							json_value_type = T_NUMBER;
-							json_string = sbStr.toString();
+							stringVal = sbStr.toString();
 							state = rstate;
 						}
 						break;

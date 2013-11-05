@@ -17,7 +17,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
 public class TestJSONObjectMappings_Nullable {
 
 	@Test
-	public void test_jsonobjectmapper_register_nullable_invalid() {
+	public void test_jsonobjectmappings_register_nullable_invalid() {
 		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( TestNullableField1Class.class );

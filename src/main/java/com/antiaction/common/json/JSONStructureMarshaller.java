@@ -41,7 +41,7 @@ public class JSONStructureMarshaller {
 		Double doubleVal;
 		BigInteger bigIntegerVal;
 		BigDecimal bigDecimalVal;
-		String strVal;
+		String stringVal;
 		byte[] byteArray;
 		Object objectVal;
 
@@ -307,17 +307,17 @@ public class JSONStructureMarshaller {
 					json_struct.put( fieldMapping.jsonName, json_value );
 					break;
 				case JSONObjectMappingConstants.T_STRING:
-					strVal = (String)fieldMapping.field.get( srcObj );
+					stringVal = (String)fieldMapping.field.get( srcObj );
 					if ( fieldMapping.converterId == -1 ) {
-						if ( strVal != null ) {
-							json_value = JSONString.String( strVal );
+						if ( stringVal != null ) {
+							json_value = JSONString.String( stringVal );
 						}
 						else {
 							json_value = null;
 						}
 					}
 					else {
-						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+						json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, stringVal );
 					}
 					if ( json_value == null ) {
 						if ( !fieldMapping.nullable ) {
@@ -636,17 +636,17 @@ public class JSONStructureMarshaller {
 						case JSONObjectMappingConstants.T_STRING:
 							arrayOf_String = (String[])array_object;
 							for ( int i=0; i<len; ++i ) {
-								strVal = arrayOf_String[ i ];
+								stringVal = arrayOf_String[ i ];
 								if ( fieldMapping.converterId == -1 ) {
-									if ( strVal != null ) {
-										json_value = JSONString.String( strVal );
+									if ( stringVal != null ) {
+										json_value = JSONString.String( stringVal );
 									}
 									else {
 										json_value = null;
 									}
 								}
 								else {
-									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+									json_value = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, stringVal );
 								}
 								if ( json_value == null ) {
 									if ( !fieldMapping.nullValues ) {

@@ -42,7 +42,7 @@ public class JSONStructureUnmarshaller {
 		Double doubleVal;
 		BigInteger bigIntegerVal;
 		BigDecimal bigDecimalVal;
-		String strVal;
+		String stringVal;
 		byte[] byteArray;
 		Object object;
 		JSONObject json_object;
@@ -232,15 +232,15 @@ public class JSONStructureUnmarshaller {
 						break;
 					case JSONObjectMappingConstants.T_STRING:
 						if ( fieldMapping.converterId == -1 ) {
-							strVal = json_value.getString();
+							stringVal = json_value.getString();
 						}
 						else {
-							strVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_value );
+							stringVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_value );
 						}
-						if ( strVal == null && !fieldMapping.nullable ) {
+						if ( stringVal == null && !fieldMapping.nullable ) {
 							throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 						}
-						fieldMapping.field.set( dstObj, strVal );
+						fieldMapping.field.set( dstObj, stringVal );
 						break;
 					case JSONObjectMappingConstants.T_BYTEARRAY:
 						if ( fieldMapping.converterId == -1 ) {
@@ -493,15 +493,15 @@ public class JSONStructureUnmarshaller {
 								for ( int i=0; i<json_values.size(); ++i ) {
 									json_value = json_values.get( i );
 									if ( fieldMapping.converterId == -1 ) {
-										strVal = json_value.getString();
+										stringVal = json_value.getString();
 									}
 									else {
-										strVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_value );
+										stringVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_value );
 									}
-									if ( strVal == null && !fieldMapping.nullValues ) {
+									if ( stringVal == null && !fieldMapping.nullValues ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
 									}
-									arrayOf_String[ i ] = strVal;
+									arrayOf_String[ i ] = stringVal;
 								}
 								object = arrayOf_String;
 								break;

@@ -7,10 +7,6 @@
 
 package com.antiaction.common.json;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,20 +44,6 @@ public class TestJSONObjectMapper_Name {
 			JSONText json = new JSONText();
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-
-			/*
-			 * Missing zero argument constructor.
-			 */
-
-			try {
-				json_objectmappings.register( TestZeroConstructor.class );
-			}
-			catch (JSONException e) {
-				// debug
-				//System.out.println( e.getMessage() );
-				//System.out.println( e.getMessage().indexOf( " does not have a zero argument contructor!" ) );
-                Assert.assertThat( e.getMessage().indexOf( " does not have a zero argument constructor!" ), is( not( equalTo( -1 ) ) ) );
-			}
 
 			json_objectmappings.register( TestJsonName.class );
 

@@ -49,8 +49,6 @@ public class TestJSONStreamMarshaller {
 		System.out.println( byte[].class.isPrimitive() + " - " + byte[].class.getName() );
 		*/
 
-		JSONStructure json_struct;
-
 		try {
 			String text;
 			byte[] bytes;
@@ -59,7 +57,6 @@ public class TestJSONStreamMarshaller {
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONDecoder json_decoder;
-			JSONText json = new JSONText();
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 
@@ -80,10 +77,8 @@ public class TestJSONStreamMarshaller {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
-			Assert.assertNotNull( json_struct );
 
-			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertTrue( result.success );
 			Assert.assertNull( result.error );
@@ -115,10 +110,8 @@ public class TestJSONStreamMarshaller {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
-			Assert.assertNotNull( json_struct );
 
-			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertTrue( result.success );
 			Assert.assertNull( result.error );
@@ -150,10 +143,8 @@ public class TestJSONStreamMarshaller {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
-			Assert.assertNotNull( json_struct );
 
-			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
+			result = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, SFSResult.class );
 			Assert.assertNotNull( result );
 			Assert.assertFalse( result.success );
 			Assert.assertEquals( "rate limit exceeded", result.error );
@@ -179,7 +170,7 @@ public class TestJSONStreamMarshaller {
 			TestTypesClass testTypes;
 
 			try {
-				testTypes = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestTypesClass.class );
+				testTypes = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, TestTypesClass.class );
 			}
 			catch (IllegalArgumentException e) {
 			}
@@ -204,10 +195,8 @@ public class TestJSONStreamMarshaller {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
-			Assert.assertNotNull( json_struct );
 
-			testTypes = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestTypesClass.class );
+			testTypes = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, TestTypesClass.class );
 			Assert.assertTrue( testTypes.b1 );
 			Assert.assertFalse( testTypes.b2 );
 			Assert.assertEquals( 1234, testTypes.i1 );
@@ -329,7 +318,6 @@ public class TestJSONStreamMarshaller {
 	public void test_jsonobjectmapper_tojson() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayInputStream in;
-		JSONText json = new JSONText();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
@@ -399,24 +387,24 @@ public class TestJSONStreamMarshaller {
 
 			byte[] json_compact = out.toByteArray();
 			// debug
-			System.out.println( new String( json_compact ) );
+			//System.out.println( new String( json_compact ) );
 
 			in = new ByteArrayInputStream( json_compact );
 
 			result = json_objectmappings.getStreamUnmarshaller().toObject( in, json_decoder, TestJSONMapObject.class );
-			//assert_jsonobjectmapper_tojson_result( result );
+			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
 			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
-			System.out.println( new String( json_pretty ) );
+			//System.out.println( new String( json_pretty ) );
 
 			in = new ByteArrayInputStream( json_pretty );
 
 			result = json_objectmappings.getStreamUnmarshaller().toObject( in, json_decoder, TestJSONMapObject.class );
-			//assert_jsonobjectmapper_tojson_result( result );
+			assert_jsonobjectmapper_tojson_result( result );
 
             Assert.assertThat( json_compact.length, is( not( equalTo( json_pretty.length ) ) ) );
 
