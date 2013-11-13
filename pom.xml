@@ -3,6 +3,12 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<groupId>com.antiaction</groupId>
 	<artifactId>common-json</artifactId>
 	<version>0.5.0-SNAPSHOT</version>
@@ -14,6 +20,12 @@
 	<url>http://www.antiaction.com/</url>
 
 	<inceptionYear>2012</inceptionYear>
+
+	<scm>
+		<connection>scm:git:https://github.com/nclarkekb/antiaction-common-json.git</connection>
+		<developerConnection>scm:git:https://github.com/nclarkekb/antiaction-common-json.git</developerConnection>
+		<url>https://github.com/nclarkekb/antiaction-common-json</url>
+	</scm>
 
 	<developers>
 		<developer>
@@ -29,10 +41,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<profile.antiaction>true</profile.antiaction>
 		<antiactionSnapshotsUrl>http://www.antiaction.com:9080/repository/snapshots/</antiactionSnapshotsUrl>
 		<antiactionStagingUrl>http://www.antiaction.com:9080/repository/staging/deploy/</antiactionStagingUrl>
 	</properties>
 
+<!--
 	<repositories>
 		<repository>
 			<id>antiaction-snapshots</id>
@@ -59,7 +73,7 @@
 			<url>${antiactionStagingUrl}</url>
 		</repository>
 	</distributionManagement>
-
+-->
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -87,13 +101,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>alternative</id>
-			<properties>
-				<maven.test.failure.ignore>true</maven.test.failure.ignore>
-			</properties>
-		</profile>
-	</profiles>
 </project>

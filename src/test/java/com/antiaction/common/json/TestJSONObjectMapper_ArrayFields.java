@@ -633,36 +633,6 @@ public class TestJSONObjectMapper_ArrayFields {
 		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
 		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 		try {
-			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid1.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid2.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid3.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid4.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
-			json_objectmappings.register( TestJSONMapObjectArraysNullValues_Invalid5.class );
-			Assert.fail( "Exception expected!" );
-		}
-		catch (JSONException e) {
-		}
-		try {
 			json_objectmappings.register( TestJSONMapObjectArraysNullValues.class );
 
 			TestJSONMapObjectArraysNullValues result;
@@ -724,36 +694,6 @@ public class TestJSONObjectMapper_ArrayFields {
 			e.printStackTrace();
 			Assert.fail( "Unexpected exception!" );
 		}
-	}
-
-	public static class TestJSONMapObjectArraysNullValues_Invalid1 {
-		@JSONNullable
-		@JSONNullValues(true)
-		public boolean[] b1_arr;
-	}
-
-	public static class TestJSONMapObjectArraysNullValues_Invalid2 {
-		@JSONNullable
-		@JSONNullValues(true)
-		public int[] i1_arr;
-	}
-
-	public static class TestJSONMapObjectArraysNullValues_Invalid3 {
-		@JSONNullable
-		@JSONNullValues(true)
-		public long[] l1_arr;
-	}
-
-	public static class TestJSONMapObjectArraysNullValues_Invalid4 {
-		@JSONNullable
-		@JSONNullValues(true)
-		public float[] f1_arr;
-	}
-
-	public static class TestJSONMapObjectArraysNullValues_Invalid5 {
-		@JSONNullable
-		@JSONNullValues(true)
-		public double[] d1_arr;
 	}
 
 	public static class TestJSONMapObjectArraysNullValues {
