@@ -1,8 +1,18 @@
 /*
- * Created on 28/12/2012
+ * JSON library.
+ * Copyright 2012-2013 Antiaction (http://antiaction.com/)
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.antiaction.common.json;
@@ -25,6 +35,11 @@ import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
 
+/**
+ * TODO javadoc
+ * @author Nicholas
+ * Created on 28/12/2012
+ */
 @RunWith(JUnit4.class)
 public class TestJSONObjectMapper_ArrayFields {
 
@@ -134,19 +149,19 @@ public class TestJSONObjectMapper_ArrayFields {
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 
@@ -429,19 +444,19 @@ public class TestJSONObjectMapper_ArrayFields {
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 
@@ -948,15 +963,15 @@ public class TestJSONObjectMapper_ArrayFields {
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 	}
 

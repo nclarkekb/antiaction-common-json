@@ -1,8 +1,18 @@
 /*
- * Created on 06/11/2013
+ * JSON library.
+ * Copyright 2012-2013 Antiaction (http://antiaction.com/)
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.antiaction.common.json;
@@ -21,6 +31,11 @@ import org.junit.runners.JUnit4;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullable;
 
+/**
+ * TODO javadoc
+ * @author Nicholas
+ * Created on 06/11/2013
+ */
 @RunWith(JUnit4.class)
 public class TestJSONStreamMarshaller_Nullable {
 
@@ -198,7 +213,7 @@ public class TestJSONStreamMarshaller_Nullable {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -458,7 +473,7 @@ public class TestJSONStreamMarshaller_Nullable {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );		
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -800,39 +815,39 @@ public class TestJSONStreamMarshaller_Nullable {
 			moldObject = get_toJSON_MoldObject();
 			moldObject.b2 = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-		
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.i2 = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.l2 = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.f2 = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.d2 = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.bi = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.bd = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.s = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.b = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
-			
+
 			moldObject = get_toJSON_MoldObject();
 			moldObject.obj = null;
 			assert_toJSON_exception( json_objectmappings, moldObject, json_encoder, out );
@@ -842,39 +857,39 @@ public class TestJSONStreamMarshaller_Nullable {
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.b2 = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-		
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.i2 = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.l2 = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.f2 = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.d2 = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.bi = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.bd = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.s = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.b = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
-			
+
 			moldObjectWithAV = get_toJSON_MoldObjectWithAV();
 			moldObjectWithAV.obj = null;
 			assert_toJSONWithAV_exception( json_objectmappings, moldObjectWithAV, json_encoder, out );
