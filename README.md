@@ -5,7 +5,26 @@ antiaction-common-json
 
 Java JSON library
 
+JSON stream <> JSON structure.
+JSON structure <> Java objects.
+JSON stream <> Java objects.
+
+## Planned ##
+
+Support for array fields and converters in JSON stream <> Java objects (un)marshalling.
+Support for top level arrays (un)marshalling to/from Java object.
+Support for more primitive types and their object counterparts.
+Get code coverage up again.
+
 ## History ##
+
+### version 0.5.0 ###
+
+Work on implementing object to/from stream marshaller/unmarshaller. 
+
+* Split the object mapper and structure marshall/unmarshall code into separate classes.
+* Started on stream marshall/unmarshal code. (Does not support arrays yet)
+* Reorganized unit tests.
 
 ### version 0.4.0 ###
 
@@ -50,4 +69,3 @@ Java types supported:
 * BigInteger
 * BigDecimal
 * String
-
