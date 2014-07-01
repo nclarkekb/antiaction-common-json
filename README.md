@@ -5,16 +5,16 @@ antiaction-common-json
 
 Java JSON library
 
-JSON stream <> JSON structure.
-JSON structure <> Java objects.
-JSON stream <> Java objects.
+* JSON stream <> JSON structure.
+* JSON structure <> Java objects.
+* JSON stream <> Java objects.
 
 ## Planned ##
 
-Support for array fields and converters in JSON stream <> Java objects (un)marshalling.
-Support for top level arrays (un)marshalling to/from Java object.
-Support for more primitive types and their object counterparts.
-Get code coverage up again.
+* Support for array fields and converters in JSON stream <> Java objects (un)marshalling.
+* Support for top level arrays (un)marshalling to/from Java object.
+* Support for more primitive types and their object counterparts.
+* Get code coverage up again.
 
 ## History ##
 

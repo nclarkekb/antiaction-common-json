@@ -11,7 +11,7 @@
 
 	<groupId>com.antiaction</groupId>
 	<artifactId>common-json</artifactId>
-	<version>0.5.0</version>
+	<version>0.6.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -51,11 +51,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<profile.antiaction>true</profile.antiaction>
-		<antiactionSnapshotsUrl>http://www.antiaction.com:9080/repository/snapshots/</antiactionSnapshotsUrl>
-		<antiactionStagingUrl>http://www.antiaction.com:9080/repository/staging/deploy/</antiactionStagingUrl>
 	</properties>
 
-<!--
 	<repositories>
 		<repository>
 			<id>antiaction-snapshots</id>
@@ -66,6 +63,17 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>antiaction-releases</id>
+			<name>Antiaction Releases Repository</name>
+			<url>${antiactionReleasesUrl}</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -82,7 +90,7 @@
 			<url>${antiactionStagingUrl}</url>
 		</repository>
 	</distributionManagement>
--->
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
