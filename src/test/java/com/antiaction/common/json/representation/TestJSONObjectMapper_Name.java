@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +26,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMappings;
 import com.antiaction.common.json.annotation.JSONName;
 
 /**
@@ -38,7 +43,7 @@ public class TestJSONObjectMapper_Name {
 
 	@Test
 	public void test_jsonobjectmapper_toobject() {
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		//JSONArray json_array;
 		JSONObject json_object;
 		//JSONObject json_object2;
@@ -56,7 +61,8 @@ public class TestJSONObjectMapper_Name {
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 			JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
-			JSONText json = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 
@@ -68,15 +74,15 @@ public class TestJSONObjectMapper_Name {
 			obj.i = 1234;
 			obj.s = "one two three four";
 
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			// debug
 			//System.out.println( out.toString( "ISO-8859-1" ) );
 
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 
-			json_struct = json.decodeJSONtext( in, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 			json_object = json_struct.getObject();
 			Assert.assertEquals( JSONNumber.Integer( 42 ), json_object.get( "integer" ) );
 			Assert.assertEquals( JSONString.String( "meaning of life" ), json_object.get( "string" ) );

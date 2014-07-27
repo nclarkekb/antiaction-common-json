@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +27,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMappings;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullable;
 
@@ -41,7 +45,7 @@ public class TestJSONObjectMapper_Nullable {
 	@Test
 	public void test_jsonobjectmapper_toobject_nullable() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
@@ -50,7 +54,7 @@ public class TestJSONObjectMapper_Nullable {
 			json_objectmappings.register( TestJSONMapObjectNullable.class );
 			json_objectmappings.register( TestJSONMapObject.class );
 
-			JSONStructure json_struct;
+			JSONCollection json_struct;
 
 			/*
 			 * Nullable valid.
@@ -89,10 +93,10 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -152,10 +156,10 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj2 );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj2 );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -304,7 +308,7 @@ public class TestJSONObjectMapper_Nullable {
 	@Test
 	public void test_jsonobjectmapper_toobject_nullable_annotation_value() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
@@ -313,7 +317,7 @@ public class TestJSONObjectMapper_Nullable {
 			json_objectmappings.register( TestJSONMapObjectNullableWithAV.class );
 			json_objectmappings.register( TestJSONMapObjectWithAV.class );
 
-			JSONStructure json_struct;
+			JSONCollection json_struct;
 
 			/*
 			 * Nullable valid.
@@ -352,10 +356,10 @@ public class TestJSONObjectMapper_Nullable {
 			obj3.s = null;
 			obj3.b = null;
 
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -415,10 +419,10 @@ public class TestJSONObjectMapper_Nullable {
 			obj2.b = "BYTES".getBytes();
 			obj2.obj = obj;
 
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj2 );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj2 );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -587,7 +591,7 @@ public class TestJSONObjectMapper_Nullable {
 	@Test
 	public void test_jsonboejctmapper_toobject_nullable_invalid() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
@@ -609,72 +613,72 @@ public class TestJSONObjectMapper_Nullable {
 			 */
 			moldObject = get_toObject_MoldObject();
 			moldObject.b1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.b2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.i1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.i2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.l1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.l2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.f1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.f2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.d1 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.d2 = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.bi = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.bd = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.s = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.b = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			moldObject = get_toObject_MoldObject();
 			moldObject.obj = null;
-			assert_toObject_exception( moldObject, out, json, json_encoder, json_objectmappings );
+			assert_toObject_exception( moldObject, out, json_textMarshaller, json_encoder, json_objectmappings );
 
 			String[] fields = { "b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj" };
 			for ( int i=0; i<fields.length; ++i ) {
-				JSONStructure json_struct;
+				JSONCollection json_struct;
 				try {
-					json_struct = json_objectmappings.getStructureMarshaller().toJSON( moldObject );
+					json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
 					((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
 					out.reset();
-					json.encodeJSONtext( json_struct, json_encoder, true, out );
+					json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 					// debug
 					//System.out.println( new String( out.toByteArray() ) );
 					json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestJSONMapObject.class );
@@ -707,12 +711,12 @@ public class TestJSONObjectMapper_Nullable {
 		}
 	}
 
-	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONText json, JSONEncoder json_encoder, JSONObjectMappings json_objectmappings) throws IOException, InstantiationException, IllegalAccessException {
-		JSONStructure json_struct = null;
+	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONTextMarshaller json_textMarshaller, JSONEncoder json_encoder, JSONObjectMappings json_objectmappings) throws IOException, InstantiationException, IllegalAccessException {
+		JSONCollection json_struct = null;
 		try {
-			json_struct = json_objectmappings.getStructureMarshaller().toJSON( moldObject );
+			json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 		}
@@ -909,7 +913,7 @@ public class TestJSONObjectMapper_Nullable {
 
 	public void assert_toJSON_exception(JSONObjectMappings json_objectmappings, TestJSONMapObject moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_objectmappings.getStructureMarshaller().toJSON( moldObject );
+			json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -955,7 +959,7 @@ public class TestJSONObjectMapper_Nullable {
 
 	public void assert_toJSONWithAV_exception(JSONObjectMappings json_objectmappings, TestJSONMapObjectWithAV moldObject) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			json_objectmappings.getStructureMarshaller().toJSON( moldObject );
+			json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {

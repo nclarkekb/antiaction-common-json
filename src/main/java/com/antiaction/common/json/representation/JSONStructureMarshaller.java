@@ -15,13 +15,21 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONConverterAbstract;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectFieldMapping;
+import com.antiaction.common.json.JSONObjectMapping;
+import com.antiaction.common.json.JSONObjectMappingConstants;
+import com.antiaction.common.json.JSONObjectMappings;
 
 /**
  * Serialize Java Object(s) into a JSON structure.
@@ -40,11 +48,11 @@ public class JSONStructureMarshaller {
 		this.classMappings = objectMappings.classMappings;
 	}
 
-	public <T> JSONStructure toJSON(T srcObj) throws JSONException {
-		return toJSON( srcObj, null );
+	public <T> JSONCollection toJSONStructure(T srcObj) throws JSONException {
+		return toJSONStructure( srcObj, null );
 	}
 
-	public <T> JSONStructure toJSON(T srcObj, JSONConverterAbstract[] converters) throws JSONException {
+	public <T> JSONCollection toJSONStructure(T srcObj, JSONConverterAbstract[] converters) throws JSONException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;
@@ -80,7 +88,7 @@ public class JSONStructureMarshaller {
 			throw new JSONException( "Class '" + srcObj.getClass().getName() + "' may required converters!" );
 		}
 
-		JSONStructure json_struct = new JSONObject();
+		JSONCollection json_struct = new JSONObject();
 		JSONArray json_array;
 
 		try {
@@ -366,7 +374,7 @@ public class JSONStructureMarshaller {
 				case JSONObjectMappingConstants.T_OBJECT:
 					objectVal = (Object)fieldMapping.field.get( srcObj );
 					if ( objectVal != null ) {
-						json_value = toJSON( objectVal, converters );
+						json_value = toJSONStructure( objectVal, converters );
 					}
 					else if ( !fieldMapping.nullable ) {
 						throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -675,7 +683,7 @@ public class JSONStructureMarshaller {
 							for ( int i=0; i<len; ++i ) {
 								objectVal = arrayOf_Object[ i ];
 								if ( objectVal != null ) {
-									json_value = toJSON( objectVal, converters );
+									json_value = toJSONStructure( objectVal, converters );
 								}
 								else if ( !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );

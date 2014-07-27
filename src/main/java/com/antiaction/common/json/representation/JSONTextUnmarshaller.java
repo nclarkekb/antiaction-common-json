@@ -15,36 +15,24 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.CharBuffer;
 import java.util.LinkedList;
 
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONException;
+
 /**
- * TODO javadoc
+ * De-serialize a JSON data stream into a JSON structure.
+ *
  * @author Nicholas
  * Created on 06/08/2012
  */
-public class JSONText {
-
-	public void encodeJSONtext(JSONStructure json_structure, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
-		encoder.init( out );
-		if ( json_structure != null ) {
-			if ( bPretty ) {
-				json_structure.encode( encoder, "", "  " );
-			}
-			else {
-				json_structure.encode( encoder );
-			}
-		}
-		else {
-			throw new JSONException( "Invalid JSON structure!" );
-		}
-		encoder.close();
-	}
+public class JSONTextUnmarshaller {
 
 	private static final int S_START = 0;
 	private static final int S_OBJECT = 1;
@@ -75,18 +63,18 @@ public class JSONText {
 	protected StringBuilder sbStr = new StringBuilder();
 
 	private static final class StackEntry {
-		public JSONStructure json_structure;
+		public JSONCollection json_structure;
 		public JSONString json_name;
-		public StackEntry(JSONStructure json_structure, JSONString json_name) {
+		public StackEntry(JSONCollection json_structure, JSONString json_name) {
 			this.json_structure = json_structure;
 			this.json_name = json_name;
 		}
 	}
 
-	public JSONStructure decodeJSONtext(InputStream in, JSONDecoder decoder) throws IOException, JSONException {
+	public JSONCollection toJSONStructure(InputStream in, JSONDecoder decoder) throws IOException, JSONException {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry = null;
-		JSONStructure current = null;
+		JSONCollection current = null;
 
 		char[] charArray = new char[ 1024 ];
 		CharBuffer charBuffer = CharBuffer.wrap( charArray );

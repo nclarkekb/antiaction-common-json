@@ -30,6 +30,8 @@ import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONName;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
+import com.antiaction.common.json.representation.JSONStructureMarshaller;
+import com.antiaction.common.json.representation.JSONStructureUnmarshaller;
 
 /**
  * TODO javadoc
@@ -40,7 +42,7 @@ public class JSONObjectMappings {
 
 	protected final Class<?>[] zeroArgsParameterTypes = new Class[ 0 ];
 
-	protected final Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
+	public final Map<String, JSONObjectMapping> classMappings = new TreeMap<String, JSONObjectMapping>();
 
 	protected final Map<String, Integer> converterNameIdMap = new TreeMap<String, Integer>();
 

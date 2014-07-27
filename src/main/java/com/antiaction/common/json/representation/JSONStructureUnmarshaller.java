@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -23,6 +23,13 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.antiaction.common.json.JSONConverterAbstract;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectFieldMapping;
+import com.antiaction.common.json.JSONObjectMapping;
+import com.antiaction.common.json.JSONObjectMappingConstants;
+import com.antiaction.common.json.JSONObjectMappings;
 
 /**
  * De-serialize a JSON structure into Java Object(s).
@@ -41,11 +48,11 @@ public class JSONStructureUnmarshaller {
 		this.classMappings = objectMappings.classMappings;
 	}
 
-	public <T> T toObject(JSONStructure json_struct, Class<T> clazz) throws JSONException {
+	public <T> T toObject(JSONCollection json_struct, Class<T> clazz) throws JSONException {
 		return toObject( json_struct, clazz, null );
 	}
 
-	public <T> T toObject(JSONStructure json_struct, Class<T> clazz, JSONConverterAbstract[] converters) throws JSONException {
+	public <T> T toObject(JSONCollection json_struct, Class<T> clazz, JSONConverterAbstract[] converters) throws JSONException {
 		Boolean booleanVal;
 		Integer intVal;
 		Long longVal;

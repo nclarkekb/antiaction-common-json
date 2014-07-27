@@ -20,6 +20,8 @@ package com.antiaction.common.json;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import com.antiaction.common.json.representation.JSONValue;
+
 /**
  * TODO javadoc
  * @author Nicholas

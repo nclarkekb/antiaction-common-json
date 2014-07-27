@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,6 +31,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMappings;
+import com.antiaction.common.json.TestHelpers;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -46,7 +51,7 @@ public class TestJSONObjectMapper_ArrayFields {
 	@Test
 	public void test_jsonobjectmapper_array_tojson() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
@@ -58,10 +63,10 @@ public class TestJSONObjectMapper_ArrayFields {
 			TestJSONMapObjectArrays obj = getTestJSONMapObjectArraysObjectMold();
 			TestJSONMapObjectArrays result;
 
-			JSONStructure json_struct = marshaller.toJSON( obj );
+			JSONCollection json_struct = marshaller.toJSONStructure( obj );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			byte[] json_compact = out.toByteArray();
 			// debug
@@ -71,7 +76,7 @@ public class TestJSONObjectMapper_ArrayFields {
 			assert_jsonobjectmapper_array_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
@@ -91,23 +96,23 @@ public class TestJSONObjectMapper_ArrayFields {
 			 */
 			obj = getTestJSONMapObjectArraysObjectMold();
 			obj.obj_arr[ 0 ].b1_arr = new boolean[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysObjectMold();
 			obj.obj_arr[ 0 ].i1_arr = new int[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysObjectMold();
 			obj.obj_arr[ 0 ].l1_arr = new long[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysObjectMold();
 			obj.obj_arr[ 0 ].f1_arr = new float[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysObjectMold();
 			obj.obj_arr[ 0 ].d1_arr = new double[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 			/*
 			 * Null values.
 			 */
@@ -331,7 +336,7 @@ public class TestJSONObjectMapper_ArrayFields {
 
 	public void assert_tojson_exception(JSONStructureMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			marshaller.toJSON( obj );
+			marshaller.toJSONStructure( obj );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -341,7 +346,7 @@ public class TestJSONObjectMapper_ArrayFields {
 	@Test
 	public void test_jsonobjectmapper_arraywithav_tojson() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
@@ -353,10 +358,10 @@ public class TestJSONObjectMapper_ArrayFields {
 			TestJSONMapObjectArraysWithAV obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			TestJSONMapObjectArraysWithAV result;
 
-			JSONStructure json_struct = marshaller.toJSON( obj );
+			JSONCollection json_struct = marshaller.toJSONStructure( obj );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			byte[] json_compact = out.toByteArray();
 			// debug
@@ -366,7 +371,7 @@ public class TestJSONObjectMapper_ArrayFields {
 			assert_jsonobjectmapper_arraywithav_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
@@ -386,23 +391,23 @@ public class TestJSONObjectMapper_ArrayFields {
 			 */
 			obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			obj.obj_arr[ 0 ].b1_arr = new boolean[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			obj.obj_arr[ 0 ].i1_arr = new int[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			obj.obj_arr[ 0 ].l1_arr = new long[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			obj.obj_arr[ 0 ].f1_arr = new float[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 
 			obj = getTestJSONMapObjectArraysWithAVObjectMold();
 			obj.obj_arr[ 0 ].d1_arr = new double[ 1 ];
-			json_struct = marshaller.toJSON( obj );
+			json_struct = marshaller.toJSONStructure( obj );
 			/*
 			 * Null values.
 			 */
@@ -641,7 +646,7 @@ public class TestJSONObjectMapper_ArrayFields {
 	@Test
 	public void test_jsonobjectmapper_nullvalues() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
@@ -668,10 +673,10 @@ public class TestJSONObjectMapper_ArrayFields {
 			obj.s_arr = new String[ 5 ];
 			obj.obj_arr = new TestJSONMapObjectArraysNullValues[ 5 ];
 
-			JSONStructure json_struct = marshaller.toJSON( obj );
+			JSONCollection json_struct = marshaller.toJSONStructure( obj );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			byte[] json_compact = out.toByteArray();
 			// debug
@@ -681,7 +686,7 @@ public class TestJSONObjectMapper_ArrayFields {
 			assert_jsonobjectmapper_nullvalues_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
@@ -822,7 +827,7 @@ public class TestJSONObjectMapper_ArrayFields {
 			json_objectmappings.register( TestJSONMapObjectArraysNotNullableNullValuesGlobal.class );
 
 			TestJSONMapObjectArrays obj = getTestJSONMapObjectArraysObjectMold();
-			JSONStructure json_struct;
+			JSONCollection json_struct;
 			JSONObject json_object;
 
 			JSONArray json_array = new JSONArray();
@@ -834,7 +839,7 @@ public class TestJSONObjectMapper_ArrayFields {
 
 			String[] fieldNamesPrimitives = { "b1_arr", "i1_arr", "l1_arr", "f1_arr", "d1_arr" };
 			for ( int i=0; i<fieldNamesPrimitives.length; ++i ) {
-				json_struct = marshaller.toJSON( obj );
+				json_struct = marshaller.toJSONStructure( obj );
 				json_object = json_struct.getObject();
 				json_object.values.put( JSONString.String( fieldNamesPrimitives[ i ] ), json_array );
 				try {
@@ -872,7 +877,7 @@ public class TestJSONObjectMapper_ArrayFields {
 
 			String[] fieldNamesObjects = { "b2_arr", "i2_arr", "l2_arr", "f2_arr", "d2_arr", "bi_arr", "bd_arr", "s_arr", "obj_arr" };
 			for ( int i=0; i<fieldNamesObjects.length; ++i ) {
-				json_struct = marshaller.toJSON( obj );
+				json_struct = marshaller.toJSONStructure( obj );
 				json_object = json_struct.getObject();
 				json_object.values.put( JSONString.String( fieldNamesObjects[ i ] ), json_array );
 				try {
@@ -1125,7 +1130,7 @@ public class TestJSONObjectMapper_ArrayFields {
 
 	public void assert_JSONMapObjectArraysNotNullableNullValuesGlobal_exception(JSONStructureMarshaller marshaller, Object obj) throws IllegalArgumentException, IllegalAccessException {
 		try {
-			marshaller.toJSON( obj );
+			marshaller.toJSONStructure( obj );
 		}
 		catch (JSONException e) {
 		}

@@ -26,6 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.representation.JSONCollection;
+import com.antiaction.common.json.representation.JSONTextUnmarshaller;
+
 /**
  * TODO javadoc
  * @author Nicholas
@@ -42,10 +45,10 @@ public class TestJSON_SOLR {
 		PushbackInputStream pbin;
 		int encoding;
 
-		JSONText json = new JSONText();
+		JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONDecoder json_decoder;
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 
 		try {
 			pbin = new PushbackInputStream( in, 4 );
@@ -55,7 +58,7 @@ public class TestJSON_SOLR {
 			json_objectmappings.register( Book[].class );
 
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 
 			Book[] books = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, Book[].class );
 		}

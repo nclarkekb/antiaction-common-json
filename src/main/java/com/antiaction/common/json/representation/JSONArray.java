@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONEncoder;
 
 /**
  * JSON Array implementation.
@@ -27,7 +30,7 @@ import java.util.List;
  * @author Nicholas
  * Created on 01/08/2012
  */
-public class JSONArray extends JSONStructure {
+public class JSONArray extends JSONCollection {
 
 	/** <code>List</code> of JSON Array values. */
 	protected List<JSONValue> values = new ArrayList<JSONValue>();

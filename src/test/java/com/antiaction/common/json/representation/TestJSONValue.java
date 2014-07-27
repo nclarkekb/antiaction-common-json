@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.IOException;
 
@@ -23,6 +23,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.representation.JSONArray;
+import com.antiaction.common.json.representation.JSONBoolean;
+import com.antiaction.common.json.representation.JSONNull;
+import com.antiaction.common.json.representation.JSONNumber;
+import com.antiaction.common.json.representation.JSONObject;
+import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONValue;
 
 /**
  * TODO javadoc

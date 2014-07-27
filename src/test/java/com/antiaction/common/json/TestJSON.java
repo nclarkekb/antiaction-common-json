@@ -27,6 +27,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.representation.JSONArray;
+import com.antiaction.common.json.representation.JSONBoolean;
+import com.antiaction.common.json.representation.JSONNumber;
+import com.antiaction.common.json.representation.JSONObject;
+import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONCollection;
+import com.antiaction.common.json.representation.JSONTextUnmarshaller;
+
 /**
  * TODO javadoc
  * @author Nicholas
@@ -37,7 +45,7 @@ public class TestJSON {
 
 	@Test
 	public void test_json() {
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		JSONObject json_object;
 		JSONObject json_object2;
 		JSONArray json_array;
@@ -50,7 +58,7 @@ public class TestJSON {
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONDecoder json_decoder;
-			JSONText json = new JSONText();
+			JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 
 			/*
 			 * stopforumspam.com example.
@@ -64,7 +72,7 @@ public class TestJSON {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_object = (JSONObject)json_struct;
@@ -93,7 +101,7 @@ public class TestJSON {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_array = (JSONArray)json_struct;
@@ -120,7 +128,7 @@ public class TestJSON {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 		}
 		catch (UnsupportedEncodingException e) {

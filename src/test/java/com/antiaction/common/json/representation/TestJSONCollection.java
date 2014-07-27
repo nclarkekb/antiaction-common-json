@@ -15,12 +15,16 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.representation.JSONNull;
+import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONCollection;
 
 /**
  * TODO javadoc
@@ -28,11 +32,11 @@ import org.junit.runners.JUnit4;
  * Created on 07/09/2012
  */
 @RunWith(JUnit4.class)
-public class TestJSONStructure {
+public class TestJSONCollection {
 
 	@Test
 	public void test_jsonstructure() {
-		JSONStructure json_structure = new JSONStructure() {
+		JSONCollection json_structure = new JSONCollection() {
 		};
 
 		try {

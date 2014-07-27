@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +33,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
 
 /**
  * TODO javadoc
@@ -92,7 +98,7 @@ public class TestJSONObject {
 				inObjects.put( UUID.randomUUID().toString(), bytes );
 			}
 
-			JSONStructure json_struct = new JSONObject();
+			JSONCollection json_struct = new JSONObject();
 
 			Iterator<Entry<String, byte[]>> objectIter = inObjects.entrySet().iterator();
 			Entry<String, byte[]> objectEntry;
@@ -105,18 +111,19 @@ public class TestJSONObject {
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			int encoding;
 			JSONDecoder json_decoder;
-			JSONText json_text = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			PushbackInputStream in;
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 			in.close();
 
 			objectIter = inObjects.entrySet().iterator();
@@ -139,7 +146,7 @@ public class TestJSONObject {
 
 	@Test
 	public void test_jsonobject_supported_unsupported() {
-		JSONStructure json_struct = new JSONObject();
+		JSONCollection json_struct = new JSONObject();
 		JSONObject json_object = json_struct.getObject();
 		Assert.assertEquals( json_struct, json_object );
 

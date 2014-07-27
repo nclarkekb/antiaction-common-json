@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +27,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONDecoderCharset;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
 
 /**
  * TODO javadoc
@@ -71,7 +79,8 @@ public class TestJSONString {
 			 */
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JSONText json = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 
 			Charset charset = Charset.forName("UTF-8");
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
@@ -79,7 +88,7 @@ public class TestJSONString {
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_string );
 
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );
@@ -87,7 +96,7 @@ public class TestJSONString {
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
 
-			JSONStructure json_structure = json.decodeJSONtext( in, json_decoder );
+			JSONCollection json_structure = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 
 			Assert.assertNotNull( json_structure );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_structure.type );
@@ -123,7 +132,7 @@ public class TestJSONString {
 	}
 
 	public void test_jsonstring_bytearray_params(Charset charset, int expected_encoding) {
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		byte[] bytes;
 
 		try {
@@ -131,7 +140,8 @@ public class TestJSONString {
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			int encoding;
 			JSONDecoder json_decoder;
-			JSONText json_text = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 			PushbackInputStream in;
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -153,13 +163,13 @@ public class TestJSONString {
 			json_struct.add( JSONString.String( sb.toString() ) );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 			in.close();
 
 			Assert.assertArrayEquals( bytes, json_struct.get( 0 ).getBytes() );
@@ -178,13 +188,13 @@ public class TestJSONString {
 			json_struct.add( JSONString.String( sb.toString() ) );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			in = new PushbackInputStream( new ByteArrayInputStream( out.toByteArray() ), 4 );
 			encoding = JSONEncoding.encoding( in );
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 			in.close();
 
 			try {

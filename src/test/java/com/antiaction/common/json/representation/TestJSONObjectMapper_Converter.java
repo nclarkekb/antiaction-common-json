@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -25,6 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONConverterAbstract;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMappings;
 import com.antiaction.common.json.annotation.JSONConverter;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -144,7 +147,7 @@ public class TestJSONObjectMapper_Converter {
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
 		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 
 		try {
 			json_objectmappings.register( TestBoolean1Conversion.class );
@@ -262,7 +265,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1 = new TestBoolean1Conversion();
 			bc1.b1 = true;
-			marshaller.toJSON( bc1 );
+			marshaller.toJSONStructure( bc1 );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -1296,7 +1299,6 @@ public class TestJSONObjectMapper_Converter {
 		JSONConverterAbstract[] converters;
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
-		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();
 
 		try {
 			json_objectmappings.register( TestBoolean1Conversion.class );
@@ -1419,7 +1421,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1 = new TestBoolean1Conversion();
 			bc1.b1 = true;
-			marshaller.toJSON( bc1, converters );
+			marshaller.toJSONStructure( bc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1427,7 +1429,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic1 = new TestInteger1Conversion();
 			ic1.i1 = 42;
-			marshaller.toJSON( ic1, converters );
+			marshaller.toJSONStructure( ic1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1435,7 +1437,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc1 = new TestLong1Conversion();
 			lc1.l1 = 12345678901234L;
-			marshaller.toJSON( lc1, converters );
+			marshaller.toJSONStructure( lc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1443,7 +1445,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc1 = new TestFloat1Conversion();
 			fc1.f1 = 1.0F / 3.0F;
-			marshaller.toJSON( fc1, converters );
+			marshaller.toJSONStructure( fc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1451,7 +1453,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc1 = new TestDouble1Conversion();
 			dc1.d1 = 1.0 / 3.0;
-			marshaller.toJSON( dc1, converters );
+			marshaller.toJSONStructure( dc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1459,7 +1461,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc2 = new TestBoolean2Conversion();
 			bc2.b2 = true;
-			marshaller.toJSON( bc2, converters );
+			marshaller.toJSONStructure( bc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1467,7 +1469,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic2 = new TestInteger2Conversion();
 			ic2.i2 = 42;
-			marshaller.toJSON( ic2, converters );
+			marshaller.toJSONStructure( ic2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1475,7 +1477,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc2 = new TestLong2Conversion();
 			lc2.l2 = 12345678901234L;
-			marshaller.toJSON( lc2, converters );
+			marshaller.toJSONStructure( lc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1483,7 +1485,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc2 = new TestFloat2Conversion();
 			fc2.f2 = 1.0F / 3.0F;
-			marshaller.toJSON( fc2, converters );
+			marshaller.toJSONStructure( fc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1491,7 +1493,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc2 = new TestDouble2Conversion();
 			dc2.d2 = 1.0 / 3.0;
-			marshaller.toJSON( dc2, converters );
+			marshaller.toJSONStructure( dc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1499,7 +1501,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bic = new TestBigIntegerConversion();
 			bic.bi = new BigInteger( "12345678901234567890" );
-			marshaller.toJSON( bic, converters );
+			marshaller.toJSONStructure( bic, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1507,7 +1509,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bdc = new TestBigDecimalConversion();
 			bdc.bd = new BigDecimal( "0.12345678901234567890" );
-			marshaller.toJSON( bdc, converters );
+			marshaller.toJSONStructure( bdc, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1515,7 +1517,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			sc = new TestStringConversion();
 			sc.s = "streng";
-			marshaller.toJSON( sc, converters );
+			marshaller.toJSONStructure( sc, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1523,7 +1525,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bac = new TestBytesConversion();
 			bac.b = "bytes".getBytes();
-			marshaller.toJSON( bac, converters );
+			marshaller.toJSONStructure( bac, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1536,7 +1538,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1_arr = new TestBooleanArray1Conversion();
 			bc1_arr.b1_arr = new boolean[] { true };
-			marshaller.toJSON( bc1_arr, converters );
+			marshaller.toJSONStructure( bc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1544,7 +1546,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic1_arr = new TestIntegerArray1Conversion();
 			ic1_arr.i1_arr = new int[] { 42 };
-			marshaller.toJSON( ic1_arr, converters );
+			marshaller.toJSONStructure( ic1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1552,7 +1554,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc1_arr = new TestLongArray1Conversion();
 			lc1_arr.l1_arr = new long[] { 12345678901234L };
-			marshaller.toJSON( lc1_arr, converters );
+			marshaller.toJSONStructure( lc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1560,7 +1562,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc1_arr = new TestFloatArray1Conversion();
 			fc1_arr.f1_arr = new float[] { 1.0F / 3.0F };
-			marshaller.toJSON( fc1_arr, converters );
+			marshaller.toJSONStructure( fc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1568,7 +1570,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc1_arr = new TestDoubleArray1Conversion();
 			dc1_arr.d1_arr = new double[] { 1.0 / 3.0 };
-			marshaller.toJSON( dc1_arr, converters );
+			marshaller.toJSONStructure( dc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1576,7 +1578,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc2_arr = new TestBooleanArray2Conversion();
 			bc2_arr.b2_arr = new Boolean[] { true };
-			marshaller.toJSON( bc2_arr, converters );
+			marshaller.toJSONStructure( bc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1584,7 +1586,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic2_arr = new TestIntegerArray2Conversion();
 			ic2_arr.i2_arr = new Integer[] { 42 };
-			marshaller.toJSON( ic2_arr, converters );
+			marshaller.toJSONStructure( ic2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1592,7 +1594,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc2_arr = new TestLongArray2Conversion();
 			lc2_arr.l2_arr = new Long[] { 12345678901234L };
-			marshaller.toJSON( lc2_arr, converters );
+			marshaller.toJSONStructure( lc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1600,7 +1602,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc2_arr = new TestFloatArray2Conversion();
 			fc2_arr.f2_arr = new Float[] { 1.0F / 3.0F };
-			marshaller.toJSON( fc2_arr, converters );
+			marshaller.toJSONStructure( fc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1608,7 +1610,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc2_arr = new TestDoubleArray2Conversion();
 			dc2_arr.d2_arr = new Double[] { 1.0 / 3.0 };
-			marshaller.toJSON( dc2_arr, converters );
+			marshaller.toJSONStructure( dc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1616,7 +1618,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bic_arr = new TestBigIntegerArrayConversion();
 			bic_arr.bi_arr = new BigInteger[] { new BigInteger( "12345678901234567890" ) };
-			marshaller.toJSON( bic_arr, converters );
+			marshaller.toJSONStructure( bic_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1624,7 +1626,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bdc_arr = new TestBigDecimalArrayConversion();
 			bdc_arr.bd_arr = new BigDecimal[] { new BigDecimal( "0.12345678901234567890" ) };
-			marshaller.toJSON( bdc_arr, converters );
+			marshaller.toJSONStructure( bdc_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1632,7 +1634,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			sc_arr = new TestStringArrayConversion();
 			sc_arr.s_arr = new String[] { "streng" };
-			marshaller.toJSON( sc_arr, converters );
+			marshaller.toJSONStructure( sc_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1657,7 +1659,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1 = new TestBoolean1Conversion();
 			bc1.b1 = true;
-			marshaller.toJSON( bc1, converters );
+			marshaller.toJSONStructure( bc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1665,7 +1667,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic1 = new TestInteger1Conversion();
 			ic1.i1 = 42;
-			marshaller.toJSON( ic1, converters );
+			marshaller.toJSONStructure( ic1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1673,7 +1675,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc1 = new TestLong1Conversion();
 			lc1.l1 = 12345678901234L;
-			marshaller.toJSON( lc1, converters );
+			marshaller.toJSONStructure( lc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1681,7 +1683,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc1 = new TestFloat1Conversion();
 			fc1.f1 = 1.0F / 3.0F;
-			marshaller.toJSON( fc1, converters );
+			marshaller.toJSONStructure( fc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1689,7 +1691,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc1 = new TestDouble1Conversion();
 			dc1.d1 = 1.0 / 3.0;
-			marshaller.toJSON( dc1, converters );
+			marshaller.toJSONStructure( dc1, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not be null." ) );
@@ -1697,7 +1699,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc2 = new TestBoolean2Conversion();
 			bc2.b2 = true;
-			marshaller.toJSON( bc2, converters );
+			marshaller.toJSONStructure( bc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1705,7 +1707,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic2 = new TestInteger2Conversion();
 			ic2.i2 = 42;
-			marshaller.toJSON( ic2, converters );
+			marshaller.toJSONStructure( ic2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1713,7 +1715,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc2 = new TestLong2Conversion();
 			lc2.l2 = 12345678901234L;
-			marshaller.toJSON( lc2, converters );
+			marshaller.toJSONStructure( lc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1721,7 +1723,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc2 = new TestFloat2Conversion();
 			fc2.f2 = 1.0F / 3.0F;
-			marshaller.toJSON( fc2, converters );
+			marshaller.toJSONStructure( fc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1729,7 +1731,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc2 = new TestDouble2Conversion();
 			dc2.d2 = 1.0 / 3.0;
-			marshaller.toJSON( dc2, converters );
+			marshaller.toJSONStructure( dc2, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1737,7 +1739,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bic = new TestBigIntegerConversion();
 			bic.bi = new BigInteger( "12345678901234567890" );
-			marshaller.toJSON( bic, converters );
+			marshaller.toJSONStructure( bic, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1745,7 +1747,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bdc = new TestBigDecimalConversion();
 			bdc.bd = new BigDecimal( "0.12345678901234567890" );
-			marshaller.toJSON( bdc, converters );
+			marshaller.toJSONStructure( bdc, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1753,7 +1755,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			sc = new TestStringConversion();
 			sc.s = "streng";
-			marshaller.toJSON( sc, converters );
+			marshaller.toJSONStructure( sc, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1761,7 +1763,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bac = new TestBytesConversion();
 			bac.b = "bytes".getBytes();
-			marshaller.toJSON( bac, converters );
+			marshaller.toJSONStructure( bac, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is not nullable." ) );
@@ -1774,7 +1776,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1_arr = new TestBooleanArray1Conversion();
 			bc1_arr.b1_arr = new boolean[] { true };
-			marshaller.toJSON( bc1_arr, converters );
+			marshaller.toJSONStructure( bc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1782,7 +1784,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic1_arr = new TestIntegerArray1Conversion();
 			ic1_arr.i1_arr = new int[] { 42 };
-			marshaller.toJSON( ic1_arr, converters );
+			marshaller.toJSONStructure( ic1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1790,7 +1792,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc1_arr = new TestLongArray1Conversion();
 			lc1_arr.l1_arr = new long[] { 12345678901234L };
-			marshaller.toJSON( lc1_arr, converters );
+			marshaller.toJSONStructure( lc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1798,7 +1800,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc1_arr = new TestFloatArray1Conversion();
 			fc1_arr.f1_arr = new float[] { 1.0F / 3.0F };
-			marshaller.toJSON( fc1_arr, converters );
+			marshaller.toJSONStructure( fc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1806,7 +1808,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc1_arr = new TestDoubleArray1Conversion();
 			dc1_arr.d1_arr = new double[] { 1.0 / 3.0 };
-			marshaller.toJSON( dc1_arr, converters );
+			marshaller.toJSONStructure( dc1_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " is primitive and can not have null values." ) );
@@ -1814,7 +1816,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc2_arr = new TestBooleanArray2Conversion();
 			bc2_arr.b2_arr = new Boolean[] { true };
-			marshaller.toJSON( bc2_arr, converters );
+			marshaller.toJSONStructure( bc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1822,7 +1824,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			ic2_arr = new TestIntegerArray2Conversion();
 			ic2_arr.i2_arr = new Integer[] { 42 };
-			marshaller.toJSON( ic2_arr, converters );
+			marshaller.toJSONStructure( ic2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1830,7 +1832,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			lc2_arr = new TestLongArray2Conversion();
 			lc2_arr.l2_arr = new Long[] { 12345678901234L };
-			marshaller.toJSON( lc2_arr, converters );
+			marshaller.toJSONStructure( lc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1838,7 +1840,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			fc2_arr = new TestFloatArray2Conversion();
 			fc2_arr.f2_arr = new Float[] { 1.0F / 3.0F };
-			marshaller.toJSON( fc2_arr, converters );
+			marshaller.toJSONStructure( fc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1846,7 +1848,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			dc2_arr = new TestDoubleArray2Conversion();
 			dc2_arr.d2_arr = new Double[] { 1.0 / 3.0 };
-			marshaller.toJSON( dc2_arr, converters );
+			marshaller.toJSONStructure( dc2_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1854,7 +1856,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bic_arr = new TestBigIntegerArrayConversion();
 			bic_arr.bi_arr = new BigInteger[] { new BigInteger( "12345678901234567890" ) };
-			marshaller.toJSON( bic_arr, converters );
+			marshaller.toJSONStructure( bic_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1862,7 +1864,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bdc_arr = new TestBigDecimalArrayConversion();
 			bdc_arr.bd_arr = new BigDecimal[] { new BigDecimal( "0.12345678901234567890" ) };
-			marshaller.toJSON( bdc_arr, converters );
+			marshaller.toJSONStructure( bdc_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1870,7 +1872,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			sc_arr = new TestStringArrayConversion();
 			sc_arr.s_arr = new String[] { "streng" };
-			marshaller.toJSON( sc_arr, converters );
+			marshaller.toJSONStructure( sc_arr, converters );
 		}
 		catch (JSONException e) {
 			Assert.assertTrue( e.getMessage().endsWith( " does not allow null values." ) );
@@ -1888,7 +1890,7 @@ public class TestJSONObjectMapper_Converter {
 			Assert.fail( "Unexpected exception!" );
 		}
 
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		JSONObject json_object;
 		JSONValue json_value;
 		JSONArray json_array;
@@ -1896,7 +1898,7 @@ public class TestJSONObjectMapper_Converter {
 		try {
 			bc1 = new TestBoolean1Conversion();
 			bc1.b1 = true;
-			json_struct = marshaller.toJSON( bc1, converters );
+			json_struct = marshaller.toJSONStructure( bc1, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1906,7 +1908,7 @@ public class TestJSONObjectMapper_Converter {
 
 			ic1 = new TestInteger1Conversion();
 			ic1.i1 = 42;
-			json_struct = marshaller.toJSON( ic1, converters );
+			json_struct = marshaller.toJSONStructure( ic1, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1916,7 +1918,7 @@ public class TestJSONObjectMapper_Converter {
 
 			lc1 = new TestLong1Conversion();
 			lc1.l1 = 12345678901234L;
-			json_struct = marshaller.toJSON( lc1, converters );
+			json_struct = marshaller.toJSONStructure( lc1, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1926,7 +1928,7 @@ public class TestJSONObjectMapper_Converter {
 
 			fc1 = new TestFloat1Conversion();
 			fc1.f1 = 1.0F / 3.0F;
-			json_struct = marshaller.toJSON( fc1, converters );
+			json_struct = marshaller.toJSONStructure( fc1, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1936,7 +1938,7 @@ public class TestJSONObjectMapper_Converter {
 
 			dc1 = new TestDouble1Conversion();
 			dc1.d1 = 1.0 / 3.0;
-			json_struct = marshaller.toJSON( dc1, converters );
+			json_struct = marshaller.toJSONStructure( dc1, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1946,7 +1948,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bc2 = new TestBoolean2Conversion();
 			bc2.b2 = true;
-			json_struct = marshaller.toJSON( bc2, converters );
+			json_struct = marshaller.toJSONStructure( bc2, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1956,7 +1958,7 @@ public class TestJSONObjectMapper_Converter {
 
 			ic2 = new TestInteger2Conversion();
 			ic2.i2 = 42;
-			json_struct = marshaller.toJSON( ic2, converters );
+			json_struct = marshaller.toJSONStructure( ic2, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1966,7 +1968,7 @@ public class TestJSONObjectMapper_Converter {
 
 			lc2 = new TestLong2Conversion();
 			lc2.l2 = 12345678901234L;
-			json_struct = marshaller.toJSON( lc2, converters );
+			json_struct = marshaller.toJSONStructure( lc2, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1976,7 +1978,7 @@ public class TestJSONObjectMapper_Converter {
 
 			fc2 = new TestFloat2Conversion();
 			fc2.f2 = 1.0F / 3.0F;
-			json_struct = marshaller.toJSON( fc2, converters );
+			json_struct = marshaller.toJSONStructure( fc2, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1986,7 +1988,7 @@ public class TestJSONObjectMapper_Converter {
 
 			dc2 = new TestDouble2Conversion();
 			dc2.d2 = 1.0 / 3.0;
-			json_struct = marshaller.toJSON( dc2, converters );
+			json_struct = marshaller.toJSONStructure( dc2, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -1996,7 +1998,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bic = new TestBigIntegerConversion();
 			bic.bi = new BigInteger( "12345678901234567890" );
-			json_struct = marshaller.toJSON( bic, converters );
+			json_struct = marshaller.toJSONStructure( bic, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2006,7 +2008,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bdc = new TestBigDecimalConversion();
 			bdc.bd = new BigDecimal( "0.12345678901234567890" );
-			json_struct = marshaller.toJSON( bdc, converters );
+			json_struct = marshaller.toJSONStructure( bdc, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2016,7 +2018,7 @@ public class TestJSONObjectMapper_Converter {
 
 			sc = new TestStringConversion();
 			sc.s = "streng";
-			json_struct = marshaller.toJSON( sc, converters );
+			json_struct = marshaller.toJSONStructure( sc, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2026,7 +2028,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bac = new TestBytesConversion();
 			bac.b = "bytes".getBytes();
-			json_struct = marshaller.toJSON( bac, converters );
+			json_struct = marshaller.toJSONStructure( bac, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2040,7 +2042,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bc1_arr = new TestBooleanArray1Conversion();
 			bc1_arr.b1_arr = new boolean[] { true };
-			json_struct = marshaller.toJSON( bc1_arr, converters );
+			json_struct = marshaller.toJSONStructure( bc1_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2053,7 +2055,7 @@ public class TestJSONObjectMapper_Converter {
 
 			ic1_arr = new TestIntegerArray1Conversion();
 			ic1_arr.i1_arr = new int[] { 42 };
-			json_struct = marshaller.toJSON( ic1_arr, converters );
+			json_struct = marshaller.toJSONStructure( ic1_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2066,7 +2068,7 @@ public class TestJSONObjectMapper_Converter {
 
 			lc1_arr = new TestLongArray1Conversion();
 			lc1_arr.l1_arr = new long[] { 12345678901234L };
-			json_struct = marshaller.toJSON( lc1_arr, converters );
+			json_struct = marshaller.toJSONStructure( lc1_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2079,7 +2081,7 @@ public class TestJSONObjectMapper_Converter {
 
 			fc1_arr = new TestFloatArray1Conversion();
 			fc1_arr.f1_arr = new float[] { 1.0F / 3.0F };
-			json_struct = marshaller.toJSON( fc1_arr, converters );
+			json_struct = marshaller.toJSONStructure( fc1_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2092,7 +2094,7 @@ public class TestJSONObjectMapper_Converter {
 
 			dc1_arr = new TestDoubleArray1Conversion();
 			dc1_arr.d1_arr = new double[] { 1.0 / 3.0 };
-			json_struct = marshaller.toJSON( dc1_arr, converters );
+			json_struct = marshaller.toJSONStructure( dc1_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2105,7 +2107,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bc2_arr = new TestBooleanArray2Conversion();
 			bc2_arr.b2_arr = new Boolean[] { true };
-			json_struct = marshaller.toJSON( bc2_arr, converters );
+			json_struct = marshaller.toJSONStructure( bc2_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2118,7 +2120,7 @@ public class TestJSONObjectMapper_Converter {
 
 			ic2_arr = new TestIntegerArray2Conversion();
 			ic2_arr.i2_arr = new Integer[] { 42 };
-			json_struct = marshaller.toJSON( ic2_arr, converters );
+			json_struct = marshaller.toJSONStructure( ic2_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2131,7 +2133,7 @@ public class TestJSONObjectMapper_Converter {
 
 			lc2_arr = new TestLongArray2Conversion();
 			lc2_arr.l2_arr = new Long[] { 12345678901234L };
-			json_struct = marshaller.toJSON( lc2_arr, converters );
+			json_struct = marshaller.toJSONStructure( lc2_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2144,7 +2146,7 @@ public class TestJSONObjectMapper_Converter {
 
 			fc2_arr = new TestFloatArray2Conversion();
 			fc2_arr.f2_arr = new Float[] { 1.0F / 3.0F };
-			json_struct = marshaller.toJSON( fc2_arr, converters );
+			json_struct = marshaller.toJSONStructure( fc2_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2157,7 +2159,7 @@ public class TestJSONObjectMapper_Converter {
 
 			dc2_arr = new TestDoubleArray2Conversion();
 			dc2_arr.d2_arr = new Double[] { 1.0 / 3.0 };
-			json_struct = marshaller.toJSON( dc2_arr, converters );
+			json_struct = marshaller.toJSONStructure( dc2_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2170,7 +2172,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bic_arr = new TestBigIntegerArrayConversion();
 			bic_arr.bi_arr = new BigInteger[] { new BigInteger( "12345678901234567890" ) };
-			json_struct = marshaller.toJSON( bic_arr, converters );
+			json_struct = marshaller.toJSONStructure( bic_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2183,7 +2185,7 @@ public class TestJSONObjectMapper_Converter {
 
 			bdc_arr = new TestBigDecimalArrayConversion();
 			bdc_arr.bd_arr = new BigDecimal[] { new BigDecimal( "0.12345678901234567890" ) };
-			json_struct = marshaller.toJSON( bdc_arr, converters );
+			json_struct = marshaller.toJSONStructure( bdc_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );
@@ -2196,7 +2198,7 @@ public class TestJSONObjectMapper_Converter {
 
 			sc_arr = new TestStringArrayConversion();
 			sc_arr.s_arr = new String[] { "streng" };
-			json_struct = marshaller.toJSON( sc_arr, converters );
+			json_struct = marshaller.toJSONStructure( sc_arr, converters );
 			Assert.assertNotNull( json_struct);
 			json_object = json_struct.getObject();
 			Assert.assertNotNull( json_object );

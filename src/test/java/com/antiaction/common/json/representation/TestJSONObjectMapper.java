@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,6 +33,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMapping;
+import com.antiaction.common.json.JSONObjectMappings;
+import com.antiaction.common.json.TestHelpers;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
@@ -64,7 +71,7 @@ public class TestJSONObjectMapper {
 		System.out.println( byte[].class.isPrimitive() + " - " + byte[].class.getName() );
 		*/
 
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 
 		try {
 			String text;
@@ -74,7 +81,7 @@ public class TestJSONObjectMapper {
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONDecoder json_decoder;
-			JSONText json = new JSONText();
+			JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 
@@ -95,7 +102,7 @@ public class TestJSONObjectMapper {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
@@ -130,7 +137,7 @@ public class TestJSONObjectMapper {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
@@ -165,7 +172,7 @@ public class TestJSONObjectMapper {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			result = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, SFSResult.class );
@@ -219,7 +226,7 @@ public class TestJSONObjectMapper {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			testTypes = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, TestTypesClass.class );
@@ -343,12 +350,12 @@ public class TestJSONObjectMapper {
 	@Test
 	public void test_jsonobjectmapper_tojson() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
+		JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
 			try {
-				json_objectmappings.getStructureMarshaller().toJSON( new TestJSONMapObject() );
+				json_objectmappings.getStructureMarshaller().toJSONStructure( new TestJSONMapObject() );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (IllegalArgumentException e) {
@@ -406,11 +413,11 @@ public class TestJSONObjectMapper {
 			obj3.s = null;
 			obj3.b = null;
 
-			JSONStructure json_struct = json_objectmappings.getStructureMarshaller().toJSON( obj );
+			JSONCollection json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( obj );
 			TestJSONMapObject result;
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			byte[] json_compact = out.toByteArray();
 			// debug
@@ -420,7 +427,7 @@ public class TestJSONObjectMapper {
 			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
-			json.encodeJSONtext( json_struct, json_encoder, true, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug

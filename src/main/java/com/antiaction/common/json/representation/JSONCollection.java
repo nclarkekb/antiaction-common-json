@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 /**
- * JSON Structure abstraction. Object and Array are the only current top level
- * JSON structures.
+ * JSON collection abstraction. Object and Array are the only current top level
+ * JSON collections.
  *
  * @author Nicholas
  * Created on 02/08/2012
  */
-public abstract class JSONStructure extends JSONValue {
+public abstract class JSONCollection extends JSONValue {
 
 	/**
 	 * Create a new JSON object, add it to this array and return it to caller.

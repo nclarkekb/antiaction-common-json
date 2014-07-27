@@ -337,7 +337,7 @@ public class TestJSONStreamMarshaller {
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		try {
 			try {
-				json_objectmappings.getStructureMarshaller().toJSON( new TestJSONMapObject() );
+				json_objectmappings.getStructureMarshaller().toJSONStructure( new TestJSONMapObject() );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (IllegalArgumentException e) {
@@ -397,7 +397,7 @@ public class TestJSONStreamMarshaller {
 			obj3.b = null;
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj, json_encoder, false, out );
 			TestJSONMapObject result;
 
 			byte[] json_compact = out.toByteArray();
@@ -410,7 +410,7 @@ public class TestJSONStreamMarshaller {
 			assert_jsonobjectmapper_tojson_result( result );
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, true, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj, json_encoder, true, out );
 
 			byte[] json_pretty = out.toByteArray();
 			// debug

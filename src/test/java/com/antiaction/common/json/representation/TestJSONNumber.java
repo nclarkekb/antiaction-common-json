@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +30,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONDecoderCharset;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
 
 /**
  * TODO javadoc
@@ -143,7 +151,8 @@ public class TestJSONNumber {
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JSONText json = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_number_int );
@@ -153,7 +162,7 @@ public class TestJSONNumber {
 			json_array.add( json_number_bigint );
 			json_array.add( json_number_bigdec );
 
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );
@@ -161,7 +170,7 @@ public class TestJSONNumber {
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
 
-			JSONStructure json_structure = json.decodeJSONtext( in, json_decoder );
+			JSONCollection json_structure = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 
 			Assert.assertNotNull( json_structure );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_structure.type );
@@ -190,11 +199,11 @@ public class TestJSONNumber {
 		PushbackInputStream pbin = null;
 		int encoding;
 
-		JSONText json = new JSONText();
+		JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONDecoder json_decoder = null;
 
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		JSONArray json_array;
 
 		String json_text;
@@ -224,7 +233,7 @@ public class TestJSONNumber {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_array = (JSONArray)json_struct;

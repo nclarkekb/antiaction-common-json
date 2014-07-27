@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,6 +34,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.representation.JSONArray;
+import com.antiaction.common.json.representation.JSONBoolean;
+import com.antiaction.common.json.representation.JSONCollection;
+import com.antiaction.common.json.representation.JSONNull;
+import com.antiaction.common.json.representation.JSONNumber;
+import com.antiaction.common.json.representation.JSONObject;
+import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONTextMarshaller;
+
 /**
  * TODO javadoc
  * @author Nicholas
@@ -48,7 +63,7 @@ public class TestJSONText {
 		PushbackInputStream pbin = null;
 		int encoding;
 
-		JSONText json = new JSONText();
+		JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONDecoder json_decoder = null;
 
@@ -105,7 +120,7 @@ public class TestJSONText {
 				Assert.fail( "Unexpected exception!" );
 			}
 			try {
-				json.decodeJSONtext( pbin, json_decoder );
+				json.toJSONStructure( pbin, json_decoder );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (IOException e) {
@@ -119,12 +134,12 @@ public class TestJSONText {
 	@Test
 	public void test_json_text_encode_exception() {
 		try {
-			JSONText json = new JSONText();
-			JSONStructure json_structure = null;
+			JSONCollection json_structure = null;
 			Charset charset = Charset.forName( "UTF-8" );
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			json.encodeJSONtext( json_structure, json_encoder, false, out );
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			json_textMarshaller.toJSONText( json_structure, json_encoder, false, out );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (IOException e) {
@@ -151,8 +166,8 @@ public class TestJSONText {
 	}
 
 	public void test_jsontext_encode_decode(Charset charset, int expected_encoding) {
-		JSONStructure json_struct;
-		JSONStructure json_struct2;
+		JSONCollection json_struct;
+		JSONCollection json_struct2;
 		JSONArray json_array;
 		JSONObject json_object;
 		JSONArray json_array2;
@@ -164,10 +179,12 @@ public class TestJSONText {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] bytes;
 
-			JSONText json = new JSONText();
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			JSONDecoder json_decoder;
+
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 
 			/*
 			 * []
@@ -175,7 +192,7 @@ public class TestJSONText {
 
 			json_array = new JSONArray();
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -185,7 +202,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			Assert.assertEquals( json_array.toString(), json_struct.toString() );
@@ -197,7 +214,7 @@ public class TestJSONText {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct2 = json.decodeJSONtext( pbin, json_decoder );
+			json_struct2 = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct2 );
 
 			/*
@@ -206,7 +223,7 @@ public class TestJSONText {
 
 			json_object = new JSONObject();
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -216,7 +233,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			Assert.assertEquals( json_object.toString(), json_struct.toString() );
@@ -228,7 +245,7 @@ public class TestJSONText {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct2 = json.decodeJSONtext( pbin, json_decoder );
+			json_struct2 = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct2 );
 
 			/*
@@ -253,7 +270,7 @@ public class TestJSONText {
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -263,7 +280,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -308,7 +325,7 @@ public class TestJSONText {
 			json_object.put( JSONString.String( "14" ), JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_object.put( JSONString.String( "15" ), JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -318,7 +335,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
@@ -363,7 +380,7 @@ public class TestJSONText {
 			json_object.put( "14", JSONNumber.BigDecimal( new BigDecimal( "3141592e04" ) ) );
 			json_object.put( "15", JSONNumber.BigDecimal( new BigDecimal( "3141592E04" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -373,7 +390,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
@@ -422,7 +439,7 @@ public class TestJSONText {
 			json_array2.add( JSONNumber.BigInteger( new BigInteger( "123456789012345678901234567890123456789012" ) ) );
 			json_array2.add( JSONNumber.BigDecimal( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -432,7 +449,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -477,7 +494,7 @@ public class TestJSONText {
 			json_object2 = new JSONObject();
 			json_array.add( json_object2 );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -487,7 +504,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -533,7 +550,7 @@ public class TestJSONText {
 			json_array.add( JSONNumber.BigInteger( new BigInteger( "123456789012345678901234567890123456789012" ) ) );
 			json_array.add( JSONNumber.BigDecimal( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ) ) );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -543,7 +560,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -584,7 +601,7 @@ public class TestJSONText {
 			json_object.put( new JSONString( "False" ), JSONBoolean.False );
 			json_object.put( new JSONString( "True" ), JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -594,7 +611,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -622,7 +639,7 @@ public class TestJSONText {
 			json_array.add( JSONBoolean.False );
 			json_array.add( JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -632,7 +649,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_struct.type );
 
@@ -661,7 +678,7 @@ public class TestJSONText {
 			json_array.add( JSONBoolean.False );
 			json_array.add( JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -671,7 +688,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
@@ -699,7 +716,7 @@ public class TestJSONText {
 			json_object2.put( new JSONString( "False" ), JSONBoolean.False );
 			json_object2.put( new JSONString( "True" ), JSONBoolean.True );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -709,7 +726,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
@@ -736,7 +753,7 @@ public class TestJSONText {
 			json_array2 = new JSONArray();
 			json_object.put( new JSONString( "Array" ), json_array2 );
 			out.reset();
-			json.encodeJSONtext( json_object, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_object, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -746,7 +763,7 @@ public class TestJSONText {
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 			Assert.assertEquals( JSONConstants.VT_OBJECT, json_struct.type );
 
@@ -780,7 +797,7 @@ public class TestJSONText {
 
 	@Test
 	public void test_jsontext_whitespace() {
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		JSONArray json_array;
 		JSONObject json_object;
 
@@ -791,7 +808,7 @@ public class TestJSONText {
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONDecoder json_decoder;
-			JSONText json = new JSONText();
+			JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 
 			bytes = new byte[] {
 					0x20, 0x09, 0x0A, 0x0D,
@@ -843,7 +860,7 @@ public class TestJSONText {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_array = (JSONArray)json_struct;
@@ -870,7 +887,7 @@ public class TestJSONText {
 
 	@Test
 	public void test_jsontext_rfc() {
-		JSONStructure json_struct;
+		JSONCollection json_struct;
 		JSONArray json_array;
 		JSONObject json_object;
 		JSONObject json_object2;
@@ -883,7 +900,7 @@ public class TestJSONText {
 
 			JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 			JSONDecoder json_decoder;
-			JSONText json = new JSONText();
+			JSONTextUnmarshaller json = new JSONTextUnmarshaller();
 
 			text = "{\n"
 					+ "    \"Image\": {\n"
@@ -905,7 +922,7 @@ public class TestJSONText {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_object = (JSONObject)json_struct;
@@ -952,7 +969,7 @@ public class TestJSONText {
 			Assert.assertEquals( JSONEncoding.E_UTF8, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
 			Assert.assertNotNull( json_decoder );
-			json_struct = json.decodeJSONtext( pbin, json_decoder );
+			json_struct = json.toJSONStructure( pbin, json_decoder );
 			Assert.assertNotNull( json_struct );
 
 			json_array = (JSONArray)json_struct;

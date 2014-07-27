@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,13 +23,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONEncoder;
+
 /**
  * JSON Object implementation.
  *
  * @author Nicholas
  * Created on 01/08/2012
  */
-public class JSONObject extends JSONStructure {
+public class JSONObject extends JSONCollection {
 
 	/** <code>Map</code> of JSON Object key/value pairs. */
 	protected Map<JSONString, JSONValue> values = new HashMap<JSONString, JSONValue>();

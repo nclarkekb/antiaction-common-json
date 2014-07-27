@@ -30,6 +30,11 @@ import org.junit.runners.JUnit4;
 
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONNullable;
+import com.antiaction.common.json.representation.JSONCollection;
+import com.antiaction.common.json.representation.JSONNull;
+import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONTextMarshaller;
+import com.antiaction.common.json.representation.PackageAccess;
 
 /**
  * TODO javadoc
@@ -90,7 +95,7 @@ public class TestJSONStreamMarshaller_Nullable {
 			obj3.b = null;
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -152,7 +157,7 @@ public class TestJSONStreamMarshaller_Nullable {
 			obj2.obj = obj;
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj2, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj2, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -350,7 +355,7 @@ public class TestJSONStreamMarshaller_Nullable {
 			obj3.b = null;
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -412,7 +417,7 @@ public class TestJSONStreamMarshaller_Nullable {
 			obj2.obj = obj;
 
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( obj2, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( obj2, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -664,15 +669,18 @@ public class TestJSONStreamMarshaller_Nullable {
 
 			String[] fields = { "b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj" };
 			for ( int i=0; i<fields.length; ++i ) {
-				JSONStructure json_struct;
-				JSONText json = new JSONText();
+				JSONCollection json_struct;
+				JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
 				ByteArrayInputStream in;
 				try {
-					json_struct = json_objectmappings.getStructureMarshaller().toJSON( moldObject );
+					json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
 					//((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
-					((JSONObject)json_struct).values.put( JSONString.String( fields[ i ] ), JSONNull.Null );
+
+					//((JSONObject)json_struct).values.put( JSONString.String( fields[ i ] ), JSONNull.Null );
+					PackageAccess.setObjectValues( json_struct, JSONString.String( fields[ i ] ), JSONNull.Null );
+
 					out.reset();
-					json.encodeJSONtext( json_struct, json_encoder, true, out );
+					json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 					// debug
 					//System.out.println( new String( out.toByteArray() ) );
 					in = new ByteArrayInputStream( out.toByteArray() );
@@ -709,7 +717,7 @@ public class TestJSONStreamMarshaller_Nullable {
 	public void assert_toObject_exception(TestJSONMapObjectNull moldObject, ByteArrayOutputStream out, JSONEncoder json_encoder, JSONDecoder json_decoder, JSONObjectMappings json_objectmappings) throws IOException, InstantiationException, IllegalAccessException {
 		try {
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( moldObject, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( moldObject, json_encoder, false, out );
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
 		}
@@ -915,7 +923,7 @@ public class TestJSONStreamMarshaller_Nullable {
 	public void assert_toJSON_exception(JSONObjectMappings json_objectmappings, TestJSONMapObject moldObject, JSONEncoder json_encoder, ByteArrayOutputStream out) throws IllegalArgumentException, IllegalAccessException, IOException {
 		try {
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( moldObject, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( moldObject, json_encoder, false, out );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -961,7 +969,7 @@ public class TestJSONStreamMarshaller_Nullable {
 	public void assert_toJSONWithAV_exception(JSONObjectMappings json_objectmappings, TestJSONMapObjectWithAV moldObject, JSONEncoder json_encoder, ByteArrayOutputStream out) throws IllegalArgumentException, IllegalAccessException, IOException {
 		try {
 			out.reset();
-			json_objectmappings.getStreamMarshaller().toJSON( moldObject, json_encoder, false, out );
+			json_objectmappings.getStreamMarshaller().toJSONText( moldObject, json_encoder, false, out );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {

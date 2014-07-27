@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +26,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONConstants;
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONDecoderCharset;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONException;
 
 /**
  * TODO javadoc
@@ -60,12 +67,13 @@ public class TestJSONNull {
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JSONText json = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 
 			JSONArray json_array = new JSONArray();
 			json_array.add( json_null );
 
-			json.encodeJSONtext( json_array, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_array, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() )  );
@@ -73,7 +81,7 @@ public class TestJSONNull {
 			ByteArrayInputStream in = new ByteArrayInputStream( out.toByteArray() );
 			JSONDecoder json_decoder = new JSONDecoderCharset( charset );
 
-			JSONStructure json_structure = json.decodeJSONtext( in, json_decoder );
+			JSONCollection json_structure = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 
 			Assert.assertNotNull( json_structure );
 			Assert.assertEquals( JSONConstants.VT_ARRAY, json_structure.type );

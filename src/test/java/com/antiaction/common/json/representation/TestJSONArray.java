@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.representation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +30,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoderCharset;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
 
 /**
  * TODO javadoc
@@ -103,7 +109,7 @@ public class TestJSONArray {
 				inArrays.add( bytes );
 			}
 
-			JSONStructure json_struct = new JSONArray();
+			JSONCollection json_struct = new JSONArray();
 			for ( int i=0; i<inArrays.size(); ++i ) {
 				json_struct.add( JSONString.String( inArrays.get( i ) ) );
 			}
@@ -112,7 +118,8 @@ public class TestJSONArray {
 			JSONEncoder json_encoder = new JSONEncoderCharset( charset );
 			int encoding;
 			JSONDecoder json_decoder;
-			JSONText json_text = new JSONText();
+			JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
+			JSONTextUnmarshaller json_textUnmarshaller = new JSONTextUnmarshaller();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			PushbackInputStream in;
 
@@ -120,7 +127,7 @@ public class TestJSONArray {
 			//System.out.println( 16384 * 8 );
 
 			out.reset();
-			json_text.encodeJSONtext( json_struct, json_encoder, false, out );
+			json_textMarshaller.toJSONText( json_struct, json_encoder, false, out );
 
 			// debug
 			//System.out.println( new String( out.toByteArray() ) );
@@ -130,7 +137,7 @@ public class TestJSONArray {
 			encoding = JSONEncoding.encoding( in );
 			Assert.assertEquals( expected_encoding, encoding );
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json_text.decodeJSONtext( in, json_decoder );
+			json_struct = json_textUnmarshaller.toJSONStructure( in, json_decoder );
 			in.close();
 
 			for ( int i=0; i<inArrays.size(); ++i ) {
@@ -151,7 +158,7 @@ public class TestJSONArray {
 
 	@Test
 	public void test_jsonarray_supported_unsupporteed() {
-		JSONStructure json_struct = new JSONArray();
+		JSONCollection json_struct = new JSONArray();
 		JSONArray json_array = json_struct.getArray();
 		Assert.assertEquals( json_struct, json_array );
 
