@@ -21,7 +21,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.antiaction.common.json.annotation.JSON;
@@ -235,26 +239,72 @@ public class JSONObjectMappings {
 					fieldObjectMapping = null;
 					if ( type == null ) {
 						if ( (classTypeMask & JSONObjectMappingConstants.FIELD_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
-							throw new JSONException( "Unsupported field class type." );
+							// Check the interface itself.
+							int colType = ClassTypeModifiers.getCollectionInterfaceType( fieldType );
+							switch ( colType ) {
+							case ClassTypeModifiers.COLTYPE_LIST:
+								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
+							case ClassTypeModifiers.COLTYPE_MAP:
+								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
+							case ClassTypeModifiers.COLTYPE_SET:
+								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
+							default:
+								// Check extended interfaces.
+								colType = ClassTypeModifiers.getCollectionType( fieldType, fieldType.getInterfaces() );
+								switch ( colType ) {
+								case ClassTypeModifiers.COLTYPE_LIST:
+									throw new JSONException( "Unsupported collection interface field type. (" + List.class.getName() + " .. " + fieldType.getName() + ")" );
+								case ClassTypeModifiers.COLTYPE_MAP:
+									throw new JSONException( "Unsupported collection interface field type. (" + Map.class.getName() + " .. " + fieldType.getName() + ")" );
+								case ClassTypeModifiers.COLTYPE_SET:
+									throw new JSONException( "Unsupported collection interface field type. (" + Set.class.getName() + " .. " + fieldType.getName() + ")" );
+								default:
+									throw new JSONException( "Unsupported field class type." );
+								}
+							}
 						}
 						classTypeMask &= JSONObjectMappingConstants.FIELD_VALID_TYPE_MODIFIERS_MASK;
 						if ( (classTypeMask == JSONObjectMappingConstants.VALID_CLASS) || (classTypeMask == JSONObjectMappingConstants.VALID_MEMBER_CLASS) ) {
 							Type genericType = field.getGenericType();
-							//System.out.println( "GT: " + genericType + " " + genericType.getClass() );
+							// debug
+							System.out.println( "GT: " + genericType + " * " + genericType.getClass() );
 
-							type = JSONObjectMappingConstants.T_OBJECT;
-							// Cache
-							fieldObjectMapping = classMappings.get( fieldTypeName );
-							if ( fieldObjectMapping == null ) {
-								fieldObjectMapping = mapClass( Class.forName( fieldTypeName, true, clazz.getClassLoader() ) );
+							if ( genericType instanceof Class ) {
+								Class<?>[] interfaces = ((Class<?>) genericType).getInterfaces();
+								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)genericType, interfaces );
+								switch ( colType ) {
+								case ClassTypeModifiers.COLTYPE_LIST:
+								case ClassTypeModifiers.COLTYPE_MAP:
+								case ClassTypeModifiers.COLTYPE_SET:
+									throw new JSONException( "Collection must have parametrized type(s). (" + fieldType.getName() + ")" );
+								default:
+									type = JSONObjectMappingConstants.T_OBJECT;
+									// Cache
+									fieldObjectMapping = classMappings.get( fieldTypeName );
+									if ( fieldObjectMapping == null ) {
+										fieldObjectMapping = mapClass( Class.forName( fieldTypeName, true, clazz.getClassLoader() ) );
+									}
+									break;
+								}
 							}
-
-							if( genericType instanceof ParameterizedType ) {
+							else if ( genericType instanceof TypeVariable ) {
+								throw new JSONException( "Unable to determine type of generic field '" + field.getName() + "'" );
+							}
+							else if ( genericType instanceof ParameterizedType ) {
 								ParameterizedType parameterizedType = (ParameterizedType)genericType;
 								Type[] typeArguments = parameterizedType.getActualTypeArguments();
+								boolean bWildCardUsed = false;
 								for ( Type typeArgument : typeArguments ) {
+									if ( typeArgument instanceof WildcardType ) {
+										bWildCardUsed = true;
+									}
+								}
+								if ( bWildCardUsed ) {
+									throw new JSONException( "Unsupported use of wildcard parameterized types." );
+								}
+								for ( Type typeArgument : typeArguments ) {
+									System.out.println( typeArgument );
 									Class<?> classType = ((Class<?>)typeArgument);
-									//System.out.println( "Field " + field.getName() + " has a parameterized type of " + classType.getSimpleName() );
 								}
 							}
 						}
@@ -267,18 +317,28 @@ public class JSONObjectMappings {
 									++level;
 								}
 								// [L<class>;
-								if ( level == 1 && level < fieldTypeName.length() && fieldTypeName.charAt( level ) == 'L' && fieldTypeName.endsWith( ";" ) ) {
-									arrayType = JSONObjectMappingConstants.T_OBJECT;
-									fieldTypeName = fieldTypeName.substring( level + 1, fieldTypeName.length() - 1 );
-									fieldType = Class.forName( fieldTypeName, true, clazz.getClassLoader() );
-									// Cache
-									fieldObjectMapping = classMappings.get( fieldTypeName );
-									if ( fieldObjectMapping == null ) {
-										fieldObjectMapping = mapClass( fieldType );
+								if ( level < fieldTypeName.length() ) {
+									if ( level == 1 ) {
+										if ( fieldTypeName.charAt( level ) == 'L' && fieldTypeName.endsWith( ";" ) ) {
+											arrayType = JSONObjectMappingConstants.T_OBJECT;
+											fieldTypeName = fieldTypeName.substring( level + 1, fieldTypeName.length() - 1 );
+											fieldType = Class.forName( fieldTypeName, true, clazz.getClassLoader() );
+											// Cache
+											fieldObjectMapping = classMappings.get( fieldTypeName );
+											if ( fieldObjectMapping == null ) {
+												fieldObjectMapping = mapClass( fieldType );
+											}
+										}
+										else {
+											throw new JSONException( "Unsupported array type '" + fieldTypeName + "'." );
+										}
+									}
+									else {
+										throw new JSONException( "Unsupported multi-dimensional array type '" + fieldTypeName + "'." );
 									}
 								}
 								else {
-									throw new JSONException( "Unsupported array type '" + fieldTypeName + "'." );
+									throw new JSONException( "Invalid array type '" + fieldTypeName + "'." );
 								}
 							}
 						}

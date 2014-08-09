@@ -19,6 +19,8 @@ package com.antiaction.common.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Small reflection helper class to convert all those useless is<x> class type
@@ -232,6 +234,88 @@ public class ClassTypeModifiers {
 			}
 		}
 		return sb.toString();
+	}
+
+	public static final int COLTYPE_OTHER = 0;
+	public static final int COLTYPE_LIST = 1;
+	public static final int COLTYPE_MAP = 2;
+	public static final int COLTYPE_SET = 3;
+
+	public static int getCollectionInterfaceType(Class<?> clazz) {
+		String clazzName = clazz.getName();
+		int colType = COLTYPE_OTHER;
+		if ( clazzName.equals( java.util.List.class.getName() ) ) {
+			colType = COLTYPE_LIST;
+		}
+		else if ( clazzName.equals( java.util.Map.class.getName() ) ) {
+			colType = COLTYPE_MAP;
+		}
+		else if ( clazzName.equals(java.util.Set.class.getName() ) ) {
+			colType = COLTYPE_SET;
+		}
+		return colType;
+	}
+
+	protected static Map<String, Integer> cachedColType = new HashMap<String, Integer>();
+
+	public static synchronized int getCollectionType(Class<?> clazz, Class<?>[] interfaces) {
+		Class<?> interfaceClazz;
+		String interfaceClazzName;
+		Integer interfaceColType;
+		String clazzName = clazz.getName();
+		Integer clazzColType = cachedColType.get( clazzName );
+		if ( clazzColType == null ) {
+			clazzColType = COLTYPE_OTHER;
+			for ( int i=0; i<interfaces.length; ++i ) {
+				interfaceClazz = interfaces[ i ];
+				interfaceClazzName = interfaceClazz.getName();
+				interfaceColType = cachedColType.get( interfaceClazzName );
+				if ( interfaceColType == null ) {
+					if ( interfaceClazz.getName().equals( java.util.List.class.getName() ) ) {
+						interfaceColType = COLTYPE_LIST;
+					}
+					else if ( interfaceClazz.getName().equals( java.util.Map.class.getName() ) ) {
+						interfaceColType = COLTYPE_MAP;
+					}
+					else if ( interfaceClazz.getName().equals(java.util.Set.class.getName() ) ) {
+						interfaceColType = COLTYPE_SET;
+					}
+					if ( interfaceColType != null ) {
+						cachedColType.put( interfaceClazzName, interfaceColType );
+						// debug
+						//System.out.println( interfaceColType + " = " + interfaceClazzName );
+					}
+					else {
+						interfaceColType = getCollectionType( interfaceClazz, interfaceClazz.getInterfaces() );
+					}
+				}
+				/*
+				else {
+					// debug
+					System.out.println( "(" + interfaceColType + " = " + interfaceClazzName + ")" );
+				}
+				*/
+				switch (interfaceColType ) {
+				case COLTYPE_LIST:
+				case COLTYPE_MAP:
+				case COLTYPE_SET:
+					clazzColType = interfaceColType;
+					break;
+				default:
+					break;
+				}
+			}
+			cachedColType.put( clazzName, clazzColType );
+			// debug
+			//System.out.println( clazzColType + " = " + clazzName );
+		}
+		/*
+		else {
+			// debug
+			System.out.println( "(" + clazzColType + " = " + clazzName + ")" );
+		}
+		*/
+		return clazzColType;
 	}
 
 }
