@@ -36,6 +36,8 @@ import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
 import com.antiaction.common.json.representation.JSONStructureMarshaller;
 import com.antiaction.common.json.representation.JSONStructureUnmarshaller;
+import com.antiaction.common.json.representation.JSONTextMarshaller;
+import com.antiaction.common.json.representation.JSONTextUnmarshaller;
 
 /**
  * TODO javadoc
@@ -52,6 +54,10 @@ public class JSONObjectMappings {
 
 	protected int converterIds = 0;
 
+	protected final JSONTextMarshaller textMarshaller;
+
+	protected final JSONTextUnmarshaller textUnmarshaller;
+
 	protected final JSONStructureMarshaller structureMarshaller;
 
 	protected final JSONStructureUnmarshaller structureUnmarshaller;
@@ -61,10 +67,20 @@ public class JSONObjectMappings {
 	protected final JSONStreamUnmarshaller streamUnmarshaller;
 
 	public JSONObjectMappings() {
+		textMarshaller = new JSONTextMarshaller();
+		textUnmarshaller = new JSONTextUnmarshaller();
 		structureMarshaller = new JSONStructureMarshaller( this );
 		structureUnmarshaller = new JSONStructureUnmarshaller( this );
 		streamMarshaller = new JSONStreamMarshaller( this );
 		streamUnmarshaller = new JSONStreamUnmarshaller( this );
+	}
+
+	public JSONTextMarshaller getTextMarshaller() {
+		return textMarshaller;
+	}
+
+	public JSONTextUnmarshaller getTextUnmarshaller() {
+		return textUnmarshaller;
 	}
 
 	public JSONStructureMarshaller getStructureMarshaller() {
@@ -126,7 +142,7 @@ public class JSONObjectMappings {
 			String arrayTypeName = clazz.getName();
 			// debug
 			//System.out.println( typeName );
-			Integer arrayType = JSONObjectMappingConstants.arrayTypeMappings.get( arrayTypeName );
+			Integer arrayType = JSONObjectMappingConstants.arrayPrimitiveTypeMappings.get( arrayTypeName );
 			// debug
 			//System.out.println( arrayType );
 			if ( arrayType == null ) {
@@ -203,6 +219,8 @@ public class JSONObjectMappings {
 		int fieldModsMask = 0;
 		int classTypeMask = 0;
 		JSONObjectMapping fieldObjectMapping;
+		Integer[] parametrizedObjectTypes; 
+		JSONObjectMapping[] parametrizedObjectMappings;
 		int level;
 		JSONNullable nullable;
 		boolean bNullable;
@@ -235,8 +253,10 @@ public class JSONObjectMappings {
 					// debug
 					//System.out.println( fieldTypeName + " " + ClassTypeModifiers.toString( classTypeMask ) );
 
-					type = JSONObjectMappingConstants.typeMappings.get( fieldTypeName );
+					type = JSONObjectMappingConstants.primitiveTypeMappings.get( fieldTypeName );
 					fieldObjectMapping = null;
+					parametrizedObjectTypes = null;
+					parametrizedObjectMappings = null;
 					if ( type == null ) {
 						if ( (classTypeMask & JSONObjectMappingConstants.FIELD_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
 							// Check the interface itself.
@@ -250,7 +270,7 @@ public class JSONObjectMappings {
 								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
 							default:
 								// Check extended interfaces.
-								colType = ClassTypeModifiers.getCollectionType( fieldType, fieldType.getInterfaces() );
+								colType = ClassTypeModifiers.getCollectionType( fieldType );
 								switch ( colType ) {
 								case ClassTypeModifiers.COLTYPE_LIST:
 									throw new JSONException( "Unsupported collection interface field type. (" + List.class.getName() + " .. " + fieldType.getName() + ")" );
@@ -270,8 +290,7 @@ public class JSONObjectMappings {
 							System.out.println( "GT: " + genericType + " * " + genericType.getClass() );
 
 							if ( genericType instanceof Class ) {
-								Class<?>[] interfaces = ((Class<?>) genericType).getInterfaces();
-								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)genericType, interfaces );
+								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)genericType );
 								switch ( colType ) {
 								case ClassTypeModifiers.COLTYPE_LIST:
 								case ClassTypeModifiers.COLTYPE_MAP:
@@ -287,9 +306,6 @@ public class JSONObjectMappings {
 									break;
 								}
 							}
-							else if ( genericType instanceof TypeVariable ) {
-								throw new JSONException( "Unable to determine type of generic field '" + field.getName() + "'" );
-							}
 							else if ( genericType instanceof ParameterizedType ) {
 								ParameterizedType parameterizedType = (ParameterizedType)genericType;
 								Type[] typeArguments = parameterizedType.getActualTypeArguments();
@@ -302,15 +318,43 @@ public class JSONObjectMappings {
 								if ( bWildCardUsed ) {
 									throw new JSONException( "Unsupported use of wildcard parameterized types." );
 								}
-								for ( Type typeArgument : typeArguments ) {
-									System.out.println( typeArgument );
-									Class<?> classType = ((Class<?>)typeArgument);
+								parametrizedObjectTypes = new Integer[ typeArguments.length ];
+								parametrizedObjectMappings = new JSONObjectMapping[ typeArguments.length ];
+								for ( int j=0; j<typeArguments.length; ++j ) {
+									Type typeArgument = typeArguments[ j ];
+									Class<?> parameterizedTypeClass = ((Class<?>)typeArgument);
+									// debug
+									System.out.println( parameterizedTypeClass );
+									parametrizedObjectTypes[ j ] = JSONObjectMappingConstants.primitiveTypeMappings.get( parameterizedTypeClass.getName() );
+									if ( parametrizedObjectTypes[ j ] == null ) {
+										parametrizedObjectMappings[ j ] = classMappings.get( parameterizedTypeClass.getName() );
+										if ( parametrizedObjectMappings[ j ] == null ) {
+											parametrizedObjectMappings[ j ] = mapClass( parameterizedTypeClass );
+										}
+									}
 								}
+								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)parameterizedType.getRawType() );
+								switch ( colType ) {
+								case ClassTypeModifiers.COLTYPE_LIST:
+									type = JSONObjectMappingConstants.T_LIST;
+									break;
+								case ClassTypeModifiers.COLTYPE_MAP:
+									type = JSONObjectMappingConstants.T_MAP;
+									break;
+								case ClassTypeModifiers.COLTYPE_SET:
+									type = JSONObjectMappingConstants.T_SET;
+									break;
+								default:
+									throw new JSONException( "Unsupported generic class. " + field.getClass() );
+								}
+							}
+							else if ( genericType instanceof TypeVariable ) {
+								throw new JSONException( "Unable to determine type of generic field '" + field.getName() + "'" );
 							}
 						}
 						else if ( classTypeMask == JSONObjectMappingConstants.VALID_ARRAY_CLASS ) {
 							type = JSONObjectMappingConstants.T_ARRAY;
-							arrayType = JSONObjectMappingConstants.arrayTypeMappings.get( fieldTypeName );
+							arrayType = JSONObjectMappingConstants.arrayPrimitiveTypeMappings.get( fieldTypeName );
 							if ( arrayType == null ) {
 								level = 0;
 								while ( level < fieldTypeName.length() && fieldTypeName.charAt( level ) == '[' ) {
@@ -357,6 +401,8 @@ public class JSONObjectMappings {
 						json_fm.className = fieldTypeName;
 						json_fm.clazz = fieldType;
 						json_fm.objectMapping = fieldObjectMapping;
+						json_fm.parametrizedObjectTypes = parametrizedObjectTypes;
+						json_fm.parametrizedObjectMappings = parametrizedObjectMappings;
 						json_fm.field = clazz.getDeclaredField( json_fm.fieldName );
 						json_fm.field.setAccessible( true );
 

@@ -38,10 +38,10 @@ import org.junit.runners.JUnit4;
  * Created on 18/12/2012
  */
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper_Generics {
+public class TestJSONObjectMappings_ParametrizedCollectionFields {
 
 	@Test
-	public void test_jsonobjectmapper_generics() {
+	public void test_jsonobjectmappings_generic_field() {
 		JSONObjectMappings json_om = new JSONObjectMappings();
 		try {
 			json_om.register( TestJSONMapObjectGenerics.class );
@@ -70,30 +70,14 @@ public class TestJSONObjectMapper_Generics {
 	}
 
 	@Test
-	public void test_jsonobjectmapper_arrays() {
-		/*
-		System.out.println( boolean[].class.getName() );
-		System.out.println( int[].class.getName() );
-		System.out.println( long[].class.getName() );
-		System.out.println( float[].class.getName() );
-		System.out.println( double[].class.getName() );
-		System.out.println( Boolean[].class.getName() );
-		System.out.println( Integer[].class.getName() );
-		System.out.println( Long[].class.getName() );
-		System.out.println( Float[].class.getName() );
-		System.out.println( Double[].class.getName() );
-		System.out.println( BigInteger[].class.getName() );
-		System.out.println( BigDecimal[].class.getName() );
-		System.out.println( String[].class.getName() );
-		*/
-
+	public void test_jsonobjectmappings_parametrizedcollectionfields() {
 		JSONObjectMappings json_om = new JSONObjectMappings();
 
 		/*
 		 * Lists.
 		 */
 
-		Object[][] testClasses = new Object[][] {
+		Object[][] testClassesInvalid = new Object[][] {
 			{ TestJSONMapInvalidList1.class, "Unsupported collection interface field type. (java.util.List)" },
 			{ TestJSONMapInvalidList2.class, "Collection must have parametrized type(s). (java.util.ArrayList)" },
 			{ TestJSONMapInvalidList3.class, "Collection must have parametrized type(s). (java.util.LinkedList)" },
@@ -129,31 +113,37 @@ public class TestJSONObjectMapper_Generics {
 		Class<?> clazz;
 		String msg;
 
-		for ( int i=0; i<testClasses.length; ++i ) {
-			clazz = (Class<?>)testClasses[ i ][ 0 ];
-			msg = (String)testClasses[ i ][ 1 ];
+		for ( int i=0; i<testClassesInvalid.length; ++i ) {
+			clazz = (Class<?>)testClassesInvalid[ i ][ 0 ];
+			msg = (String)testClassesInvalid[ i ][ 1 ];
 			try {
 				json_om.register( clazz );
 				Assert.fail( "Exception expected!" );
 			}
 			catch (JSONException e) {
 				// debug
-				e.printStackTrace();
-				System.out.println( e.getMessage() );
-				System.out.println( msg );
+				//e.printStackTrace();
+				//System.out.println( e.getMessage() );
+				//System.out.println( msg );
 				Assert.assertTrue( e.getMessage().startsWith( msg ) );
 			}
 		}
 
-		/*
-		try {
-			json_om.register( TestJSONMapArrayObject.class );
+		Class<?>[] testClassesValid = new Class<?>[] {
+				TestJSONMapValidList.class,
+				TestJSONMapValidMap.class,
+				TestJSONMapValidSet.class
+		};
+
+		for ( int i=0; i<testClassesValid.length; ++i ) {
+			try {
+				json_om.register( testClassesValid[ i ] );
+			}
+			catch (JSONException e) {
+				e.printStackTrace();
+				Assert.fail( "Unexpected exception!" );
+			}
 		}
-		catch (JSONException e) {
-			e.printStackTrace();
-			Assert.fail( "Unexpected exception!" );
-		}
-		*/
 	}
 
 	/*
@@ -318,18 +308,23 @@ public class TestJSONObjectMapper_Generics {
 		public Set3 list;
 	}
 
-	public static class TestJSONMapArrayObject {
+	/*
+	 * Valid use of List, Map, Set.
+	 */
 
-		public int[] a_int;
+	public static class TestJSONMapValidList {
+		public ArrayList<String> list1;
+		public LinkedList<Integer> list2;
+	}
 
-		//public TestJSONMapObjectGenerics<?> genObj;
+	public static class TestJSONMapValidMap {
+		public HashMap<String, String> map1;
+		public TreeMap<String, Integer> map22;
+	}
 
-		public ArrayList fudge0;
-
-		public ArrayList<? extends Object> fudge;
-
-		public ArrayList<String> fudge2;
-
+	public static class TestJSONMapValidSet {
+		public HashSet<String> set1;
+		public TreeSet<Integer> set2;
 	}
 
 }

@@ -258,7 +258,8 @@ public class ClassTypeModifiers {
 
 	protected static Map<String, Integer> cachedColType = new HashMap<String, Integer>();
 
-	public static synchronized int getCollectionType(Class<?> clazz, Class<?>[] interfaces) {
+	public static synchronized int getCollectionType(Class<?> clazz) {
+		Class<?>[] interfaces;
 		Class<?> interfaceClazz;
 		String interfaceClazzName;
 		Integer interfaceColType;
@@ -266,6 +267,7 @@ public class ClassTypeModifiers {
 		Integer clazzColType = cachedColType.get( clazzName );
 		if ( clazzColType == null ) {
 			clazzColType = COLTYPE_OTHER;
+			interfaces = clazz.getInterfaces();
 			for ( int i=0; i<interfaces.length; ++i ) {
 				interfaceClazz = interfaces[ i ];
 				interfaceClazzName = interfaceClazz.getName();
@@ -286,7 +288,7 @@ public class ClassTypeModifiers {
 						//System.out.println( interfaceColType + " = " + interfaceClazzName );
 					}
 					else {
-						interfaceColType = getCollectionType( interfaceClazz, interfaceClazz.getInterfaces() );
+						interfaceColType = getCollectionType( interfaceClazz );
 					}
 				}
 				/*

@@ -36,6 +36,9 @@ import org.junit.runners.JUnit4;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
+import com.antiaction.common.json.representation.JSONArray;
+import com.antiaction.common.json.representation.JSONNumber;
+import com.antiaction.common.json.representation.JSONObject;
 
 /**
  * TODO javadoc
@@ -533,6 +536,51 @@ public class TestJSONStreamMarshaller {
 		@JSONNullable
 		private TestJSONMapObject obj;
 
+	}
+
+	@Test
+	public void test_jsonom_toarray() {
+		JSONObject json_object = new JSONObject();
+		JSONArray json_array = new JSONArray();
+		json_object.put( "list", json_array );
+		json_array.add( JSONNumber.Integer( 1 ) );
+		json_array.add( JSONNumber.Integer( 2 ) );
+		json_array.add( JSONNumber.Integer( 3 ) );
+
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+		JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
+
+		try {
+			ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+			JSONObjectMappings json_om = new JSONObjectMappings();
+
+			json_om.getTextMarshaller().toJSONText( json_object, json_encoder, false, bOut );
+
+			// debug
+			System.out.println( new String( bOut.toByteArray(), "UTF-8" ) );
+
+			json_om.register( TestJSONMapArrayField.class );
+
+			ByteArrayInputStream bIn = new ByteArrayInputStream( bOut.toByteArray() );
+
+			TestJSONMapArrayField mapArray = json_om.getStreamUnmarshaller().toObject( bIn, json_decoder, TestJSONMapArrayField.class );
+
+			// debug
+			System.out.println( mapArray.list );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	public static class TestJSONMapArrayField {
+		public Integer[] list;
 	}
 
 }

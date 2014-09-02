@@ -39,6 +39,22 @@ public class TestJSONObjectMapper_Array {
 
 	@Test
 	public void test_jsonobjectmapper_array() {
+		/*
+		System.out.println( boolean[].class.getName() );
+		System.out.println( int[].class.getName() );
+		System.out.println( long[].class.getName() );
+		System.out.println( float[].class.getName() );
+		System.out.println( double[].class.getName() );
+		System.out.println( Boolean[].class.getName() );
+		System.out.println( Integer[].class.getName() );
+		System.out.println( Long[].class.getName() );
+		System.out.println( Float[].class.getName() );
+		System.out.println( Double[].class.getName() );
+		System.out.println( BigInteger[].class.getName() );
+		System.out.println( BigDecimal[].class.getName() );
+		System.out.println( String[].class.getName() );
+		*/
+
 		boolean[] b1_arr = new boolean[] { true, false };
 		int[] i1_arr = new int[] { 42, 4213 };
 		long[] l1_arr = new long[] { 12345678901234L, 12345678901234L * 2L };

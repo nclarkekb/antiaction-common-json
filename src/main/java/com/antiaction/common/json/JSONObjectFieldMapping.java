@@ -48,6 +48,12 @@ public class JSONObjectFieldMapping {
 	/** Field object mapping, if object type. */
 	public JSONObjectMapping objectMapping;
 
+	/** Type of generic class parameters. */
+	public Integer[] parametrizedObjectTypes;
+
+	/** Parameterized class object mappings for generic class parameters. */
+	public JSONObjectMapping[] parametrizedObjectMappings;
+
 	/** Reflection field. */
 	public Field field;
 

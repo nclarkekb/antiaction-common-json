@@ -1,4 +1,4 @@
-/*
+ /*
  * JSON library.
  * Copyright 2012-2013 Antiaction (http://antiaction.com/)
  *
@@ -29,6 +29,9 @@ import java.util.TreeMap;
  */
 public class JSONObjectMappingConstants {
 
+	/**
+	 * Prohibit external construction.
+	 */
 	protected JSONObjectMappingConstants() {
 	}
 
@@ -52,40 +55,43 @@ public class JSONObjectMappingConstants {
 	public static final int T_STRING = 108;
 	public static final int T_BYTEARRAY = 109;
 	public static final int T_ARRAY = 200;
+	public static final int T_LIST = 201;
+	public static final int T_MAP = 202;
+	public static final int T_SET = 203;
 
-	protected static Map<String, Integer> typeMappings = new TreeMap<String, Integer>();
+	protected static Map<String, Integer> primitiveTypeMappings = new TreeMap<String, Integer>();
 
-	protected static Map<String, Integer> arrayTypeMappings = new TreeMap<String, Integer>();
+	protected static Map<String, Integer> arrayPrimitiveTypeMappings = new TreeMap<String, Integer>();
 
 	static {
-		typeMappings.put( boolean.class.getName(), T_PRIMITIVE_BOOLEAN );
-		typeMappings.put( int.class.getName(), T_PRIMITIVE_INTEGER );
-		typeMappings.put( long.class.getName(), T_PRIMITIVE_LONG );
-		typeMappings.put( float.class.getName(), T_PRIMITIVE_FLOAT );
-		typeMappings.put( double.class.getName(), T_PRIMITIVE_DOUBLE );
-		typeMappings.put( Boolean.class.getName(), T_BOOLEAN );
-		typeMappings.put( Integer.class.getName(), T_INTEGER );
-		typeMappings.put( Long.class.getName(), T_LONG );
-		typeMappings.put( Float.class.getName(), T_FLOAT );
-		typeMappings.put( Double.class.getName(), T_DOUBLE );
-		typeMappings.put( BigInteger.class.getName(), T_BIGINTEGER );
-		typeMappings.put( BigDecimal.class.getName(), T_BIGDECIMAL );
-		typeMappings.put( String.class.getName(), T_STRING );
-		typeMappings.put( byte[].class.getName(), T_BYTEARRAY );
+		primitiveTypeMappings.put( boolean.class.getName(), T_PRIMITIVE_BOOLEAN );
+		primitiveTypeMappings.put( int.class.getName(), T_PRIMITIVE_INTEGER );
+		primitiveTypeMappings.put( long.class.getName(), T_PRIMITIVE_LONG );
+		primitiveTypeMappings.put( float.class.getName(), T_PRIMITIVE_FLOAT );
+		primitiveTypeMappings.put( double.class.getName(), T_PRIMITIVE_DOUBLE );
+		primitiveTypeMappings.put( Boolean.class.getName(), T_BOOLEAN );
+		primitiveTypeMappings.put( Integer.class.getName(), T_INTEGER );
+		primitiveTypeMappings.put( Long.class.getName(), T_LONG );
+		primitiveTypeMappings.put( Float.class.getName(), T_FLOAT );
+		primitiveTypeMappings.put( Double.class.getName(), T_DOUBLE );
+		primitiveTypeMappings.put( BigInteger.class.getName(), T_BIGINTEGER );
+		primitiveTypeMappings.put( BigDecimal.class.getName(), T_BIGDECIMAL );
+		primitiveTypeMappings.put( String.class.getName(), T_STRING );
+		primitiveTypeMappings.put( byte[].class.getName(), T_BYTEARRAY );
 
-		arrayTypeMappings.put( boolean[].class.getName(), T_PRIMITIVE_BOOLEAN );
-		arrayTypeMappings.put( int[].class.getName(), T_PRIMITIVE_INTEGER );
-		arrayTypeMappings.put( long[].class.getName(), T_PRIMITIVE_LONG );
-		arrayTypeMappings.put( float[].class.getName(), T_PRIMITIVE_FLOAT );
-		arrayTypeMappings.put( double[].class.getName(), T_PRIMITIVE_DOUBLE );
-		arrayTypeMappings.put( Boolean[].class.getName(), T_BOOLEAN );
-		arrayTypeMappings.put( Integer[].class.getName(), T_INTEGER );
-		arrayTypeMappings.put( Long[].class.getName(), T_LONG );
-		arrayTypeMappings.put( Float[].class.getName(), T_FLOAT );
-		arrayTypeMappings.put( Double[].class.getName(), T_DOUBLE );
-		arrayTypeMappings.put( BigInteger[].class.getName(), T_BIGINTEGER );
-		arrayTypeMappings.put( BigDecimal[].class.getName(), T_BIGDECIMAL );
-		arrayTypeMappings.put( String[].class.getName(), T_STRING );
+		arrayPrimitiveTypeMappings.put( boolean[].class.getName(), T_PRIMITIVE_BOOLEAN );
+		arrayPrimitiveTypeMappings.put( int[].class.getName(), T_PRIMITIVE_INTEGER );
+		arrayPrimitiveTypeMappings.put( long[].class.getName(), T_PRIMITIVE_LONG );
+		arrayPrimitiveTypeMappings.put( float[].class.getName(), T_PRIMITIVE_FLOAT );
+		arrayPrimitiveTypeMappings.put( double[].class.getName(), T_PRIMITIVE_DOUBLE );
+		arrayPrimitiveTypeMappings.put( Boolean[].class.getName(), T_BOOLEAN );
+		arrayPrimitiveTypeMappings.put( Integer[].class.getName(), T_INTEGER );
+		arrayPrimitiveTypeMappings.put( Long[].class.getName(), T_LONG );
+		arrayPrimitiveTypeMappings.put( Float[].class.getName(), T_FLOAT );
+		arrayPrimitiveTypeMappings.put( Double[].class.getName(), T_DOUBLE );
+		arrayPrimitiveTypeMappings.put( BigInteger[].class.getName(), T_BIGINTEGER );
+		arrayPrimitiveTypeMappings.put( BigDecimal[].class.getName(), T_BIGDECIMAL );
+		arrayPrimitiveTypeMappings.put( String[].class.getName(), T_STRING );
 	}
 
 	/*
