@@ -38,7 +38,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
  * Created on 16/01/2013
  */
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper_Converter {
+public class TestJSONStructureMarshaller_Converter {
 
 	@Test
 	public void test_jsonobjectmapper_converter_exceptions() {

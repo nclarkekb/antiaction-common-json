@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.antiaction.common.json.representation.TestJSONObjectMapper_Name.TestZeroConstructor;
+import com.antiaction.common.json.representation.TestJSONStructureMarshaller_Name.TestZeroConstructor;
 
 /**
  * TODO javadoc

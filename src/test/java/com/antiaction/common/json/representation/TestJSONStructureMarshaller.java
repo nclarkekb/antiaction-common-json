@@ -50,7 +50,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
  * Created on 11/11/2012
  */
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper {
+public class TestJSONStructureMarshaller {
 
 	@Test
 	public void test_jsonobjectmapper_toobject() {

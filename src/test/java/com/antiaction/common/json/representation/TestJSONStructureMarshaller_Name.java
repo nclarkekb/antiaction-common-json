@@ -39,7 +39,7 @@ import com.antiaction.common.json.annotation.JSONName;
  * Created on 13/01/2013
  */
 @RunWith(JUnit4.class)
-public class TestJSONObjectMapper_Name {
+public class TestJSONStructureMarshaller_Name {
 
 	@Test
 	public void test_jsonobjectmapper_toobject() {
