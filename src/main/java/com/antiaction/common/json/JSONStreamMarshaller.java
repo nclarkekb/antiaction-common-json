@@ -198,6 +198,20 @@ public class JSONStreamMarshaller {
 						encoder.write( indentationArr, 0, indentation );
 					}
 					encoder.write( ']' );
+					if ( stack.size() > 0 ) {
+						stackEntry = stack.removeLast();
+						object = stackEntry.object;
+						objectMapping = stackEntry.objectMapping;
+						state = stackEntry.state;
+						//indentation = stackEntry.indentation;
+						fieldMappingsArr = stackEntry.fieldMappingsArr;
+						fieldMappingIdx = stackEntry.fieldMappingIdx;
+						//fieldMapping = stackEntry.fieldMapping;
+						len = stackEntry.len;
+					}
+					else {
+						bLoop = false;
+					}
 					break;
 				case S_OBJECT:
 					bFieldLoop = true;

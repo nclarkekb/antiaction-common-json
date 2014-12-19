@@ -810,12 +810,6 @@ public class TestJSONStructureMarshaller_ArrayFields {
 
 	@Test
 	public void test_jsonobjectmapper_toobject_nullvalues() {
-		/*
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		JSONText json = new JSONText();
-		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
-		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
-		*/
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONStructureMarshaller marshaller = json_objectmappings.getStructureMarshaller();
 		JSONStructureUnmarshaller unmarshaller = json_objectmappings.getStructureUnmarshaller();

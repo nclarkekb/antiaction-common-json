@@ -142,4 +142,54 @@ public class JSONObjectMappingConstants {
 			| ClassTypeModifiers.CM_FINAL
 			| ClassTypeModifiers.CM_STATIC;
 
+	public static String typeString(Integer type)  {
+		if ( type != null ) {
+			switch ( type ) {
+			case T_PRIMITIVE_BOOLEAN:
+				return "T_PRIMITIVE_BOOLEAN";
+			case T_PRIMITIVE_INTEGER:
+				return "T_PRIMITIVE_INTEGER";
+			case T_PRIMITIVE_LONG:
+				return "T_PRIMITIVE_LONG";
+			case T_PRIMITIVE_FLOAT:
+				return "T_PRIMITIVE_FLOAT";
+			case T_PRIMITIVE_DOUBLE:
+				return "T_PRIMITIVE_DOUBLE";
+			case T_OBJECT:
+				return "T_OBJECT";
+			case T_BOOLEAN:
+				return "T_BOOLEAN";
+			case T_INTEGER:
+				return "T_INTEGER";
+			case T_LONG:
+				return "T_LONG";
+			case T_FLOAT:
+				return "T_FLOAT";
+			case T_DOUBLE:
+				return "T_DOUBLE";
+			case T_BIGINTEGER:
+				return "T_BIGINTEGER";
+			case T_BIGDECIMAL:
+				return "T_BIGDECIMAL";
+			case T_STRING:
+				return "T_STRING";
+			case T_BYTEARRAY:
+				return "T_BYTEARRAY";
+			case T_ARRAY:
+				return "T_ARRAY";
+			case T_LIST:
+				return "T_LIST";
+			case T_MAP:
+				return "T_MAP";
+			case T_SET:
+				return "T_SET";
+			default:
+				return "Unknown";
+			}
+		}
+		else {
+			return "null";
+		}
+	}
+
 }

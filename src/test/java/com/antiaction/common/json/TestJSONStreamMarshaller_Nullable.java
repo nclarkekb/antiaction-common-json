@@ -33,6 +33,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
 import com.antiaction.common.json.representation.JSONCollection;
 import com.antiaction.common.json.representation.JSONNull;
 import com.antiaction.common.json.representation.JSONString;
+import com.antiaction.common.json.representation.JSONStructureMarshaller;
 import com.antiaction.common.json.representation.JSONTextMarshaller;
 import com.antiaction.common.json.representation.PackageAccess;
 
@@ -587,10 +588,14 @@ public class TestJSONStreamMarshaller_Nullable {
 	@Test
 	public void test_jsonboejctmapper_toobject_nullable_invalid() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
 		JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
 		JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
+		JSONStructureMarshaller structureMarshaller = json_objectmappings.getStructureMarshaller();
+		JSONTextMarshaller textMarshaller = new JSONTextMarshaller();
+		JSONCollection json_struct;
 		try {
 			json_objectmappings.register( TestJSONMapObjectNull.class );
 			json_objectmappings.register( TestJSONMapObjectNullable.class );
@@ -669,18 +674,15 @@ public class TestJSONStreamMarshaller_Nullable {
 
 			String[] fields = { "b1", "i1", "l1", "f1", "d1", "b2", "i2", "l2", "f2", "d2", "bi", "bd", "s", "b", "obj" };
 			for ( int i=0; i<fields.length; ++i ) {
-				JSONCollection json_struct;
-				JSONTextMarshaller json_textMarshaller = new JSONTextMarshaller();
-				ByteArrayInputStream in;
 				try {
-					json_struct = json_objectmappings.getStructureMarshaller().toJSONStructure( moldObject );
+					json_struct = structureMarshaller.toJSONStructure( moldObject );
 					//((JSONObject)json_struct).values.remove( JSONString.String( fields[ i ] ) );
 
 					//((JSONObject)json_struct).values.put( JSONString.String( fields[ i ] ), JSONNull.Null );
 					PackageAccess.setObjectValues( json_struct, JSONString.String( fields[ i ] ), JSONNull.Null );
 
 					out.reset();
-					json_textMarshaller.toJSONText( json_struct, json_encoder, true, out );
+					textMarshaller.toJSONText( json_struct, json_encoder, true, out );
 					// debug
 					//System.out.println( new String( out.toByteArray() ) );
 					in = new ByteArrayInputStream( out.toByteArray() );

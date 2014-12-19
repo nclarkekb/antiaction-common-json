@@ -408,7 +408,7 @@ public class JSONStreamUnmarshaller {
 								fieldMapping.field.set( curObj, booleanVal );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type. (" + JSONObjectMappingConstants.typeString( fieldMapping.type ) + ")" );
 							}
 							break;
 						case T_STRING:
