@@ -25,13 +25,10 @@ import java.math.BigInteger;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.antiaction.common.json.representation.JSONArray;
-import com.antiaction.common.json.representation.JSONValue;
 
 /**
  * De-serialize a JSON data stream into Java Object(s).
@@ -85,10 +82,11 @@ public class JSONStreamUnmarshaller {
 	protected StringBuilder sbStr = new StringBuilder();
 
 	private static final class StackEntry {
+		int rstate;
 		Object curObj;
 		Map<String, JSONObjectFieldMapping> fieldMappingsMap;
 		JSONObjectFieldMapping fieldMapping;
-		int rstate;
+		Collection<?> curArr;
 	}
 
 	public JSONStreamUnmarshaller(JSONObjectMappings objectMappings) {
@@ -112,14 +110,16 @@ public class JSONStreamUnmarshaller {
 		String stringVal = null;
 		byte[] byteArray = null;
 		Object object = null;
+		Collection array = null;
 
-		JSONArray json_array;
-		List<JSONValue> json_values;
+		//JSONArray json_array;
+		//List<JSONValue> json_values;
 		boolean[] arrayOf_boolean;
 		int[] arrayOf_int;
 		long[] arrayOf_long;
 		float[] arrayOf_float;
 		double[] arrayOf_double;
+		/*
 		Boolean[] arrayOf_Boolean;
 		Integer[] arrayOf_Integer;
 		Long[] arrayOf_Long;
@@ -129,6 +129,7 @@ public class JSONStreamUnmarshaller {
 		BigDecimal[] arrayOf_BigDecimal;
 		String[] arrayOf_String;
 		Object[] arrayOf_Object;
+		*/
 
 		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
 		if ( json_om == null ) {
@@ -221,10 +222,11 @@ public class JSONStreamUnmarshaller {
 						++pos;
 						// TODO
 						stackEntry = new StackEntry();
+						stackEntry.rstate = rstate;
 						stackEntry.curObj = curObj;
 						stackEntry.fieldMappingsMap = fieldMappingsMap;
 						stackEntry.fieldMapping = fieldMapping;
-						stackEntry.rstate = rstate;
+						stackEntry.curArr = curArr;
 						stack.add( stackEntry );
 
 						curObj = fieldMapping.clazz.newInstance();
@@ -251,10 +253,11 @@ public class JSONStreamUnmarshaller {
 							object = curObj;
 							// TODO
 							stackEntry = stack.removeLast();
+							state = stackEntry.rstate;
 							curObj = stackEntry.curObj;
 							fieldMappingsMap = stackEntry.fieldMappingsMap;
 							fieldMapping = stackEntry.fieldMapping;
-							state = stackEntry.rstate;
+							curArr = stackEntry.curArr;
 							/*
 							if (current.type == JSONConstants.VT_OBJECT) {
 								state = S_OBJECT_VALUE;
@@ -272,10 +275,11 @@ public class JSONStreamUnmarshaller {
 						++pos;
 						// TODO
 						stackEntry = new StackEntry();
+						stackEntry.rstate = rstate;
 						stackEntry.curObj = curObj;
 						stackEntry.fieldMappingsMap = fieldMappingsMap;
 						stackEntry.fieldMapping = fieldMapping;
-						stackEntry.rstate = rstate;
+						stackEntry.curArr = curArr;
 						stack.add( stackEntry );
 
 						switch (fieldMapping.type) {
@@ -303,13 +307,14 @@ public class JSONStreamUnmarshaller {
 						*/
 						if ( stack.size() > 0 ) {
 							json_value_type = T_ARRAY;
-							//object = curObj;
+							array = curArr;
 							// TODO
 							stackEntry = stack.removeLast();
+							state = stackEntry.rstate;
 							curObj = stackEntry.curObj;
 							fieldMappingsMap = stackEntry.fieldMappingsMap;
 							fieldMapping = stackEntry.fieldMapping;
-							state = stackEntry.rstate;
+							curArr = stackEntry.curArr;
 							/*
 							if (current.type == JSONConstants.VT_OBJECT) {
 								state = S_OBJECT_VALUE;
@@ -635,6 +640,59 @@ public class JSONStreamUnmarshaller {
 						case T_ARRAY:
 							switch ( fieldMapping.type ) {
 							case JSONObjectMappingConstants.T_ARRAY:
+								// debug
+								//System.out.println( fieldMapping.arrayType );
+								int idx;
+								switch ( fieldMapping.arrayType ) {
+								case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
+									arrayOf_boolean = new boolean[ array.size() ];
+									Iterator<Boolean> booleanIter = array.iterator();
+									idx = 0;
+									while ( booleanIter.hasNext() ) {
+										arrayOf_boolean[ idx++ ] = booleanIter.next();
+									}
+									fieldMapping.field.set( curObj, arrayOf_boolean );
+									break;
+								case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
+									arrayOf_int = new int[ array.size() ];
+									Iterator<Integer> intIter = array.iterator();
+									idx = 0;
+									while ( intIter.hasNext() ) {
+										arrayOf_int[ idx++ ] = intIter.next();
+									}
+									fieldMapping.field.set( curObj, arrayOf_int );
+									break;
+								case JSONObjectMappingConstants.T_PRIMITIVE_LONG:
+									arrayOf_long = new long[ array.size() ];
+									Iterator<Long> longIter = array.iterator();
+									idx = 0;
+									while ( longIter.hasNext() ) {
+										arrayOf_long[ idx++ ] = longIter.next();
+									}
+									fieldMapping.field.set( curObj, arrayOf_long );
+									break;
+								case JSONObjectMappingConstants.T_PRIMITIVE_FLOAT:
+									arrayOf_float = new float[ array.size() ];
+									Iterator<Float> floatIter = array.iterator();
+									idx = 0;
+									while ( floatIter.hasNext() ) {
+										arrayOf_float[ idx++ ] = floatIter.next();
+									}
+									fieldMapping.field.set( curObj, arrayOf_float );
+									break;
+								case JSONObjectMappingConstants.T_PRIMITIVE_DOUBLE:
+									arrayOf_double = new double[ array.size() ];
+									Iterator<Double> doubleIter = array.iterator();
+									idx = 0;
+									while ( doubleIter.hasNext() ) {
+										arrayOf_double[ idx++ ] = doubleIter.next();
+									}
+									fieldMapping.field.set( curObj, arrayOf_double );
+									break;
+								default:
+									fieldMapping.field.set( curObj, array.toArray( (Object[]) Array.newInstance( fieldMapping.field.getType().getComponentType(), array.size() ) ) );
+									break;
+								}
 								/*
 								if ( object != null ) {
 									// TODO
@@ -644,7 +702,6 @@ public class JSONStreamUnmarshaller {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								*/
-								fieldMapping.field.set( curObj, curArr.toArray( (Object[]) Array.newInstance( fieldMapping.field.getType().getComponentType(), curArr.size() ) ) );
 								break;
 							default:
 								throw new JSONException( "Wrong type." );
@@ -792,7 +849,7 @@ public class JSONStreamUnmarshaller {
 						// TODO
 						switch ( json_value_type ) {
 						case T_NULL:
-							if ( !fieldMapping.nullable ) {
+							if ( !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "'/'" + fieldMapping.jsonName + "' is not nullable." );
 							}
 							curArr.add( null );
@@ -815,7 +872,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
 								}
-								if ( booleanVal == null && !fieldMapping.nullable ) {
+								if ( booleanVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, booleanVal );
@@ -832,7 +889,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//strVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_string );
 								}
-								if ( stringVal == null && !fieldMapping.nullable ) {
+								if ( stringVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, stringVal );
@@ -846,7 +903,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//byteArray = converters[ fieldMapping.converterId ].getBytes( fieldMapping.fieldName, json_string );
 								}
-								if ( byteArray == null && !fieldMapping.nullable ) {
+								if ( byteArray == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, byteArray );
@@ -863,7 +920,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//object = toObject( object, fieldMapping.clazz, converters );
 								}
-								if ( object == null && !fieldMapping.nullable ) {
+								if ( object == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, object );
@@ -911,7 +968,7 @@ public class JSONStreamUnmarshaller {
 									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
 									booleanVal = null;
 								}
-								if ( booleanVal == null && !fieldMapping.nullable ) {
+								if ( booleanVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, booleanVal );
@@ -981,7 +1038,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//intVal = converters[ fieldMapping.converterId ].getInteger( fieldMapping.fieldName, json_value );
 								}
-								if ( intVal == null && !fieldMapping.nullable ) {
+								if ( intVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, intVal );
@@ -995,7 +1052,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//longVal = converters[ fieldMapping.converterId ].getLong( fieldMapping.fieldName, json_value );
 								}
-								if ( longVal == null && !fieldMapping.nullable ) {
+								if ( longVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, longVal );
@@ -1009,7 +1066,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//floatVal = converters[ fieldMapping.converterId ].getFloat( fieldMapping.fieldName, json_value );
 								}
-								if ( floatVal == null && !fieldMapping.nullable ) {
+								if ( floatVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, floatVal );
@@ -1023,7 +1080,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//doubleVal = converters[ fieldMapping.converterId ].getDouble( fieldMapping.fieldName, json_value );
 								}
-								if ( doubleVal == null && !fieldMapping.nullable ) {
+								if ( doubleVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, doubleVal );
@@ -1037,7 +1094,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//bigIntegerVal = converters[ fieldMapping.converterId ].getBigInteger( fieldMapping.fieldName, json_value );
 								}
-								if ( bigIntegerVal == null && !fieldMapping.nullable ) {
+								if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, bigIntegerVal );
@@ -1051,7 +1108,7 @@ public class JSONStreamUnmarshaller {
 									// TODO
 									//bigDecimalVal = converters[ fieldMapping.converterId ].getBigDecimal( fieldMapping.fieldName, json_value );
 								}
-								if ( bigDecimalVal == null && !fieldMapping.nullable ) {
+								if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								//fieldMapping.field.set( curObj, bigDecimalVal );
