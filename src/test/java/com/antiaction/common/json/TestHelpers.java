@@ -18,6 +18,8 @@
 package com.antiaction.common.json;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URL;
 
 import org.junit.Assert;
 
@@ -27,6 +29,23 @@ import org.junit.Assert;
  * Created on 28/12/2012
  */
 public class TestHelpers {
+
+	protected static ClassLoader clsLdr = TestHelpers.class.getClassLoader();
+
+	public static final File getTestResourceFile(String fname) {
+		URL url = clsLdr.getResource( fname );
+		if ( url ==  null ) {
+			throw new IllegalStateException( "Could not find resource, '" + fname + "'." );
+		}
+		String path = url.getFile();
+		if ( path == null ) {
+			throw new IllegalStateException( "Could not resolve path for resource, " + fname + "'." );
+		}
+		path = path.replaceAll( "%5b", "[" );
+		path = path.replaceAll( "%5d", "]" );
+		File file = new File( path );
+		return file;
+	}
 
 	public static void assertArrayEquals(boolean[] expecteds, boolean[] actuals) {
 		Assert.assertEquals( expecteds.length, actuals.length );

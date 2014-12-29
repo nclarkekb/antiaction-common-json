@@ -52,7 +52,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<profile.antiaction>true</profile.antiaction>
 	</properties>
-
+<!--
 	<repositories>
 		<repository>
 			<id>antiaction-snapshots</id>
@@ -77,7 +77,8 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
+-->
+<!--
 	<distributionManagement>
 		<snapshotRepository>
 			<id>antiaction-snapshots</id>
@@ -90,7 +91,7 @@
 			<url>${antiactionStagingUrl}</url>
 		</repository>
 	</distributionManagement>
-
+-->
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
