@@ -228,7 +228,6 @@ public class JSONStreamUnmarshaller {
 							throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' may required converters!" );
 						}
 						fieldMappingsMap = json_om.fieldMappingsMap;
-
 						state = S_OBJECT;
 						break;
 					case S_OBJECT_END:
@@ -275,7 +274,6 @@ public class JSONStreamUnmarshaller {
 							break;
 						}
 						json_om = classMappings.get( fieldMapping.clazz.getName() );
-
 						state = S_ARRAY;
 						break;
 					case S_ARRAY_END:
