@@ -39,9 +39,9 @@ import java.util.TreeMap;
 public class JSONStreamUnmarshaller {
 
 	private static final int S_START = 0;
-	private static final int S_OBJECT_START = 1;
+	private static final int S_OBJECT_BEGIN = 1;
 	private static final int S_OBJECT_END = 2;
-	private static final int S_ARRAY_START = 3;
+	private static final int S_ARRAY_BEGIN = 3;
 	private static final int S_ARRAY_END = 4;
 	private static final int S_OBJECT = 5;
 	private static final int S_OBJECT_NAME = 6;
@@ -129,11 +129,11 @@ public class JSONStreamUnmarshaller {
 		Object[] arrayOf_Object;
 		*/
 
-		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
-		if ( json_om == null ) {
+		JSONObjectMapping objectMapping = classMappings.get( clazz.getName() );
+		if ( objectMapping == null ) {
 			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
 		}
-		if ( json_om.converters == true && converters == null ) {
+		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + clazz.getName() + "' may required converters!" );
 		}
 
@@ -178,7 +178,7 @@ public class JSONStreamUnmarshaller {
 			rootObj = clazz.newInstance();
 			curObj = rootObj;
 
-			fieldMappingsMap = json_om.fieldMappingsMap;
+			fieldMappingsMap = objectMapping.fieldMappingsMap;
 
 			while ( bLoop ) {
 				while ( pos < limit ) {
@@ -209,7 +209,7 @@ public class JSONStreamUnmarshaller {
 						}
 						++pos;
 						break;
-					case S_OBJECT_START:
+					case S_OBJECT_BEGIN:
 						++pos;
 						stackEntry = new StackEntry();
 						stackEntry.state = rstate;
@@ -220,14 +220,14 @@ public class JSONStreamUnmarshaller {
 						stack.add( stackEntry );
 
 						curObj = fieldMapping.clazz.newInstance();
-						json_om = classMappings.get( fieldMapping.clazz.getName() );
-						if ( json_om == null ) {
+						objectMapping = classMappings.get( fieldMapping.clazz.getName() );
+						if ( objectMapping == null ) {
 							throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
 						}
-						if ( json_om.converters == true && converters == null ) {
+						if ( objectMapping.converters == true && converters == null ) {
 							throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' may required converters!" );
 						}
-						fieldMappingsMap = json_om.fieldMappingsMap;
+						fieldMappingsMap = objectMapping.fieldMappingsMap;
 						state = S_OBJECT;
 						break;
 					case S_OBJECT_END:
@@ -251,7 +251,7 @@ public class JSONStreamUnmarshaller {
 							state = S_EOF;
 						}
 						break;
-					case S_ARRAY_START:
+					case S_ARRAY_BEGIN:
 						++pos;
 						stackEntry = new StackEntry();
 						stackEntry.state = rstate;
@@ -273,7 +273,7 @@ public class JSONStreamUnmarshaller {
 						case JSONObjectMappingConstants.T_MAP:
 							break;
 						}
-						json_om = classMappings.get( fieldMapping.clazz.getName() );
+						objectMapping = classMappings.get( fieldMapping.clazz.getName() );
 						state = S_ARRAY;
 						break;
 					case S_ARRAY_END:
@@ -744,12 +744,12 @@ public class JSONStreamUnmarshaller {
 							break;
 						case '{':
 							++x;
-							state = S_OBJECT_START;
+							state = S_OBJECT_BEGIN;
 							rstate = S_ARRAY_VALUE;
 							break;
 						case '[':
 							++x;
-							state = S_ARRAY_START;
+							state = S_ARRAY_BEGIN;
 							rstate = S_ARRAY_VALUE;
 							break;
 						case '"':
@@ -1112,11 +1112,11 @@ public class JSONStreamUnmarshaller {
 							break;
 						case '{':
 							++x;
-							state = S_OBJECT_START;
+							state = S_OBJECT_BEGIN;
 							break;
 						case '[':
 							++x;
-							state = S_ARRAY_START;
+							state = S_ARRAY_BEGIN;
 							break;
 						case '"':
 							++x;
@@ -1566,9 +1566,9 @@ public class JSONStreamUnmarshaller {
 
 	static {
 		stateStr.put( S_START, "S_START" );
-		stateStr.put( S_OBJECT_START, "S_OBJECT_START" );
+		stateStr.put( S_OBJECT_BEGIN, "S_OBJECT_START" );
 		stateStr.put( S_OBJECT_END, "S_OBJECT_END" );
-		stateStr.put( S_ARRAY_START, "S_ARRAY_START" );
+		stateStr.put( S_ARRAY_BEGIN, "S_ARRAY_START" );
 		stateStr.put( S_ARRAY_END, "S_ARRAY_END" );
 		stateStr.put( S_OBJECT, "S_OBJECT" );
 		stateStr.put( S_OBJECT_NAME, "S_OBJECT_NAME" );

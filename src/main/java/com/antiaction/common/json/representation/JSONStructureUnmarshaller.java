@@ -41,9 +41,9 @@ import com.antiaction.common.json.JSONObjectMappings;
 public class JSONStructureUnmarshaller {
 
 	private static final int S_START = 0;
-	private static final int S_OBJECT_START = 1;
+	private static final int S_OBJECT_BEGIN = 1;
 	private static final int S_OBJECT_END = 2;
-	private static final int S_ARRAY_START = 3;
+	private static final int S_ARRAY_BEGIN = 3;
 	private static final int S_ARRAY_END = 4;
 	private static final int S_OBJECT_VALUE = 5;
 	private static final int S_OBJECT = 6;
@@ -59,8 +59,8 @@ public class JSONStructureUnmarshaller {
 		int state;
 		JSONObject jsonObject;
 		Object curObj;
-		List<JSONObjectFieldMapping> fieldMappingsList;
-		int fieldMappingsListIdx;
+		JSONObjectFieldMapping[] fieldMappingsArr;
+		int fieldMappingsArrIdx;
 		JSONObjectFieldMapping fieldMapping;
 		List<JSONValue> jsonValues;
 		int jsonValuesIdx;
@@ -111,21 +111,21 @@ public class JSONStructureUnmarshaller {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry = null;
 
-		JSONObjectMapping json_om = classMappings.get( clazz.getName() );
-		if ( json_om == null ) {
+		JSONObjectMapping objectMapping = classMappings.get( clazz.getName() );
+		if ( objectMapping == null ) {
 			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
 		}
-		if ( json_om.converters == true && converters == null ) {
+		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + clazz.getName() + "' may required converters!" );
 		}
 
 		JSONObject jsonObject = null;
-		JSONArray jsonArray = null;
+		//JSONArray jsonArray = null;
 		T dstObj = null;
 		Object curObj = null;
 
-		List<JSONObjectFieldMapping> fieldMappingsList = null;
-		int fieldMappingsListIdx = 0;
+		JSONObjectFieldMapping[] fieldMappingsArr = null;
+		int fieldMappingsArrIdx = 0;
 		JSONObjectFieldMapping fieldMapping = null;
 		JSONValue json_value;
 
@@ -140,27 +140,33 @@ public class JSONStructureUnmarshaller {
 				case S_START:
 					switch ( json_struct.type ) {
 					case JSONConstants.VT_OBJECT:
+						if ( objectMapping.type != JSONObjectMapping.OMT_OBJECT ) {
+							throw new IllegalArgumentException( "Destination is not an object!" );
+						}
 						jsonObject = json_struct.getObject();
 						dstObj = clazz.newInstance();
 						curObj = dstObj;
-						fieldMappingsList = json_om.fieldMappingsList;
+						fieldMappingsArr = objectMapping.fieldMappingsArr;
 						state = S_OBJECT;
 						break;
 					case JSONConstants.VT_ARRAY:
-						jsonArray = json_struct.getArray();
-						state = S_ARRAY_START;
+						if ( objectMapping.type != JSONObjectMapping.OMT_ARRAY ) {
+							throw new IllegalArgumentException( "Destination is not an array!" );
+						}
+						//jsonArray = json_struct.getArray();
+						state = S_ARRAY;
 						break;
 					default:
-						throw new IllegalArgumentException( "Invalid json structure representation." );
+						throw new IllegalArgumentException( "Invalid json structure representation!" );
 					}
 					break;
-				case S_OBJECT_START:
+				case S_OBJECT_BEGIN:
 					stackEntry = new StackEntry();
 					stackEntry.state = r_state;
 					stackEntry.jsonObject = jsonObject;
 					stackEntry.curObj = curObj;
-					stackEntry.fieldMappingsList = fieldMappingsList;
-					stackEntry.fieldMappingsListIdx = fieldMappingsListIdx;
+					stackEntry.fieldMappingsArr = fieldMappingsArr;
+					stackEntry.fieldMappingsArrIdx = fieldMappingsArrIdx;
 					stackEntry.fieldMapping = fieldMapping;
 					stackEntry.jsonValues = jsonValues;
 					stackEntry.jsonValuesIdx = jsonValuesIdx;
@@ -169,15 +175,15 @@ public class JSONStructureUnmarshaller {
 
 					jsonObject = jsonObjectVal;
 					curObj = fieldMapping.clazz.newInstance();
-					json_om = classMappings.get( fieldMapping.clazz.getName() );
-					if ( json_om == null ) {
+					objectMapping = classMappings.get( fieldMapping.clazz.getName() );
+					if ( objectMapping == null ) {
 						throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
 					}
-					if ( json_om.converters == true && converters == null ) {
+					if ( objectMapping.converters == true && converters == null ) {
 						throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' may required converters!" );
 					}
-					fieldMappingsList = json_om.fieldMappingsList;
-					fieldMappingsListIdx = 0;
+					fieldMappingsArr = objectMapping.fieldMappingsArr;
+					fieldMappingsArrIdx = 0;
 					state = S_OBJECT;
 					break;
 				case S_OBJECT_END:
@@ -187,8 +193,8 @@ public class JSONStructureUnmarshaller {
 						state = stackEntry.state;
 						jsonObject = stackEntry.jsonObject;
 						curObj = stackEntry.curObj;
-						fieldMappingsList = stackEntry.fieldMappingsList;
-						fieldMappingsListIdx = stackEntry.fieldMappingsListIdx;
+						fieldMappingsArr = stackEntry.fieldMappingsArr;
+						fieldMappingsArrIdx = stackEntry.fieldMappingsArrIdx;
 						fieldMapping = stackEntry.fieldMapping;
 						jsonValues = stackEntry.jsonValues;
 						jsonValuesIdx = stackEntry.jsonValuesIdx;
@@ -198,13 +204,13 @@ public class JSONStructureUnmarshaller {
 						bLoop = false;
 					}
 					break;
-				case S_ARRAY_START:
+				case S_ARRAY_BEGIN:
 					stackEntry = new StackEntry();
 					stackEntry.state = r_state;
 					stackEntry.jsonObject = jsonObject;
 					stackEntry.curObj = curObj;
-					stackEntry.fieldMappingsList = fieldMappingsList;
-					stackEntry.fieldMappingsListIdx = fieldMappingsListIdx;
+					stackEntry.fieldMappingsArr = fieldMappingsArr;
+					stackEntry.fieldMappingsArrIdx = fieldMappingsArrIdx;
 					stackEntry.fieldMapping = fieldMapping;
 					stackEntry.jsonValues = jsonValues;
 					stackEntry.jsonValuesIdx = jsonValuesIdx;
@@ -220,8 +226,8 @@ public class JSONStructureUnmarshaller {
 						state = stackEntry.state;
 						jsonObject = stackEntry.jsonObject;
 						curObj = stackEntry.curObj;
-						fieldMappingsList = stackEntry.fieldMappingsList;
-						fieldMappingsListIdx = stackEntry.fieldMappingsListIdx;
+						fieldMappingsArr = stackEntry.fieldMappingsArr;
+						fieldMappingsArrIdx = stackEntry.fieldMappingsArrIdx;
 						fieldMapping = stackEntry.fieldMapping;
 						jsonValues = stackEntry.jsonValues;
 						jsonValuesIdx = stackEntry.jsonValuesIdx;
@@ -235,8 +241,8 @@ public class JSONStructureUnmarshaller {
 					fieldMapping.field.set( curObj, object );
 					state = S_OBJECT;
 				case S_OBJECT:
-					if ( fieldMappingsListIdx < fieldMappingsList.size() ) {
-						fieldMapping = fieldMappingsList.get( fieldMappingsListIdx++ );
+					if ( fieldMappingsArrIdx < fieldMappingsArr.length ) {
+						fieldMapping = fieldMappingsArr[ fieldMappingsArrIdx++ ];
 						json_value = jsonObject.get( fieldMapping.jsonName );
 						if ( json_value != null ) {
 							switch ( fieldMapping.type ) {
@@ -413,7 +419,7 @@ public class JSONStructureUnmarshaller {
 								if ( jsonObjectVal != null ) {
 									//object = toObject( json_object, fieldMapping.clazz, converters );
 									r_state = S_OBJECT_VALUE;
-									state = S_OBJECT_START;
+									state = S_OBJECT_BEGIN;
 								}
 								else if ( !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -427,7 +433,7 @@ public class JSONStructureUnmarshaller {
 								jsonArrayVal = json_value.getArray();
 								if ( jsonArrayVal != null ) {
 									r_state = S_OBJECT_VALUE;
-									state = S_ARRAY_START;
+									state = S_ARRAY_BEGIN;
 								}
 								else if ( !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -716,7 +722,7 @@ public class JSONStructureUnmarshaller {
 						if ( jsonObjectVal != null ) {
 							//object = toObject( jsonObjectVal, fieldMapping.clazz, converters );
 							r_state = S_ARRAY_OBJECT_VALUE;
-							state = S_OBJECT_START;
+							state = S_OBJECT_BEGIN;
 						}
 						else if ( !fieldMapping.nullValues ) {
 							throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );

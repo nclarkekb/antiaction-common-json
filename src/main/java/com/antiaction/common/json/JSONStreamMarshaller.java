@@ -35,15 +35,10 @@ import java.util.Map;
 public class JSONStreamMarshaller {
 
 	private static final int S_OBJECT_BEGIN = 1;
-
 	private static final int S_OBJECT_END = 2;
-
 	private static final int S_ARRAY_BEGIN = 3;
-
 	private static final int S_ARRAY_END = 4;
-
 	private static final int S_OBJECT = 5;
-
 	private static final int S_ARRAY = 6;
 
 	/** Null string cached as bytes. */
@@ -116,6 +111,7 @@ public class JSONStreamMarshaller {
 
 		Object object = srcObj;
 		Object array = null;
+
 		JSONObjectMapping objectMapping = classMappings.get( object.getClass().getName() );
 		if ( objectMapping == null ) {
 			throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
@@ -124,8 +120,6 @@ public class JSONStreamMarshaller {
 			throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
 		}
 
-		int state = S_OBJECT_BEGIN;
-		int indentation = 0;
 		JSONObjectFieldMapping[] fieldMappingsArr = null;
 		int fieldMappingIdx = 0;
 		JSONObjectFieldMapping fieldMapping = null;
@@ -135,6 +129,8 @@ public class JSONStreamMarshaller {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry;
 
+		int state = S_OBJECT_BEGIN;
+		int indentation = 0;
 		boolean bLoop = true;
 		boolean bFieldLoop;
 		try {
@@ -477,7 +473,6 @@ public class JSONStreamMarshaller {
 									stackEntry.fieldMappingsArr = fieldMappingsArr;
 									stackEntry.fieldMappingIdx = fieldMappingIdx;
 									stackEntry.fieldMapping = fieldMapping;
-									//arrayLen = stackEntry.arrayLen;
 									stack.add( stackEntry );
 									object = tmpObject;
 									objectMapping = classMappings.get( object.getClass().getName() );
@@ -507,8 +502,6 @@ public class JSONStreamMarshaller {
 									stackEntry.fieldMappingsArr = fieldMappingsArr;
 									stackEntry.fieldMappingIdx = fieldMappingIdx;
 									stackEntry.fieldMapping = fieldMapping;
-									//stackEntry.array = array;
-									//arrayLen = stackEntry.arrayLen;
 									stack.add( stackEntry );
 									array = tmpArray;
 									arrayIdx = 0;
@@ -957,7 +950,6 @@ public class JSONStreamMarshaller {
 								stackEntry.array = array;
 								stackEntry.arrayIdx = arrayIdx;
 								stackEntry.arrayLen = arrayLen;
-								//arrayLen = stackEntry.arrayLen;
 								stack.add( stackEntry );
 								object = tmpObject;
 								objectMapping = classMappings.get( object.getClass().getName() );

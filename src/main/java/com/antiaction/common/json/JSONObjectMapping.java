@@ -79,7 +79,10 @@ public class JSONObjectMapping {
 	/** Field class. */
 	public Class<?> clazz;
 
-	/** Field object mapping, if object type. */
+	/** Field object mapping. */
+	public JSONObjectFieldMapping fieldMapping;
+
+	/** Object mapping, if array is an object type. */
 	public JSONObjectMapping objectMapping;
 
 	private JSONObjectMapping() {

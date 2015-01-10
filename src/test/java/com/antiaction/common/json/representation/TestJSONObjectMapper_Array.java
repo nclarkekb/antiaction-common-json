@@ -37,6 +37,7 @@ import com.antiaction.common.json.JSONObjectMappings;
 @RunWith(JUnit4.class)
 public class TestJSONObjectMapper_Array {
 
+	// TODO Finish implementing and testing top level array (un)marshalling.
 	@Test
 	public void test_jsonobjectmapper_array() {
 		/*

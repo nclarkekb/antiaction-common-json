@@ -133,10 +133,10 @@ public class JSONObjectMappings {
 	protected JSONObjectMapping mapArray(Class<?> clazz) throws JSONException {
 		int level;
 		Class<?> fieldType = null;
-		JSONObjectMapping fieldObjectMapping;
+		JSONObjectMapping fieldObjectMapping = null;
 
-		JSONObjectMapping json_om = JSONObjectMapping.getArrayMapping();
-		classMappings.put( clazz.getName(), json_om );
+		JSONObjectMapping objectMapping = JSONObjectMapping.getArrayMapping();
+		classMappings.put( clazz.getName(), objectMapping );
 
 		try {
 			String arrayTypeName = clazz.getName();
@@ -164,15 +164,18 @@ public class JSONObjectMappings {
 				else {
 					throw new JSONException( "Unsupported array type '" + arrayTypeName + "'." );
 				}
-				json_om.arrayType = arrayType;
-				json_om.className = arrayTypeName;
-				json_om.clazz = fieldType;
-				json_om.objectMapping = fieldObjectMapping;
 			}
+			objectMapping.arrayType = arrayType;
+			objectMapping.className = arrayTypeName;
+			objectMapping.clazz = fieldType;
+			objectMapping.objectMapping = fieldObjectMapping;
+			// TODO FieldMapping need to work for top level arrays.
+			objectMapping.fieldMapping = new JSONObjectFieldMapping();
+			objectMapping.fieldMapping.arrayType = arrayType;
 		} catch (ClassNotFoundException e) {
 			new JSONException( e );
 		}
-		return json_om;
+		return objectMapping;
 	}
 
 	protected JSONObjectMapping mapClass(Class<?> clazz) throws JSONException {
@@ -180,8 +183,8 @@ public class JSONObjectMappings {
 		JSON json;
 		JSONIgnore ignore;
 
-		JSONObjectMapping json_om = JSONObjectMapping.getObjectMapping();
-		classMappings.put( clazz.getName(), json_om );
+		JSONObjectMapping objectMapping = JSONObjectMapping.getObjectMapping();
+		classMappings.put( clazz.getName(), objectMapping );
 
 		Constructor<?> constructor = null;
 		try {
@@ -197,15 +200,15 @@ public class JSONObjectMappings {
 		if ( json != null ) {
 			String[] ignores = json.ignore();
 			for ( int i=0; i<ignores.length; ++i) {
-				json_om.ignore.add( ignores[ i ] );
+				objectMapping.ignore.add( ignores[ i ] );
 			}
 			String [] nullables = json.nullable();
 			for ( int i=0; i<nullables.length; ++i ) {
-				json_om.nullableSet.add( nullables[ i ] );
+				objectMapping.nullableSet.add( nullables[ i ] );
 			}
 			String[] nullValues = json.nullValues();
 			for ( int i=0; i<nullValues.length; ++i ) {
-				json_om.nullValuesSet.add( nullValues[ i ] );
+				objectMapping.nullValuesSet.add( nullValues[ i ] );
 			}
 		}
 
@@ -233,7 +236,7 @@ public class JSONObjectMappings {
 				field = fields[ i ];
 				// debug
 				//System.out.println( field.getName() );
-				bIgnore = json_om.ignore.contains( field.getName() );
+				bIgnore = objectMapping.ignore.contains( field.getName() );
 				ignore = field.getAnnotation( JSONIgnore.class );
 				if ( ignore != null ) {
 					// debug
@@ -406,7 +409,7 @@ public class JSONObjectMappings {
 						json_fm.field = clazz.getDeclaredField( json_fm.fieldName );
 						json_fm.field.setAccessible( true );
 
-						bNullable = json_om.nullableSet.contains( json_fm.fieldName );
+						bNullable = objectMapping.nullableSet.contains( json_fm.fieldName );
 						if ( !bNullable ) {
 							nullable = field.getAnnotation( JSONNullable.class );
 							if ( nullable != null ) {
@@ -419,7 +422,7 @@ public class JSONObjectMappings {
 							}
 							json_fm.nullable = true;
 						}
-						bNullValues = json_om.nullValuesSet.contains( json_fm.fieldName );
+						bNullValues = objectMapping.nullValuesSet.contains( json_fm.fieldName );
 						if ( !bNullValues) {
 							nullValues = field.getAnnotation( JSONNullValues.class );
 							if ( nullValues != null ) {
@@ -441,7 +444,7 @@ public class JSONObjectMappings {
 								converterNameIdMap.put( json_fm.converterName, converterId );
 							}
 							json_fm.converterId = converterId;
-							json_om.converters = true;
+							objectMapping.converters = true;
 						}
 						jsonName = field.getAnnotation( JSONName.class );
 						if ( jsonName != null ) {
@@ -451,12 +454,12 @@ public class JSONObjectMappings {
 							json_fm.jsonName = json_fm.fieldName;
 						}
 
-						json_om.fieldMappingsMap.put( json_fm.jsonName, json_fm );
-						json_om.fieldMappingsList.add( json_fm );
+						objectMapping.fieldMappingsMap.put( json_fm.jsonName, json_fm );
+						objectMapping.fieldMappingsList.add( json_fm );
 					}
 				}
 			}
-			json_om.fieldMappingsArr = json_om.fieldMappingsList.toArray( new JSONObjectFieldMapping[ 0 ] );
+			objectMapping.fieldMappingsArr = objectMapping.fieldMappingsList.toArray( new JSONObjectFieldMapping[ 0 ] );
 		}
 		catch (ClassNotFoundException e) {
 			throw new JSONException( e );
@@ -467,7 +470,7 @@ public class JSONObjectMappings {
 		catch (SecurityException e) {
 			throw new JSONException( e );
 		}
-		return json_om;
+		return objectMapping;
 	}
 
 }
