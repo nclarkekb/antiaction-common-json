@@ -5,22 +5,36 @@ antiaction-common-json
 
 Java JSON library
 
-* JSON stream <> JSON structure.
-* JSON structure <> Java objects.
+A compact library to un/-marshall JSON streams to/from objects/representations.
+
+## Usage ##
+
+* JSON stream <> JSON structure <> Java objects.
 * JSON stream <> Java objects.
 
-## Planned ##
+Using JSON structures is more flexible depending ones requirements.
+Converting directly between streams and objects is the fastest.
 
-* Support for array fields and converters in JSON stream <> Java objects (un)marshalling.
+## Roadmap ##
+
+* Support for converters in JSON stream <> Java objects (un)marshalling.
 * Support for top level arrays (un)marshalling to/from Java object.
 * Support for more primitive types and their object counterparts.
-* Get code coverage up again.
+* Improve code coverage.
 
 ## History ##
 
+### version 0.6.0-SNAPSHOT ###
+
+Work on improving object to/from stream marshaller/unmarshaller.
+
+* Added support for array fields in JSON stream <> Java objects (un)marshalling.
+* Structure marshaller/unmarshaller refactored to work without recursion.
+* Code coverage at 84.2%.
+
 ### version 0.5.0 ###
 
-Work on implementing object to/from stream marshaller/unmarshaller. 
+Work on implementing object to/from stream marshaller/unmarshaller.
 
 * Split the object mapper and structure marshall/unmarshall code into separate classes.
 * Started on stream marshall/unmarshal code. (Does not support arrays yet)

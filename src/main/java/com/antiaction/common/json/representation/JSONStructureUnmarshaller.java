@@ -76,6 +76,7 @@ public class JSONStructureUnmarshaller {
 		return toObject( json_struct, clazz, null );
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T toObject(JSONCollection json_struct, Class<T> clazz, JSONConverterAbstract[] converters) throws JSONException {
 		Boolean booleanVal;
 		Integer intVal;
@@ -153,6 +154,9 @@ public class JSONStructureUnmarshaller {
 						if ( objectMapping.type != JSONObjectMapping.OMT_ARRAY ) {
 							throw new IllegalArgumentException( "Destination is not an array!" );
 						}
+						jsonArrayVal = json_struct.getArray();
+						jsonValues = jsonArrayVal.values;
+						fieldMapping = objectMapping.fieldMapping;
 						//jsonArray = json_struct.getArray();
 						state = S_ARRAY;
 						break;
@@ -234,6 +238,7 @@ public class JSONStructureUnmarshaller {
 						arrayOf_Object = stackEntry.arrayOf_Object;
 					}
 					else {
+						dstObj = (T)object;
 						bLoop = false;
 					}
 					break;
@@ -455,7 +460,7 @@ public class JSONStructureUnmarshaller {
 					}
 					break;
 				case S_ARRAY:
-					switch (  fieldMapping.arrayType ) {
+					switch ( fieldMapping.arrayType ) {
 					case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
 						jsonValues = jsonArrayVal.values;
 						arrayOf_boolean = new boolean[ jsonValues.size() ];
