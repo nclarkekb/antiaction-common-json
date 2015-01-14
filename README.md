@@ -30,7 +30,8 @@ Work on improving object to/from stream marshaller/unmarshaller.
 
 * Added support for array fields in JSON stream <> Java objects (un)marshalling.
 * Structure marshaller/unmarshaller refactored to work without recursion.
-* Code coverage at 84.2%.
+* Added support for (un)marshalling top level arrays to representations.
+* Code coverage at 84.8%.
 
 ### version 0.5.0 ###
 

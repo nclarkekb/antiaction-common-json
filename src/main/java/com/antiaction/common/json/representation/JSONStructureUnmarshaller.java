@@ -76,7 +76,6 @@ public class JSONStructureUnmarshaller {
 		return toObject( json_struct, clazz, null );
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T toObject(JSONCollection json_struct, Class<T> clazz, JSONConverterAbstract[] converters) throws JSONException {
 		Boolean booleanVal;
 		Integer intVal;

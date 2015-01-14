@@ -172,6 +172,8 @@ public class JSONObjectMappings {
 			// TODO FieldMapping need to work for top level arrays.
 			objectMapping.fieldMapping = new JSONObjectFieldMapping();
 			objectMapping.fieldMapping.arrayType = arrayType;
+			objectMapping.fieldMapping.className = arrayTypeName;
+			objectMapping.fieldMapping.clazz = fieldType;
 		} catch (ClassNotFoundException e) {
 			new JSONException( e );
 		}

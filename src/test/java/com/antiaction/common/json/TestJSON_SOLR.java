@@ -17,8 +17,9 @@
 
 package com.antiaction.common.json;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 import org.junit.Ignore;
@@ -37,28 +38,31 @@ import com.antiaction.common.json.representation.JSONTextUnmarshaller;
 @RunWith(JUnit4.class)
 public class TestJSON_SOLR {
 
-	@Ignore
 	@Test
 	public void test_json_solr() {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("books.json");
+		File file = TestHelpers.getTestResourceFile( "books.json" );
+		// debug
+		//System.out.println( file.getPath() );
+		FileInputStream fis = null;
 
 		PushbackInputStream pbin;
 		int encoding;
 
-		JSONTextUnmarshaller json = new JSONTextUnmarshaller();
+		JSONTextUnmarshaller textUnmarshaller = new JSONTextUnmarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONDecoder json_decoder;
 		JSONCollection json_struct;
 
 		try {
-			pbin = new PushbackInputStream( in, 4 );
+	        fis = new FileInputStream( file );
+			pbin = new PushbackInputStream( fis, 4 );
 			encoding = JSONEncoding.encoding( pbin );
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
 			json_objectmappings.register( Book[].class );
 
 			json_decoder = json_encoding.getJSONDecoder( encoding );
-			json_struct = json.toJSONStructure( pbin, json_decoder );
+			json_struct = textUnmarshaller.toJSONStructure( pbin, json_decoder );
 
 			Book[] books = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, Book[].class );
 		}
@@ -67,6 +71,15 @@ public class TestJSON_SOLR {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+		}
+		finally {
+			if ( fis != null ) {
+				try {
+					fis.close();
+				}
+				catch (IOException e) {
+				}
+			}
 		}
 	}
 
