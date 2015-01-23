@@ -65,7 +65,8 @@ public class JSONStreamUnmarshaller {
 	private static final int S_NUMBER_E = 24;
 	private static final int S_NUMBER_EXPONENT = 25;
 	private static final int S_NUMBER_EXPONENTS = 26;
-	private static final int S_EOF = 27;
+	private static final int S_ARRAY_TO_ROOTOBJ = 27;
+	private static final int S_EOF = 28;
 
 	private static final int T_NULL = 1;
 	private static final int T_BOOLEAN = 2;
@@ -165,21 +166,15 @@ public class JSONStreamUnmarshaller {
 		int json_value_type = 0;
 
 		Object curObj = null;
-		Map<String, JSONObjectFieldMapping> fieldMappingsMap;
-		JSONObjectFieldMapping fieldMapping = null;
-
 		Collection curArr = null;
+		Map<String, JSONObjectFieldMapping> fieldMappingsMap = null;
+		JSONObjectFieldMapping fieldMapping = null;
 
 		int state = S_START;
 		int rstate = -1;
 		boolean bLoop = true;
 		char c;
 		try {
-			rootObj = clazz.newInstance();
-			curObj = rootObj;
-
-			fieldMappingsMap = objectMapping.fieldMappingsMap;
-
 			while ( bLoop ) {
 				while ( pos < limit ) {
 					c = charArray[ pos ];
@@ -199,9 +194,14 @@ public class JSONStreamUnmarshaller {
 							x = 1;
 							break;
 						case '{':
+							rootObj = clazz.newInstance();
+							curObj = rootObj;
+							fieldMappingsMap = objectMapping.fieldMappingsMap;
 							state = S_OBJECT;
 							break;
 						case '[':
+							curArr = new ArrayList();
+							fieldMapping = objectMapping.fieldMapping;
 							state = S_ARRAY;
 							break;
 						default:
@@ -232,11 +232,6 @@ public class JSONStreamUnmarshaller {
 						break;
 					case S_OBJECT_END:
 						++pos;
-						/*
-						if ( stack.size() == 0 ) {
-							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
-						}
-						*/
 						if ( stack.size() > 0 ) {
 							json_value_type = T_OBJECT;
 							object = curObj;
@@ -278,11 +273,6 @@ public class JSONStreamUnmarshaller {
 						break;
 					case S_ARRAY_END:
 						++pos;
-						/*
-						if ( stack.size() == 0 ) {
-							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
-						}
-						*/
 						if ( stack.size() > 0 ) {
 							json_value_type = T_ARRAY;
 							array = curArr;
@@ -294,7 +284,9 @@ public class JSONStreamUnmarshaller {
 							curArr = stackEntry.curArr;
 						}
 						else {
-							state = S_EOF;
+							array = curArr;
+							state = S_ARRAY_TO_ROOTOBJ;
+							//state = S_EOF;
 						}
 						break;
 					case S_OBJECT:
@@ -1500,6 +1492,59 @@ public class JSONStreamUnmarshaller {
 							state = rstate;
 						}
 						break;
+					case S_ARRAY_TO_ROOTOBJ:
+						int idx;
+						switch ( fieldMapping.arrayType ) {
+						case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
+							arrayOf_boolean = new boolean[ array.size() ];
+							Iterator<Boolean> booleanIter = array.iterator();
+							idx = 0;
+							while ( booleanIter.hasNext() ) {
+								arrayOf_boolean[ idx++ ] = booleanIter.next();
+							}
+							rootObj = (T)arrayOf_boolean;
+							break;
+						case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
+							arrayOf_int = new int[ array.size() ];
+							Iterator<Integer> intIter = array.iterator();
+							idx = 0;
+							while ( intIter.hasNext() ) {
+								arrayOf_int[ idx++ ] = intIter.next();
+							}
+							rootObj = (T)arrayOf_int;
+							break;
+						case JSONObjectMappingConstants.T_PRIMITIVE_LONG:
+							arrayOf_long = new long[ array.size() ];
+							Iterator<Long> longIter = array.iterator();
+							idx = 0;
+							while ( longIter.hasNext() ) {
+								arrayOf_long[ idx++ ] = longIter.next();
+							}
+							rootObj = (T)arrayOf_long;
+							break;
+						case JSONObjectMappingConstants.T_PRIMITIVE_FLOAT:
+							arrayOf_float = new float[ array.size() ];
+							Iterator<Float> floatIter = array.iterator();
+							idx = 0;
+							while ( floatIter.hasNext() ) {
+								arrayOf_float[ idx++ ] = floatIter.next();
+							}
+							rootObj = (T)arrayOf_float;
+							break;
+						case JSONObjectMappingConstants.T_PRIMITIVE_DOUBLE:
+							arrayOf_double = new double[ array.size() ];
+							Iterator<Double> doubleIter = array.iterator();
+							idx = 0;
+							while ( doubleIter.hasNext() ) {
+								arrayOf_double[ idx++ ] = doubleIter.next();
+							}
+							rootObj = (T)arrayOf_double;
+							break;
+						default:
+							rootObj = (T)array.toArray( (Object[]) Array.newInstance( fieldMapping.clazz, array.size() ) );
+							break;
+						}
+						state = S_EOF;
 					case S_EOF:
 						++x;
 						switch ( c ) {
@@ -1536,7 +1581,7 @@ public class JSONStreamUnmarshaller {
 		catch (IllegalAccessException e) {
 			throw new JSONException( e );
 		}
-		if (curObj == null || stack.size() > 0) {
+		if ( (curObj == null && curArr == null) || stack.size() > 0) {
 			throw new JSONException( "Invalid JSON structure!" );
 		}
 		return rootObj;
@@ -1592,6 +1637,7 @@ public class JSONStreamUnmarshaller {
 		stateStr.put( S_NUMBER_E, "S_NUMBER_E" );
 		stateStr.put( S_NUMBER_EXPONENT, "S_NUMBER_EXPONENT" );
 		stateStr.put( S_NUMBER_EXPONENTS, "S_NUMBER_EXPONENTS" );
+		stateStr.put( S_ARRAY_TO_ROOTOBJ, "S_ARRAY_TO_ROOTOBJ" );
 		stateStr.put( S_EOF, "S_EOF" );
 	}
 

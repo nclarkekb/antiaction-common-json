@@ -18,6 +18,7 @@
 package com.antiaction.common.json;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,93 @@ public class JSONObjectMapping {
 		JSONObjectMapping om = new JSONObjectMapping();
 		om.type = OMT_ARRAY;
 		return om;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString( sb );
+		return sb.toString();
+	}
+
+	public void toString(StringBuilder sb) {
+		switch ( type ) {
+		case OMT_OBJECT:
+			sb.append( "  type: Object(" );
+			sb.append( type );
+			sb.append( ")\n" );
+			break;
+		case OMT_ARRAY:
+			sb.append( "  type: Array(" );
+			sb.append( type );
+			sb.append( ")\n" );
+			sb.append( "  arrayType: " );
+			sb.append( JSONObjectMappingConstants.typeString( arrayType ) );
+			sb.append( "(" );
+			sb.append( arrayType );
+			sb.append( ")\n" );
+			break;
+		}
+		sb.append( "  className: " );
+		sb.append( className );
+		sb.append( "\n" );
+		sb.append( "  clazz: " );
+		sb.append( clazz );
+		sb.append( "\n" );
+
+		sb.append( "  ignore: " );
+		toString( ignore, sb );
+		sb.append( "\n" );
+		sb.append( "  nullableSet: " );
+		toString( nullableSet, sb );
+		sb.append( "\n" );
+		sb.append( "  nullValuesSet: " );
+		toString( nullValuesSet, sb );
+		sb.append( "\n" );
+		sb.append( "  fieldMapping: " );
+		if ( fieldMapping != null ) {
+			sb.append( "\n" );
+			fieldMapping.toString( sb );
+		}
+		else {
+			sb.append( "null" );
+			sb.append( "\n" );
+		}
+		sb.append( "  objectMapping: " );
+		if ( objectMapping != null ) {
+			sb.append( objectMapping.className );
+		}
+		else {
+			sb.append( "null" );
+		}
+		sb.append( "\n" );
+		sb.append( "  fieldMappingsArr[]: " );
+		if ( fieldMappingsArr != null ) {
+			sb.append( "\n" );
+			for ( int i=0; i<fieldMappingsArr.length; ++i ) {
+				sb.append( "  [" );
+				sb.append( i );
+				sb.append( "]" );
+				sb.append( "\n" );
+				fieldMappingsArr[ i ].toString( sb );
+			}
+		}
+		else {
+			sb.append( "null" );
+			sb.append( "\n" );
+		}
+	}
+
+	public void toString(Set<String> set, StringBuilder sb) {
+		sb.append( "[" );
+		Iterator<String> iter = set.iterator();
+		String str = null;
+		while ( iter.hasNext() ) {
+			if ( str == null ) {
+				sb.append( ", " );
+			}
+			sb.append( iter.next() );
+		}
+		sb.append( "]" );
 	}
 
 }

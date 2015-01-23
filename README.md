@@ -18,8 +18,8 @@ Converting directly between streams and objects is the fastest.
 ## Roadmap ##
 
 * Support for converters in JSON stream <> Java objects (un)marshalling.
-* Support for top level arrays (un)marshalling to/from Java object.
 * Support for more primitive types and their object counterparts.
+* Omit null values from json output.
 * Improve code coverage.
 
 ## History ##
@@ -30,8 +30,9 @@ Work on improving object to/from stream marshaller/unmarshaller.
 
 * Added support for array fields in JSON stream <> Java objects (un)marshalling.
 * Structure marshaller/unmarshaller refactored to work without recursion.
-* Added support for (un)marshalling top level arrays to representations.
-* Code coverage at 84.8%.
+* Added support for (un)marshalling top level arrays to/from representations.
+* Added support for (un)marshalling top level arrays to/from Java object.
+* Code coverage at 81.3%.
 
 ### version 0.5.0 ###
 

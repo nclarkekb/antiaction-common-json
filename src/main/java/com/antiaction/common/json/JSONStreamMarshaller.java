@@ -25,6 +25,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Serialize Java Object(s) into a JSON data stream.
@@ -34,6 +35,7 @@ import java.util.Map;
  */
 public class JSONStreamMarshaller {
 
+	private static final int S_START = 0;
 	private static final int S_OBJECT_BEGIN = 1;
 	private static final int S_OBJECT_END = 2;
 	private static final int S_ARRAY_BEGIN = 3;
@@ -129,13 +131,31 @@ public class JSONStreamMarshaller {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry;
 
-		int state = S_OBJECT_BEGIN;
+		int state = S_START;
 		int indentation = 0;
 		boolean bLoop = true;
 		boolean bFieldLoop;
 		try {
 			while ( bLoop ) {
+				// debug
+				//System.out.println( stateStr.get( state ) + " (" + state + ")" );
 				switch ( state ) {
+				case S_START:
+					switch ( objectMapping.type ) {
+					case JSONObjectMapping.OMT_OBJECT:
+						state = S_OBJECT_BEGIN;
+						break;
+					case JSONObjectMapping.OMT_ARRAY:
+						fieldMapping = objectMapping.fieldMapping;
+						array = srcObj;
+						//arrayIdx = 0;
+						arrayLen = Array.getLength( array );
+						state = S_ARRAY_BEGIN;
+						break;
+					default:
+						throw new IllegalArgumentException( "Invalid object mapping class!" );
+					}
+					break;
 				case S_OBJECT_BEGIN:
 					if ( bPretty ) {
 						encoder.write( "{\n" );
@@ -994,6 +1014,18 @@ public class JSONStreamMarshaller {
 		}
 
 		encoder.close();
+	}
+
+	private static Map<Integer, String> stateStr = new TreeMap<Integer, String>();
+
+	static {
+		stateStr.put( S_START, "S_START" );
+		stateStr.put( S_OBJECT_BEGIN, "S_OBJECT_START" );
+		stateStr.put( S_OBJECT_END, "S_OBJECT_END" );
+		stateStr.put( S_ARRAY_BEGIN, "S_ARRAY_START" );
+		stateStr.put( S_ARRAY_END, "S_ARRAY_END" );
+		stateStr.put( S_OBJECT, "S_OBJECT" );
+		stateStr.put( S_ARRAY, "S_ARRAY" );
 	}
 
 }

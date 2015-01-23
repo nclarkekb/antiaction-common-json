@@ -23,8 +23,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -111,23 +113,25 @@ public class JSONObjectMappings {
 		return converterIds;
 	}
 
-	public void register(Class<?> clazz) throws JSONException {
-		if ( !classMappings.containsKey( clazz.getName() ) ) {
+	public JSONObjectMapping register(Class<?> clazz) throws JSONException {
+		JSONObjectMapping objectMapping = classMappings.get( clazz.getName() );
+		if ( objectMapping == null ) {
 			int classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( clazz );
 			if ( (classTypeMask & JSONObjectMappingConstants.CLASS_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
 				throw new JSONException( "Unsupported class type." );
 			}
 			classTypeMask &= JSONObjectMappingConstants.CLASS_VALID_TYPE_MODIFIERS_MASK;
 			if ( (classTypeMask == JSONObjectMappingConstants.VALID_CLASS) || (classTypeMask == JSONObjectMappingConstants.VALID_MEMBER_CLASS) ) {
-				mapClass( clazz );
+				objectMapping = mapClass( clazz );
 			}
 			else if ( classTypeMask == JSONObjectMappingConstants.VALID_ARRAY_CLASS ) {
-				mapArray( clazz );
+				objectMapping = mapArray( clazz );
 			}
 			else  {
 				throw new JSONException( "Unsupported class type." );
 			}
 		}
+		return objectMapping;
 	}
 
 	protected JSONObjectMapping mapArray(Class<?> clazz) throws JSONException {
@@ -473,6 +477,22 @@ public class JSONObjectMappings {
 			throw new JSONException( e );
 		}
 		return objectMapping;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		Iterator<Entry<String, JSONObjectMapping>> iter = classMappings.entrySet().iterator();
+		Entry<String, JSONObjectMapping> entry;
+		JSONObjectMapping objectMapping;
+		while ( iter.hasNext() ) {
+			entry = iter.next();
+			sb.append( "class: " );
+			sb.append( entry.getKey() );
+			sb.append( "\n" );
+			objectMapping = entry.getValue();
+			objectMapping.toString( sb );
+		}
+		return sb.toString();
 	}
 
 }

@@ -17,16 +17,18 @@
 
 package com.antiaction.common.json;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
 
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.annotation.JSONNullable;
 import com.antiaction.common.json.representation.JSONCollection;
 import com.antiaction.common.json.representation.JSONTextUnmarshaller;
 
@@ -47,11 +49,16 @@ public class TestJSON_SOLR {
 
 		PushbackInputStream pbin;
 		int encoding;
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
 		JSONTextUnmarshaller textUnmarshaller = new JSONTextUnmarshaller();
 		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
 		JSONDecoder json_decoder;
+		JSONEncoder json_encoder;
 		JSONCollection json_struct;
+		JSONCollection json_struct2;
+
+		JSONObjectMapping objectMapping;
 
 		try {
 	        fis = new FileInputStream( file );
@@ -59,12 +66,63 @@ public class TestJSON_SOLR {
 			encoding = JSONEncoding.encoding( pbin );
 
 			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
-			json_objectmappings.register( Book[].class );
+			objectMapping = json_objectmappings.register( Book[].class );
+
+			//System.out.println( json_objectmappings.toString() );
 
 			json_decoder = json_encoding.getJSONDecoder( encoding );
+			json_encoder = json_encoding.getJSONEncoder( encoding );
+
 			json_struct = textUnmarshaller.toJSONStructure( pbin, json_decoder );
 
 			Book[] books = json_objectmappings.getStructureUnmarshaller().toObject( json_struct, Book[].class );
+
+			Assert.assertNotNull( books );
+
+			json_struct2 = json_objectmappings.getStructureMarshaller().toJSONStructure( books );
+
+			bOut.reset();
+			json_objectmappings.getTextMarshaller().toJSONText( json_struct2, json_encoder, true, bOut );
+
+			System.out.println( new String( bOut.toByteArray(), "UTF-8" ) );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if ( fis != null ) {
+				try {
+					fis.close();
+				}
+				catch (IOException e) {
+				}
+			}
+		}
+
+		try {
+	        fis = new FileInputStream( file );
+			pbin = new PushbackInputStream( fis, 4 );
+			encoding = JSONEncoding.encoding( pbin );
+
+			JSONObjectMappings json_objectmappings = new JSONObjectMappings();
+			objectMapping = json_objectmappings.register( Book[].class );
+
+			//System.out.println( json_objectmappings.toString() );
+
+			json_decoder = json_encoding.getJSONDecoder( encoding );
+			json_encoder = json_encoding.getJSONEncoder( encoding );
+
+			Book[] books = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, Book[].class );
+
+			Assert.assertNotNull( books );
+
+			bOut.reset();
+			json_objectmappings.getStreamMarshaller().toJSONText( books, json_encoder, true, bOut );
+
+			System.out.println( new String( bOut.toByteArray(), "UTF-8" ) );
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
@@ -85,6 +143,25 @@ public class TestJSON_SOLR {
 
 	public static class Book {
 		String id;
+
+		String[] cat;
+
+		String name;
+
+		String author;
+
+		@JSONNullable
+	    String series_t;
+
+		Integer sequence_i;
+
+		String genre_s;
+
+		Boolean inStock;
+
+		Float price;
+
+		Integer pages_i;
 	}
 
 }

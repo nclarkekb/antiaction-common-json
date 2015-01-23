@@ -69,4 +69,88 @@ public class JSONObjectFieldMapping {
 	/** Id of desired field data converter. */
 	public int converterId = -1;
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString( sb );
+		return sb.toString();
+	}
+
+	public void toString(StringBuilder sb) {
+		sb.append( "    fieldName: " );
+		sb.append( fieldName );
+		sb.append( "\n" );
+		sb.append( "    jsonName: " );
+		sb.append( jsonName );
+		sb.append( "\n" );
+		sb.append( "    type:" );
+		sb.append( JSONObjectMappingConstants.typeString( type ) );
+		sb.append( "(" );
+		sb.append( type );
+		sb.append( ")\n" );
+		sb.append( "    arrayType: " );
+		sb.append( JSONObjectMappingConstants.typeString( arrayType ) );
+		sb.append( "(" );
+		sb.append( arrayType );
+		sb.append( ")\n" );
+		sb.append( "    className: " );
+		sb.append( className );
+		sb.append( "\n" );
+		sb.append( "    clazz: " );
+		sb.append( clazz );
+		sb.append( "\n" );
+		sb.append( "    objectMapping: " );
+		if ( objectMapping != null ) {
+			sb.append( objectMapping.className );
+		}
+		else {
+			sb.append( "null" );
+		}
+		sb.append( "\n" );
+		sb.append( "    parametrizedObjectTypes[] : " );
+		if ( parametrizedObjectTypes != null ) {
+			sb.append( "<" );
+			for ( int i=0; i<parametrizedObjectTypes.length; ++i ) {
+				if ( i > 0 ) {
+					sb.append( ", " );
+				}
+				sb.append( JSONObjectMappingConstants.typeString( parametrizedObjectTypes[ i ] ) );
+				sb.append( "(" );
+				sb.append( parametrizedObjectTypes[ i ] );
+				sb.append( ")" );
+			}
+			sb.append( ">" );
+		}
+		else {
+			sb.append( "null" );
+		}
+		sb.append( "\n" );
+		sb.append( "    parametrizedObjectMappings[]: " );
+		if ( parametrizedObjectMappings != null ) {
+			sb.append( "<" );
+			for ( int i=0; i<parametrizedObjectMappings.length; ++i ) {
+				if ( i > 0 ) {
+					sb.append( ", " );
+				}
+				sb.append( parametrizedObjectMappings[ i ].className );
+			}
+			sb.append( ">" );
+		}
+		else {
+			sb.append( "null" );
+		}
+		sb.append( "\n" );
+		sb.append( "    nullable: " );
+		sb.append( nullable );
+		sb.append( "\n" );
+		sb.append( "    nullValues: " );
+		sb.append( nullValues );
+		sb.append( "\n" );
+		sb.append( "    converterName: " );
+		sb.append( converterName );
+		sb.append( "\n" );
+		sb.append( "    converterId: " );
+		sb.append( converterId );
+		sb.append( "\n" );
+	}
+
 }
