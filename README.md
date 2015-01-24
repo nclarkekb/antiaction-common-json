@@ -17,6 +17,7 @@ Converting directly between streams and objects is the fastest.
 
 ## Roadmap ##
 
+* Check how json values not mapped are handled.
 * Support for converters in JSON stream <> Java objects (un)marshalling.
 * Support for more primitive types and their object counterparts.
 * Omit null values from json output.
@@ -24,7 +25,7 @@ Converting directly between streams and objects is the fastest.
 
 ## History ##
 
-### version 0.6.0-SNAPSHOT ###
+### version 0.6.0 ###
 
 Work on improving object to/from stream marshaller/unmarshaller.
 
