@@ -42,7 +42,7 @@ import com.antiaction.common.json.representation.JSONTextUnmarshaller;
 public class TestJSONMarshallingTopLevelArray {
 
 	@Test
-	public void test_json_solr() {
+	public void test_json_solr_top_level_array() {
 		File file = TestHelpers.getTestResourceFile( "books.json" );
 		// debug
 		//System.out.println( file.getPath() );

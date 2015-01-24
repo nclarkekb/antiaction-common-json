@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -539,6 +540,7 @@ public class TestJSONStreamMarshaller {
 	}
 
 	@Test
+	@Ignore
 	public void test_jsonom_toarray() {
 		JSONObject json_object = new JSONObject();
 		JSONArray json_array = new JSONArray();

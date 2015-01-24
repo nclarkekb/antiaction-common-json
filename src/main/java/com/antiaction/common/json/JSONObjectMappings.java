@@ -295,8 +295,8 @@ public class JSONObjectMappings {
 						classTypeMask &= JSONObjectMappingConstants.FIELD_VALID_TYPE_MODIFIERS_MASK;
 						if ( (classTypeMask == JSONObjectMappingConstants.VALID_CLASS) || (classTypeMask == JSONObjectMappingConstants.VALID_MEMBER_CLASS) ) {
 							Type genericType = field.getGenericType();
-							// debug
-							System.out.println( "GT: " + genericType + " * " + genericType.getClass() );
+							// debug - uncomment
+							//System.out.println( "GT: " + genericType + " * " + genericType.getClass() );
 
 							if ( genericType instanceof Class ) {
 								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)genericType );
@@ -332,8 +332,8 @@ public class JSONObjectMappings {
 								for ( int j=0; j<typeArguments.length; ++j ) {
 									Type typeArgument = typeArguments[ j ];
 									Class<?> parameterizedTypeClass = ((Class<?>)typeArgument);
-									// debug
-									System.out.println( parameterizedTypeClass );
+									// debug - uncomment
+									//System.out.println( parameterizedTypeClass );
 									parametrizedObjectTypes[ j ] = JSONObjectMappingConstants.primitiveTypeMappings.get( parameterizedTypeClass.getName() );
 									if ( parametrizedObjectTypes[ j ] == null ) {
 										parametrizedObjectMappings[ j ] = classMappings.get( parameterizedTypeClass.getName() );
