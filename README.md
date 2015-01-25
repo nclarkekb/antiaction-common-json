@@ -25,6 +25,10 @@ Converting directly between streams and objects is the fastest.
 
 ## History ##
 
+### version 0.7.0-SNAPSHOT ###
+
+...
+
 ### version 0.6.0 ###
 
 Work on improving object to/from stream marshaller/unmarshaller.
