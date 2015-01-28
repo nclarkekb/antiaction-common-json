@@ -47,19 +47,19 @@ public class JSONObjectMapping {
 	 */
 
 	/** Field names to ignore when mapping objects. */
-	public Set<String> ignore = new HashSet<String>();
+	public Set<String> ignore;
 
 	/** Field names which can be null. */
-	public Set<String> nullableSet = new TreeSet<String>();
+	public Set<String> nullableSet;
 
 	/** Field names which can have null values. */
-	public Set<String> nullValuesSet = new TreeSet<String>();
+	public Set<String> nullValuesSet;
 
 	/** Map of mapped fields. */
-	public Map<String, JSONObjectFieldMapping> fieldMappingsMap = new TreeMap<String, JSONObjectFieldMapping>();
+	public Map<String, JSONObjectFieldMapping> fieldMappingsMap;
 
 	/** List of mapped fields. */
-	public List<JSONObjectFieldMapping> fieldMappingsList = new LinkedList<JSONObjectFieldMapping>();
+	public List<JSONObjectFieldMapping> fieldMappingsList;
 
 	/** Array of mapped fields. */
 	public JSONObjectFieldMapping[] fieldMappingsArr;
@@ -180,17 +180,23 @@ public class JSONObjectMapping {
 		}
 	}
 
-	public void toString(Set<String> set, StringBuilder sb) {
-		sb.append( "[" );
-		Iterator<String> iter = set.iterator();
-		String str = null;
-		while ( iter.hasNext() ) {
-			if ( str == null ) {
-				sb.append( ", " );
+	public static void toString(Set<String> set, StringBuilder sb) {
+		if ( set != null ) {
+			sb.append( "[" );
+			Iterator<String> iter = set.iterator();
+			String str = null;
+			while ( iter.hasNext() ) {
+				if ( str != null ) {
+					sb.append( ", " );
+				}
+				str = iter.next();
+				sb.append( str );
 			}
-			sb.append( iter.next() );
+			sb.append( "]" );
 		}
-		sb.append( "]" );
+		else {
+			sb.append( "null" );
+		}
 	}
 
 }

@@ -31,6 +31,12 @@ import java.util.Map;
  */
 public class ClassTypeModifiers {
 
+	/**
+	 * Prohibit external construction.
+	 */
+	protected ClassTypeModifiers() {
+	}
+
 	/*
 	 * Class types.
 	 */
@@ -150,7 +156,7 @@ public class ClassTypeModifiers {
 		if ( Modifier.isNative( mod ) ) {
 			mask |= CM_NATIVE;
 		}
-		if ( Modifier.isPrivate( mod) ) {
+		if ( Modifier.isPrivate( mod ) ) {
 			mask |= CM_PRIVATE;
 		}
 		if ( Modifier.isProtected( mod ) ) {
@@ -177,53 +183,55 @@ public class ClassTypeModifiers {
 		return mask;
 	}
 
+	private static int[] masks = new int[] {
+			CT_ANNOTATION,
+			CT_ANONYMOUSCLASS,
+			CT_ARRAY,
+			CT_ENUM,
+			CT_INTERFACE,
+			CT_LOCALCLASS,
+			CT_MEMBERCLASS,
+			CT_PRIMITIVE,
+			CT_SYNTHETIC,
+			CT_CLASS,
+			CM_ABSTRACT,
+			CM_FINAL,
+			CM_NATIVE,
+			CM_PRIVATE,
+			CM_PROTECTED,
+			CM_PUBLIC,
+			CM_STATIC,
+			CM_STRICT,
+			CM_SYNCHRONIZED,
+			CM_TRANSIENT,
+			CM_VOLATILE
+	};
+
+	private static String[] names = new String[] {
+			"Annotation",
+			"Anonymous",
+			"Array",
+			"Enum",
+			"Interface",
+			"Local",
+			"Member",
+			"Primitive",
+			"Synthetic",
+			"Class",
+			"Abstract",
+			"Final",
+			"Native",
+			"Private",
+			"Protected",
+			"Public",
+			"Static",
+			"Strict",
+			"Synchronized",
+			"Transient",
+			"Volative"
+	};
+
 	public static String toString(int mask) {
-		int[] masks = new int[] {
-				CT_ANNOTATION,
-				CT_ANONYMOUSCLASS,
-				CT_ARRAY,
-				CT_ENUM,
-				CT_INTERFACE,
-				CT_LOCALCLASS,
-				CT_MEMBERCLASS,
-				CT_PRIMITIVE,
-				CT_SYNTHETIC,
-				CT_CLASS,
-				CM_ABSTRACT,
-				CM_FINAL,
-				CM_NATIVE,
-				CM_PRIVATE,
-				CM_PROTECTED,
-				CM_PUBLIC,
-				CM_STATIC,
-				CM_STRICT,
-				CM_SYNCHRONIZED,
-				CM_TRANSIENT,
-				CM_VOLATILE
-		};
-		String[] names = new String[] {
-				"Annotation",
-				"Anonymous",
-				"Array",
-				"Enum",
-				"Interface",
-				"Local",
-				"Member",
-				"Primitive",
-				"Synthetic",
-				"Class",
-				"Abstract",
-				"Final",
-				"Native",
-				"Private",
-				"Protected",
-				"Public",
-				"Static",
-				"Strict",
-				"Synchronized",
-				"Transient",
-				"Volative"
-		};
 		StringBuilder sb = new StringBuilder();
 		for ( int i=0; i<masks.length; ++i ) {
 			if ( (mask & masks[ i ]) != 0 ) {

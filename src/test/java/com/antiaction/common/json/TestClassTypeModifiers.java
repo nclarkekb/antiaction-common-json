@@ -17,8 +17,7 @@
 
 package com.antiaction.common.json;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -242,6 +241,86 @@ public class TestClassTypeModifiers {
 
 	@JSON(ignore={"$jacocoData"})
 	public static class TestStaticMemberClass {
+	}
+
+	@Test
+	public void test_classtypemodifiers_tostring() {
+		ClassTypeModifiers modifiers = new ClassTypeModifiers();
+		Assert.assertNotNull( modifiers );
+		Assert.assertEquals( "", ClassTypeModifiers.toString( 0 ) );
+
+		Assert.assertEquals( "Annotation", ClassTypeModifiers.toString( ClassTypeModifiers.CT_ANNOTATION ) );
+		Assert.assertEquals( "Anonymous", ClassTypeModifiers.toString( ClassTypeModifiers.CT_ANONYMOUSCLASS ) );
+		Assert.assertEquals( "Array", ClassTypeModifiers.toString( ClassTypeModifiers.CT_ARRAY ) );
+		Assert.assertEquals( "Enum", ClassTypeModifiers.toString( ClassTypeModifiers.CT_ENUM ) );
+		Assert.assertEquals( "Interface", ClassTypeModifiers.toString( ClassTypeModifiers.CT_INTERFACE ) );
+		Assert.assertEquals( "Local", ClassTypeModifiers.toString( ClassTypeModifiers.CT_LOCALCLASS ) );
+		Assert.assertEquals( "Member", ClassTypeModifiers.toString( ClassTypeModifiers.CT_MEMBERCLASS ) );
+		Assert.assertEquals( "Primitive", ClassTypeModifiers.toString( ClassTypeModifiers.CT_PRIMITIVE ) );
+		Assert.assertEquals( "Synthetic", ClassTypeModifiers.toString( ClassTypeModifiers.CT_SYNTHETIC ) );
+		Assert.assertEquals( "Class", ClassTypeModifiers.toString( ClassTypeModifiers.CT_CLASS ) );
+		Assert.assertEquals( "Abstract", ClassTypeModifiers.toString( ClassTypeModifiers.CM_ABSTRACT ) );
+		Assert.assertEquals( "Final", ClassTypeModifiers.toString( ClassTypeModifiers.CM_FINAL ) );
+		Assert.assertEquals( "Native", ClassTypeModifiers.toString( ClassTypeModifiers.CM_NATIVE ) );
+		Assert.assertEquals( "Private", ClassTypeModifiers.toString( ClassTypeModifiers.CM_PRIVATE ) );
+		Assert.assertEquals( "Protected", ClassTypeModifiers.toString( ClassTypeModifiers.CM_PROTECTED ) );
+		Assert.assertEquals( "Public", ClassTypeModifiers.toString( ClassTypeModifiers.CM_PUBLIC ) );
+		Assert.assertEquals( "Static", ClassTypeModifiers.toString( ClassTypeModifiers.CM_STATIC ) );
+		Assert.assertEquals( "Strict", ClassTypeModifiers.toString( ClassTypeModifiers.CM_STRICT ) );
+		Assert.assertEquals( "Synchronized", ClassTypeModifiers.toString( ClassTypeModifiers.CM_SYNCHRONIZED ) );
+		Assert.assertEquals( "Transient", ClassTypeModifiers.toString( ClassTypeModifiers.CM_TRANSIENT ) );
+		Assert.assertEquals( "Volative", ClassTypeModifiers.toString( ClassTypeModifiers.CM_VOLATILE ) );
+
+		Assert.assertEquals( "Annotation, Array, Interface, Member, Synthetic, Abstract, Native, Protected, Static, Synchronized, Volative", ClassTypeModifiers.toString(
+				ClassTypeModifiers.CT_ANNOTATION
+				| ClassTypeModifiers.CT_ARRAY
+				| ClassTypeModifiers.CT_INTERFACE
+				| ClassTypeModifiers.CT_MEMBERCLASS
+				| ClassTypeModifiers.CT_SYNTHETIC
+				| ClassTypeModifiers.CM_ABSTRACT
+				| ClassTypeModifiers.CM_NATIVE
+				| ClassTypeModifiers.CM_PROTECTED
+				| ClassTypeModifiers.CM_STATIC
+				| ClassTypeModifiers.CM_SYNCHRONIZED
+				| ClassTypeModifiers.CM_VOLATILE
+		) );
+
+		Assert.assertEquals( "Anonymous, Enum, Local, Primitive, Class, Final, Private, Public, Strict, Transient", ClassTypeModifiers.toString(
+				ClassTypeModifiers.CT_ANONYMOUSCLASS
+				| ClassTypeModifiers.CT_ENUM
+				| ClassTypeModifiers.CT_LOCALCLASS
+				| ClassTypeModifiers.CT_PRIMITIVE
+				| ClassTypeModifiers.CT_CLASS
+				| ClassTypeModifiers.CM_FINAL
+				| ClassTypeModifiers.CM_PRIVATE
+				| ClassTypeModifiers.CM_PUBLIC
+				| ClassTypeModifiers.CM_STRICT
+				| ClassTypeModifiers.CM_TRANSIENT
+		) );
+
+		Assert.assertEquals( "Annotation, Anonymous, Array, Enum, Interface, Local, Member, Primitive, Synthetic, Class, Abstract, Final, Native, Private, Protected, Public, Static, Strict, Synchronized, Transient, Volative", ClassTypeModifiers.toString(
+				ClassTypeModifiers.CT_ANNOTATION
+				| ClassTypeModifiers.CT_ANONYMOUSCLASS
+				| ClassTypeModifiers.CT_ARRAY
+				| ClassTypeModifiers.CT_ENUM
+				| ClassTypeModifiers.CT_INTERFACE
+				| ClassTypeModifiers.CT_LOCALCLASS
+				| ClassTypeModifiers.CT_MEMBERCLASS
+				| ClassTypeModifiers.CT_PRIMITIVE
+				| ClassTypeModifiers.CT_SYNTHETIC
+				| ClassTypeModifiers.CT_CLASS
+				| ClassTypeModifiers.CM_ABSTRACT
+				| ClassTypeModifiers.CM_FINAL
+				| ClassTypeModifiers.CM_NATIVE
+				| ClassTypeModifiers.CM_PRIVATE
+				| ClassTypeModifiers.CM_PROTECTED
+				| ClassTypeModifiers.CM_PUBLIC
+				| ClassTypeModifiers.CM_STATIC
+				| ClassTypeModifiers.CM_STRICT
+				| ClassTypeModifiers.CM_SYNCHRONIZED
+				| ClassTypeModifiers.CM_TRANSIENT
+				| ClassTypeModifiers.CM_VOLATILE
+		) );
 	}
 
 }

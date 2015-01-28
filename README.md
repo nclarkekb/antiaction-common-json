@@ -18,16 +18,18 @@ Converting directly between streams and objects is the fastest.
 ## Roadmap ##
 
 * Check how json values not mapped are handled.
-* Support for converters in JSON stream <> Java objects (un)marshalling.
-* Support for more primitive types and their object counterparts.
 * Omit null values from json output.
+* Add support for Set<..>, Map<..> and List<..>.
+* Add support for converters in JSON stream <> Java objects (un)marshalling.
+* Add support for more primitive types and their object counterparts.
 * Improve code coverage.
 
 ## History ##
 
 ### version 0.7.0-SNAPSHOT ###
 
-...
+* Unit tests and bug fix to JSONObjectMappings/JSONObjectMapping/JSONObjectFieldMapping toString().
+* Code coverage at 86.1%.
 
 ### version 0.6.0 ###
 

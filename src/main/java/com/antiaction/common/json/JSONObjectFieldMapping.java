@@ -131,7 +131,13 @@ public class JSONObjectFieldMapping {
 				if ( i > 0 ) {
 					sb.append( ", " );
 				}
-				sb.append( parametrizedObjectMappings[ i ].className );
+				JSONObjectMapping objectMapping = parametrizedObjectMappings[ i ];
+				if ( objectMapping != null ) {
+					sb.append( objectMapping.className );
+				}
+				else {
+					sb.append( "null" );
+				}
 			}
 			sb.append( ">" );
 		}

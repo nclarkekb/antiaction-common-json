@@ -26,7 +26,7 @@ import org.junit.runners.JUnit4;
 public class TestJSONObjectMappingConstants {
 
 	@Test
-	public void test_objectmappingconstants() {
+	public void test_objectmappingconstants_typestring() {
 		JSONObjectMappingConstants constants = new JSONObjectMappingConstants();
 		Assert.assertNotNull( constants );
 		Assert.assertEquals( "T_PRIMITIVE_BOOLEAN", JSONObjectMappingConstants.typeString( JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN ) );

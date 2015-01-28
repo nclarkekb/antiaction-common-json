@@ -19,6 +19,8 @@ package com.antiaction.common.json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
 
 import org.junit.Assert;
@@ -85,6 +87,18 @@ public class TestHelpers {
 			}
 		}
 		return out.toByteArray();
+	}
+
+	public static void saveFile(String fname, byte[] bytes) throws IOException {
+		File file = new File( fname );
+		if ( file.exists() ) {
+			file.delete();
+		}
+		RandomAccessFile raf = new RandomAccessFile( file, "rw" );
+		raf.seek( 0L );
+		raf.setLength( 0L );
+		raf.write( bytes );
+		raf.close();
 	}
 
 }
