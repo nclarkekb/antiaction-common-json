@@ -23,7 +23,9 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,8 +42,11 @@ public class JSONStreamMarshaller {
 	private static final int S_OBJECT_END = 2;
 	private static final int S_ARRAY_BEGIN = 3;
 	private static final int S_ARRAY_END = 4;
-	private static final int S_OBJECT = 5;
-	private static final int S_ARRAY = 6;
+	private static final int S_LIST_BEGIN = 5;
+	private static final int S_LIST_END = 6;
+	private static final int S_OBJECT = 7;
+	private static final int S_ARRAY = 8;
+	private static final int S_LIST = 9;
 
 	/** Null string cached as bytes. */
 	protected static final byte[] nullBytes = "null".getBytes();
@@ -66,6 +71,7 @@ public class JSONStreamMarshaller {
 		int fieldMappingIdx;
 		JSONObjectFieldMapping fieldMapping;
 		Object array;
+		Iterator<?> iterator;
 		int arrayIdx;
 		int arrayLen;
 	}
@@ -81,6 +87,7 @@ public class JSONStreamMarshaller {
 		toJSONText( srcObj, null, encoder, bPretty, out );
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> void toJSONText(T srcObj, JSONConverterAbstract[] converters, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
 		Boolean booleanVal;
 		Integer intVal;
@@ -92,6 +99,7 @@ public class JSONStreamMarshaller {
 		String stringVal;
 		byte[] byteArray;
 		Object tmpObject;
+		List<?> tmpList;
 
 		Object tmpArray;
 		boolean[] arrayOf_boolean;
@@ -113,6 +121,7 @@ public class JSONStreamMarshaller {
 
 		Object object = srcObj;
 		Object array = null;
+		Iterator<?> iterator = null;
 
 		JSONObjectMapping objectMapping = classMappings.get( object.getClass().getName() );
 		if ( objectMapping == null ) {
@@ -189,6 +198,7 @@ public class JSONStreamMarshaller {
 						fieldMappingIdx = stackEntry.fieldMappingIdx;
 						fieldMapping = stackEntry.fieldMapping;
 						array = stackEntry.array;
+						iterator = stackEntry.iterator;
 						arrayIdx = stackEntry.arrayIdx;
 						arrayLen = stackEntry.arrayLen;
 					}
@@ -237,6 +247,56 @@ public class JSONStreamMarshaller {
 						fieldMappingIdx = stackEntry.fieldMappingIdx;
 						fieldMapping = stackEntry.fieldMapping;
 						array = stackEntry.array;
+						iterator = stackEntry.iterator;
+						arrayIdx = stackEntry.arrayIdx;
+						arrayLen = stackEntry.arrayLen;
+					}
+					else {
+						bLoop = false;
+					}
+					break;
+				case S_LIST_BEGIN:
+					if ( bPretty ) {
+						encoder.write( '[' );
+						if ( arrayLen > 0 ) {
+							encoder.write( '\n' );
+							indentation += 2;
+							if ( indentation > indentationArr.length ) {
+								byte[] newIndentationArr = new byte[ indentationArr.length * 2 ];
+								Arrays.fill( newIndentationArr, (byte)' ' );
+								indentationArr = newIndentationArr;
+							}
+						}
+					}
+					else {
+						encoder.write( '[' );
+					}
+					if ( arrayLen > 0 ) {
+						state = S_LIST;
+					}
+					else {
+						state = S_LIST_END;
+					}
+					break;
+				case S_LIST_END:
+					if ( bPretty ) {
+						if ( arrayLen > 0 ) {
+							indentation -= 2;
+							encoder.write( '\n' );
+							encoder.write( indentationArr, 0, indentation );
+						}
+					}
+					encoder.write( ']' );
+					if ( stack.size() > 0 ) {
+						stackEntry = stack.removeLast();
+						state = stackEntry.state;
+						object = stackEntry.object;
+						objectMapping = stackEntry.objectMapping;
+						fieldMappingsArr = stackEntry.fieldMappingsArr;
+						fieldMappingIdx = stackEntry.fieldMappingIdx;
+						fieldMapping = stackEntry.fieldMapping;
+						array = stackEntry.array;
+						iterator = stackEntry.iterator;
 						arrayIdx = stackEntry.arrayIdx;
 						arrayLen = stackEntry.arrayLen;
 					}
@@ -544,6 +604,43 @@ public class JSONStreamMarshaller {
 								else {
 									encoder.write( nullBytes );
 								}
+								break;
+							case JSONObjectMappingConstants.T_LIST:
+								tmpList = (List<?>)fieldMapping.field.get( object );
+								if ( tmpList != null ) {
+									stackEntry = new StackEntry();
+									stackEntry.state = state;
+									stackEntry.object = object;
+									stackEntry.objectMapping = objectMapping;
+									stackEntry.fieldMappingsArr = fieldMappingsArr;
+									stackEntry.fieldMappingIdx = fieldMappingIdx;
+									stackEntry.fieldMapping = fieldMapping;
+									stack.add( stackEntry );
+									iterator = tmpList.iterator();
+									arrayIdx = 0;
+									arrayLen = tmpList.size();
+									/*
+									objectMapping = classMappings.get( object.getClass().getName() );
+									if ( objectMapping == null ) {
+										throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+									}
+									if ( objectMapping.converters == true && converters == null ) {
+										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
+									}
+									*/
+									state = S_LIST_BEGIN;
+									bFieldLoop = false;
+								}
+								else if ( !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
+							case JSONObjectMappingConstants.T_SET:
+							case JSONObjectMappingConstants.T_MAP:
+								throw new UnsupportedOperationException();
 							}
 						}
 						else {
@@ -1006,6 +1103,333 @@ public class JSONStreamMarshaller {
 						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
 					}
 					break;
+				case S_LIST:
+					switch ( fieldMapping.parametrizedObjectTypes[ 0 ] ) {
+					case JSONObjectMappingConstants.T_BOOLEAN:
+						Iterator<Boolean> iteratorOf_Boolean = (Iterator<Boolean>)iterator;
+						while ( iteratorOf_Boolean.hasNext() ) {
+							++arrayIdx;
+							booleanVal = iteratorOf_Boolean.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+							}
+							if ( booleanVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( booleanVal != null ) {
+								if ( booleanVal ) {
+									encoder.write( trueBytes );
+								}
+								else {
+									encoder.write( falseBytes );
+								}
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_INTEGER:
+						Iterator<Integer> iteratorOf_Integer = (Iterator<Integer>)iterator;
+						while ( iteratorOf_Integer.hasNext() ) {
+							++arrayIdx;
+							intVal = iteratorOf_Integer.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+							}
+							if ( intVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( intVal != null ) {
+								encoder.write( intVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_LONG:
+						Iterator<Long> iteratorOf_Long = (Iterator<Long>)iterator;
+						while ( iteratorOf_Long.hasNext() ) {
+							++arrayIdx;
+							longVal = iteratorOf_Long.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+							}
+							if ( longVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( longVal != null ) {
+								encoder.write( longVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_FLOAT:
+						Iterator<Float> iteratorOf_Float = (Iterator<Float>)iterator;
+						while ( iteratorOf_Float.hasNext() ) {
+							++arrayIdx;
+							floatVal = iteratorOf_Float.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+							}
+							if ( floatVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( floatVal != null ) {
+								encoder.write( floatVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_DOUBLE:
+						Iterator<Double> iteratorOf_Double = (Iterator<Double>)iterator;
+						while ( iteratorOf_Double.hasNext() ) {
+							++arrayIdx;
+							doubleVal = iteratorOf_Double.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+							}
+							if ( doubleVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( doubleVal != null ) {
+								encoder.write( doubleVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_BIGINTEGER:
+						Iterator<BigInteger> iteratorOf_BigInteger = (Iterator<BigInteger>)iterator;
+						while ( iteratorOf_BigInteger.hasNext() ) {
+							++arrayIdx;
+							bigIntegerVal = iteratorOf_BigInteger.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//bigIntegerVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigIntegerVal );
+							}
+							if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( bigIntegerVal != null ) {
+								encoder.write( bigIntegerVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_BIGDECIMAL:
+						Iterator<BigDecimal> iteratorOf_BigDecimal = (Iterator<BigDecimal>)iterator;
+						while ( iteratorOf_BigDecimal.hasNext() ) {
+							++arrayIdx;
+							bigDecimalVal = iteratorOf_BigDecimal.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//bigDecimalVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigDecimalVal );
+							}
+							if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( bigDecimalVal != null ) {
+								encoder.write( bigDecimalVal.toString().getBytes() );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_STRING:
+						Iterator<String> iteratorOf_String = (Iterator<String>)iterator;
+						while ( iteratorOf_String.hasNext() ) {
+							++arrayIdx;
+							stringVal = iteratorOf_String.next();
+							if ( fieldMapping.converterId != -1 ) {
+								// TODO
+								//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+							}
+							if ( stringVal == null && !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( stringVal != null ) {
+								encoder.write( '"' );
+								encoder.write( stringVal );
+								encoder.write( '"' );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+						}
+						state = S_LIST_END;
+						break;
+					case JSONObjectMappingConstants.T_OBJECT:
+						if ( iterator.hasNext() ) {
+							++arrayIdx;
+							tmpObject = iterator.next();
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							if ( tmpObject != null ) {
+								stackEntry = new StackEntry();
+								stackEntry.state = state;
+								stackEntry.object = object;
+								stackEntry.objectMapping = objectMapping;
+								stackEntry.fieldMappingsArr = fieldMappingsArr;
+								stackEntry.fieldMappingIdx = fieldMappingIdx;
+								stackEntry.fieldMapping = fieldMapping;
+								stackEntry.iterator = iterator;
+								stackEntry.arrayIdx = arrayIdx;
+								stackEntry.arrayLen = arrayLen;
+								stack.add( stackEntry );
+								object = tmpObject;
+								objectMapping = classMappings.get( object.getClass().getName() );
+								if ( objectMapping == null ) {
+									throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+								}
+								if ( objectMapping.converters == true && converters == null ) {
+									throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
+								}
+								state = S_OBJECT_BEGIN;
+							}
+							else if ( !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+							/*
+							objectVal = arrayOf_Object[ arrayIdx ];
+							if ( objectVal != null ) {
+								objectVal = toJSON( objectVal, converters );
+							}
+							else if ( !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							json_array.add( json_value );
+							*/
+						}
+						else {
+							state = S_LIST_END;
+						}
+						break;
+					default:
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
+					}
+					break;
 				}
 			}
 		}
@@ -1024,8 +1448,11 @@ public class JSONStreamMarshaller {
 		stateStr.put( S_OBJECT_END, "S_OBJECT_END" );
 		stateStr.put( S_ARRAY_BEGIN, "S_ARRAY_START" );
 		stateStr.put( S_ARRAY_END, "S_ARRAY_END" );
+		stateStr.put( S_LIST_BEGIN, "S_LIST_BEGIN" );
+		stateStr.put( S_LIST_END, "S_LIST_END" );
 		stateStr.put( S_OBJECT, "S_OBJECT" );
 		stateStr.put( S_ARRAY, "S_ARRAY" );
+		stateStr.put( S_LIST, "S_LIST" );
 	}
 
 }

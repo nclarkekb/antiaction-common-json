@@ -175,6 +175,8 @@ public class JSONObjectMappings {
 			objectMapping.objectMapping = fieldObjectMapping;
 			// TODO FieldMapping need to work for top level arrays.
 			objectMapping.fieldMapping = new JSONObjectFieldMapping();
+			// Try to support Collection field type. Caused regression error.
+			objectMapping.fieldMapping.type = JSONObjectMappingConstants.T_ARRAY;
 			objectMapping.fieldMapping.arrayType = arrayType;
 			objectMapping.fieldMapping.className = arrayTypeName;
 			objectMapping.fieldMapping.clazz = fieldType;
@@ -191,6 +193,10 @@ public class JSONObjectMappings {
 
 		JSONObjectMapping objectMapping = JSONObjectMapping.getObjectMapping();
 		classMappings.put( clazz.getName(), objectMapping );
+
+		// Try to set to support List in stream unmarshall.
+		objectMapping.className = clazz.getName();
+		objectMapping.clazz = clazz;
 
 		Constructor<?> constructor = null;
 		try {
@@ -336,6 +342,7 @@ public class JSONObjectMappings {
 									//System.out.println( parameterizedTypeClass );
 									parametrizedObjectTypes[ j ] = JSONObjectMappingConstants.primitiveTypeMappings.get( parameterizedTypeClass.getName() );
 									if ( parametrizedObjectTypes[ j ] == null ) {
+										parametrizedObjectTypes[ j ] = JSONObjectMappingConstants.T_OBJECT;
 										parametrizedObjectMappings[ j ] = classMappings.get( parameterizedTypeClass.getName() );
 										if ( parametrizedObjectMappings[ j ] == null ) {
 											parametrizedObjectMappings[ j ] = mapClass( parameterizedTypeClass );

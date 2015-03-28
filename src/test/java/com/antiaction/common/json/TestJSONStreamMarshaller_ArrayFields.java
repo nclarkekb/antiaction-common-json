@@ -51,7 +51,7 @@ public class TestJSONStreamMarshaller_ArrayFields {
 
 			byte[] json_compact = out.toByteArray();
 			// debug
-			//System.out.println( new String( json_compact ) );
+			System.out.println( new String( json_compact ) );
 
 			in = new ByteArrayInputStream( json_compact );
 			result = streamUnmarshaller.toObject( in, json_decoder, TestJSONMapObjectArrays.class );

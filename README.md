@@ -12,7 +12,7 @@ A compact library to un/-marshall JSON streams to/from objects/representations.
 * JSON stream <> JSON structure <> Java objects.
 * JSON stream <> Java objects.
 
-Using JSON structures is more flexible depending ones requirements.
+Using JSON structures is more flexible depending on ones requirements.
 Converting directly between streams and objects is the fastest.
 
 ## Roadmap ##
@@ -28,10 +28,13 @@ Converting directly between streams and objects is the fastest.
 
 ### version 0.7.0-SNAPSHOT ###
 
+* Added support for stream (un)marshalling of List<..> instances.
+* Minor additions to JSONObjectMappings to support List<..> (un)marshalling.
 * Unit tests and bug fix to JSONObjectMappings/JSONObjectMapping/JSONObjectFieldMapping toString().
 * Code coverage at 86.1%.
 
 ### version 0.6.0 ###
+Released: 2015-01-24
 
 Work on improving object to/from stream marshaller/unmarshaller.
 
@@ -42,6 +45,7 @@ Work on improving object to/from stream marshaller/unmarshaller.
 * Code coverage at 81.3%.
 
 ### version 0.5.0 ###
+Released: 2013-11-16
 
 Work on implementing object to/from stream marshaller/unmarshaller.
 
@@ -50,6 +54,7 @@ Work on implementing object to/from stream marshaller/unmarshaller.
 * Reorganized unit tests.
 
 ### version 0.4.0 ###
+Released: 2013-02-08
 
 Work on improving JSON object mapper for array fields.
 
@@ -61,6 +66,7 @@ Work on improving JSON object mapper for array fields.
 * Work in progress for top level array and native collection types object mapping.
 
 ### version 0.3.0 ###
+Released: 2012-12-11
 
 Work on the Object to JSON structure mapper.
 
@@ -68,6 +74,7 @@ Work on the Object to JSON structure mapper.
 * Pretty encoding option. (Linefeeds, indentation and spaces)
 
 ### version 0.2.0 ###
+Released: 2012-12-05
 
 Work on the JSON structure to Object mapper.
 Comprehensive unit testing of the Object mapper.
@@ -78,6 +85,7 @@ Comprehensive unit testing of the Object mapper.
 * Recursive JSON structure to Object mapping.
 
 ### version 0.1.0 ###
+Released: 2012-11-20
 
 Main focus on JSON text decoding/encoding.
 Comprehensive unit testing of core functionality.

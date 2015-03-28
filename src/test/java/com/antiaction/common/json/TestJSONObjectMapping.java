@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4;
 public class TestJSONObjectMapping {
 
 	@Test
-	public void test_objectmapping() {
+	public void test_objectmapping_tostring() {
 		JSONObjectMapping objectMapping;
 
 		objectMapping = JSONObjectMapping.getObjectMapping();
@@ -46,7 +46,10 @@ public class TestJSONObjectMapping {
 		Assert.assertNull( objectMapping.clazz );
 		Assert.assertNull( objectMapping.fieldMapping );
 		Assert.assertNull( objectMapping.objectMapping );
+	}
 
+	@Test
+	public void test_objectmapping_settostring() {
 		StringBuilder sb = new StringBuilder();
 		Set<String> set = new TreeSet<String>();
 		JSONObjectMapping.toString( set, sb );

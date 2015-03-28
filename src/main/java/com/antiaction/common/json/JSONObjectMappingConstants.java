@@ -184,7 +184,7 @@ public class JSONObjectMappingConstants {
 			case T_SET:
 				return "T_SET";
 			default:
-				return "Unknown";
+				return "Unknown(" + type + ")";
 			}
 		}
 		else {

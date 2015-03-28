@@ -52,20 +52,23 @@ public class JSONStreamUnmarshaller {
 	private static final int S_ARRAY = 11;
 	private static final int S_ARRAY_VALUE = 12;
 	private static final int S_ARRAY_NEXT = 13;
-	private static final int S_VALUE_START = 14;
-	private static final int S_STRING = 15;
-	private static final int S_STRING_UNESCAPE = 16;
-	private static final int S_STRING_UNHEX = 17;
-	private static final int S_CONSTANT = 18;
-	private static final int S_NUMBER_MINUS = 19;
-	private static final int S_NUMBER_ZERO = 20;
-	private static final int S_NUMBER_INTEGER = 21;
-	private static final int S_NUMBER_DECIMAL = 22;
-	private static final int S_NUMBER_DECIMALS = 23;
-	private static final int S_NUMBER_E = 24;
-	private static final int S_NUMBER_EXPONENT = 25;
-	private static final int S_NUMBER_EXPONENTS = 26;
-	private static final int S_EOF = 27;
+	private static final int S_LIST = 14;
+	private static final int S_LIST_VALUE = 15;
+	private static final int S_LIST_NEXT = 16;
+	private static final int S_VALUE_START = 17;
+	private static final int S_STRING = 18;
+	private static final int S_STRING_UNESCAPE = 19;
+	private static final int S_STRING_UNHEX = 20;
+	private static final int S_CONSTANT = 21;
+	private static final int S_NUMBER_MINUS = 22;
+	private static final int S_NUMBER_ZERO = 23;
+	private static final int S_NUMBER_INTEGER = 24;
+	private static final int S_NUMBER_DECIMAL = 25;
+	private static final int S_NUMBER_DECIMALS = 26;
+	private static final int S_NUMBER_E = 27;
+	private static final int S_NUMBER_EXPONENT = 28;
+	private static final int S_NUMBER_EXPONENTS = 29;
+	private static final int S_EOF = 30;
 
 	private static final int T_NULL = 1;
 	private static final int T_BOOLEAN = 2;
@@ -220,8 +223,22 @@ public class JSONStreamUnmarshaller {
 						stackEntry.curArr = curArr;
 						stack.add( stackEntry );
 
-						curObj = fieldMapping.clazz.newInstance();
-						objectMapping = classMappings.get( fieldMapping.clazz.getName() );
+						// To support collection of objects. "[{..."
+						switch (fieldMapping.type) {
+						case JSONObjectMappingConstants.T_OBJECT:
+						case JSONObjectMappingConstants.T_ARRAY:
+							curObj = fieldMapping.clazz.newInstance();
+							objectMapping = classMappings.get( fieldMapping.clazz.getName() );
+							break;
+						case JSONObjectMappingConstants.T_LIST:
+							curObj = fieldMapping.parametrizedObjectMappings[ 0 ].clazz.newInstance();
+							objectMapping = classMappings.get( fieldMapping.parametrizedObjectMappings[ 0 ].clazz.getName() );
+							break;
+						case JSONObjectMappingConstants.T_SET:
+						case JSONObjectMappingConstants.T_MAP:
+						default:
+							throw new UnsupportedOperationException( "Unexpected type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
+						}
 						if ( objectMapping == null ) {
 							throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
 						}
@@ -261,20 +278,24 @@ public class JSONStreamUnmarshaller {
 						case JSONObjectMappingConstants.T_ARRAY:
 							curArr = new ArrayList();
 							//curArrType = fieldMapping.arrayType;
+							state = S_ARRAY;
 							break;
 						case JSONObjectMappingConstants.T_LIST:
+							//curArr = new ArrayList();
+							curArr = (Collection)fieldMapping.clazz.newInstance();
+							state = S_LIST;
 							break;
 						case JSONObjectMappingConstants.T_SET:
-							break;
 						case JSONObjectMappingConstants.T_MAP:
-							break;
+							throw new UnsupportedOperationException();
 						}
 						objectMapping = classMappings.get( fieldMapping.clazz.getName() );
-						state = S_ARRAY;
 						break;
 					case S_ARRAY_END:
 						++pos;
 						if ( stack.size() > 0 ) {
+							// debug
+							//System.out.println( fieldMapping.type );
 							json_value_type = T_ARRAY;
 							array = curArr;
 							stackEntry = stack.removeLast();
@@ -375,7 +396,7 @@ public class JSONStreamUnmarshaller {
 								fieldMapping.field.set( curObj, booleanVal );
 								break;
 							default:
-								throw new JSONException( "Wrong type. (" + JSONObjectMappingConstants.typeString( fieldMapping.type ) + ")" );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 							break;
 						case T_STRING:
@@ -404,7 +425,7 @@ public class JSONStreamUnmarshaller {
 								fieldMapping.field.set( curObj, byteArray );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 							break;
 						case T_OBJECT:
@@ -420,7 +441,7 @@ public class JSONStreamUnmarshaller {
 								fieldMapping.field.set( curObj, object );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 							break;
 						case T_NUMBER:
@@ -596,7 +617,7 @@ public class JSONStreamUnmarshaller {
 								fieldMapping.field.set( curObj, bigDecimalVal );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 							break;
 						case T_ARRAY:
@@ -656,12 +677,19 @@ public class JSONStreamUnmarshaller {
 									break;
 								}
 								break;
+							case JSONObjectMappingConstants.T_LIST:
+							case JSONObjectMappingConstants.T_SET:
+								fieldMapping.field.set( curObj, array );
+								break;
+							case JSONObjectMappingConstants.T_MAP:
+								// TODO
+								throw new UnsupportedOperationException();
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 							break;
 						default:
-							throw new IllegalStateException( "Unknown json value type: " + json_value_type );
+							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
 						}
 						// TODO
 						//current.put( json_name, json_value );
@@ -830,7 +858,7 @@ public class JSONStreamUnmarshaller {
 								curArr.add( booleanVal );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 							}
 							break;
 						case T_STRING:
@@ -859,7 +887,7 @@ public class JSONStreamUnmarshaller {
 								curArr.add( byteArray );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 							}
 							break;
 						case T_OBJECT:
@@ -875,7 +903,7 @@ public class JSONStreamUnmarshaller {
 								curArr.add( object );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 							}
 							break;
 						case T_NUMBER:
@@ -1051,11 +1079,11 @@ public class JSONStreamUnmarshaller {
 								curArr.add( bigDecimalVal );
 								break;
 							default:
-								throw new JSONException( "Wrong type." );
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 							}
 							break;
 						default:
-							throw new IllegalStateException( "Unknown json value type: " + json_value_type );
+							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
 						}
 						state = S_ARRAY_NEXT;
 						// debug
@@ -1082,6 +1110,377 @@ public class JSONStreamUnmarshaller {
 							++x;
 							state = S_VALUE_START;
 							rstate = S_ARRAY_VALUE;
+							++pos;
+							break;
+						default:
+							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
+						}
+						break;
+					case S_LIST:
+						switch ( c ) {
+						case 0x20:
+						case 0x09:
+						case 0x0D:
+							++x;
+							// Whitespace.
+							++pos;
+							break;
+						case 0x0A:
+							++y;
+							x = 1;
+							++pos;
+							break;
+						case ']':
+							++x;
+							state = S_ARRAY_END;
+							break;
+						case '{':
+							++x;
+							state = S_OBJECT_BEGIN;
+							rstate = S_LIST_VALUE;
+							break;
+						case '[':
+							++x;
+							state = S_ARRAY_BEGIN;
+							rstate = S_LIST_VALUE;
+							break;
+						case '"':
+							++x;
+							sbStr.setLength( 0 );
+							state = S_STRING;
+							rstate = S_LIST_VALUE;
+							++pos;
+							break;
+						case 'f':
+						case 'n':
+						case 't':
+							++x;
+							sbStr.setLength( 0 );
+							sbStr.append( c );
+							state = S_CONSTANT;
+							rstate = S_LIST_VALUE;
+							++pos;
+							break;
+						case '-':
+							++x;
+							sbStr.setLength( 0 );
+							sbStr.append( c );
+							state = S_NUMBER_MINUS;
+							rstate = S_LIST_VALUE;
+							++pos;
+							break;
+						case '0':
+							++x;
+							sbStr.setLength( 0 );
+							sbStr.append( c );
+							state = S_NUMBER_ZERO;
+							rstate = S_LIST_VALUE;
+							++pos;
+							break;
+						case '1':
+						case '2':
+						case '3':
+						case '4':
+						case '5':
+						case '6':
+						case '7':
+						case '8':
+						case '9':
+							++x;
+							sbStr.setLength( 0 );
+							sbStr.append( c );
+							state = S_NUMBER_INTEGER;
+							rstate = S_LIST_VALUE;
+							++pos;
+							break;
+						default:
+							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
+						}
+						break;
+					case S_LIST_VALUE:
+						// TODO
+						switch ( json_value_type ) {
+						case T_NULL:
+							if ( !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "'/'" + fieldMapping.jsonName + "' is not nullable." );
+							}
+							curArr.add( null );
+							break;
+						case T_BOOLEAN:
+							switch ( fieldMapping.parametrizedObjectTypes[ 0 ] ) {
+							case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+								}
+								if ( booleanVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( booleanVal );
+								break;
+							case JSONObjectMappingConstants.T_BOOLEAN:
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+								}
+								if ( booleanVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( booleanVal );
+								break;
+							default:
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
+							}
+							break;
+						case T_STRING:
+							switch ( fieldMapping.parametrizedObjectTypes[ 0 ] ) {
+							case JSONObjectMappingConstants.T_STRING:
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//strVal = converters[ fieldMapping.converterId ].getString( fieldMapping.fieldName, json_string );
+								}
+								if ( stringVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( stringVal );
+								break;
+							case JSONObjectMappingConstants.T_BYTEARRAY:
+								if ( fieldMapping.converterId == -1 ) {
+									byteArray = stringVal.getBytes();
+								}
+								else {
+									// TODO
+									//byteArray = converters[ fieldMapping.converterId ].getBytes( fieldMapping.fieldName, json_string );
+								}
+								if ( byteArray == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( byteArray );
+								break;
+							default:
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
+							}
+							break;
+						case T_OBJECT:
+							switch ( fieldMapping.parametrizedObjectTypes[ 0 ] ) {
+							case JSONObjectMappingConstants.T_OBJECT:
+								if ( object != null ) {
+									// TODO
+									//object = toObject( object, fieldMapping.clazz, converters );
+								}
+								if ( object == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( object );
+								break;
+							default:
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
+							}
+							break;
+						case T_NUMBER:
+							switch ( fieldMapping.parametrizedObjectTypes[ 0 ] ) {
+							case JSONObjectMappingConstants.T_PRIMITIVE_BOOLEAN:
+								if ( "1".equals( stringVal ) ) {
+									booleanVal = true;
+								}
+								else if ( "0".equals( stringVal ) ) {
+									booleanVal = false;
+								}
+								else {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is a boolean and can not be '" + stringVal + "'." );
+								}
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+									booleanVal = null;
+								}
+								if ( booleanVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( booleanVal );
+								break;
+							case JSONObjectMappingConstants.T_BOOLEAN:
+								if ( "1".equals( stringVal ) ) {
+									booleanVal = true;
+								}
+								else if ( "0".equals( stringVal ) ) {
+									booleanVal = false;
+								}
+								else {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is a boolean and can not be '" + stringVal + "'." );
+								}
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//booleanVal = converters[ fieldMapping.converterId ].getBoolean( fieldMapping.fieldName, json_value );
+									booleanVal = null;
+								}
+								if ( booleanVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( booleanVal );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
+								if ( fieldMapping.converterId == -1 ) {
+									intVal = Integer.parseInt( stringVal );
+								}
+								else {
+									// TODO
+									//intVal = converters[ fieldMapping.converterId ].getInteger( fieldMapping.fieldName, json_value );
+								}
+								if ( intVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( intVal );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_LONG:
+								if ( fieldMapping.converterId == -1 ) {
+									longVal = Long.parseLong( stringVal );
+								}
+								else {
+									// TODO
+									//longVal = converters[ fieldMapping.converterId ].getLong( fieldMapping.fieldName, json_value );
+								}
+								if ( longVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( longVal );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_FLOAT:
+								if ( fieldMapping.converterId == -1 ) {
+									floatVal = Float.parseFloat( stringVal );
+								}
+								else {
+									// TODO
+									//floatVal = converters[ fieldMapping.converterId ].getFloat( fieldMapping.fieldName, json_value );
+								}
+								if ( floatVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( floatVal );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_DOUBLE:
+								if ( fieldMapping.converterId == -1 ) {
+									doubleVal = Double.parseDouble( stringVal );
+								}
+								else {
+									// TODO
+									//doubleVal = converters[ fieldMapping.converterId ].getDouble( fieldMapping.fieldName, json_value );
+								}
+								if ( doubleVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								curArr.add( doubleVal );
+								break;
+							case JSONObjectMappingConstants.T_INTEGER:
+								if ( fieldMapping.converterId == -1 ) {
+									intVal = Integer.parseInt( stringVal );
+								}
+								else {
+									// TODO
+									//intVal = converters[ fieldMapping.converterId ].getInteger( fieldMapping.fieldName, json_value );
+								}
+								if ( intVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( intVal );
+								break;
+							case JSONObjectMappingConstants.T_LONG:
+								if ( fieldMapping.converterId == -1 ) {
+									longVal = Long.parseLong( stringVal );
+								}
+								else {
+									// TODO
+									//longVal = converters[ fieldMapping.converterId ].getLong( fieldMapping.fieldName, json_value );
+								}
+								if ( longVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( longVal );
+								break;
+							case JSONObjectMappingConstants.T_FLOAT:
+								if ( fieldMapping.converterId == -1 ) {
+									floatVal = Float.parseFloat( stringVal );
+								}
+								else {
+									// TODO
+									//floatVal = converters[ fieldMapping.converterId ].getFloat( fieldMapping.fieldName, json_value );
+								}
+								if ( floatVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( floatVal );
+								break;
+							case JSONObjectMappingConstants.T_DOUBLE:
+								if ( fieldMapping.converterId == -1 ) {
+									doubleVal = Double.parseDouble( stringVal );
+								}
+								else {
+									// TODO
+									//doubleVal = converters[ fieldMapping.converterId ].getDouble( fieldMapping.fieldName, json_value );
+								}
+								if ( doubleVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( doubleVal );
+								break;
+							case JSONObjectMappingConstants.T_BIGINTEGER:
+								if ( fieldMapping.converterId == -1 ) {
+									bigIntegerVal = new BigInteger( stringVal );
+								}
+								else {
+									// TODO
+									//bigIntegerVal = converters[ fieldMapping.converterId ].getBigInteger( fieldMapping.fieldName, json_value );
+								}
+								if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( bigIntegerVal );
+								break;
+							case JSONObjectMappingConstants.T_BIGDECIMAL:
+								if ( fieldMapping.converterId == -1 ) {
+									bigDecimalVal = new BigDecimal( stringVal );
+								}
+								else {
+									// TODO
+									//bigDecimalVal = converters[ fieldMapping.converterId ].getBigDecimal( fieldMapping.fieldName, json_value );
+								}
+								if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								curArr.add( bigDecimalVal );
+								break;
+							default:
+								throw new JSONException( "Wrong type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
+							}
+							break;
+						default:
+							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
+						}
+						state = S_LIST_NEXT;
+						// debug
+						//System.out.println( json_value.toString() );
+					case S_LIST_NEXT:
+						switch ( c ) {
+						case 0x20:
+						case 0x09:
+						case 0x0D:
+							++x;
+							// Whitespace.
+							++pos;
+							break;
+						case 0x0A:
+							++y;
+							x = 1;
+							++pos;
+							break;
+						case ']':
+							++x;
+							state = S_ARRAY_END;
+							break;
+						case ',':
+							++x;
+							state = S_VALUE_START;
+							rstate = S_LIST_VALUE;
 							++pos;
 							break;
 						default:
@@ -1639,6 +2038,30 @@ public class JSONStreamUnmarshaller {
 		stateStr.put( S_NUMBER_EXPONENT, "S_NUMBER_EXPONENT" );
 		stateStr.put( S_NUMBER_EXPONENTS, "S_NUMBER_EXPONENTS" );
 		stateStr.put( S_EOF, "S_EOF" );
+	}
+
+	public static String typeString(Integer type)  {
+		if ( type != null ) {
+			switch ( type ) {
+			case T_NULL:
+				return "T_NULL";
+			case T_BOOLEAN:
+				return "T_BOOLEAN";
+			case T_STRING:
+				return "T_STRING";
+			case T_NUMBER:
+				return "T_NUMBER";
+			case T_OBJECT:
+				return "T_OBJECT";
+			case T_ARRAY:
+				return "T_ARRAY";
+			default:
+				return "Unknown(" + type + ")";
+			}
+		}
+		else {
+			return "null";
+		}
 	}
 
 }

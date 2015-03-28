@@ -48,7 +48,7 @@ public class TestJSONObjectMappingConstants {
 		Assert.assertEquals( "T_LIST", JSONObjectMappingConstants.typeString( JSONObjectMappingConstants.T_LIST ) );
 		Assert.assertEquals( "T_MAP", JSONObjectMappingConstants.typeString( JSONObjectMappingConstants.T_MAP ) );
 		Assert.assertEquals( "T_SET", JSONObjectMappingConstants.typeString( JSONObjectMappingConstants.T_SET ) );
-		Assert.assertEquals( "Unknown", JSONObjectMappingConstants.typeString( 42 ) );
+		Assert.assertEquals( "Unknown(42)", JSONObjectMappingConstants.typeString( 42 ) );
 		Assert.assertEquals( "null", JSONObjectMappingConstants.typeString( null ) );
 	}
 
