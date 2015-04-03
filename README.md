@@ -28,6 +28,8 @@ Converting directly between streams and objects is the fastest.
 
 ### version 0.7.0-SNAPSHOT ###
 
+* Added support for mapping interface collection field types.
+* Added @JSONInstanceType annotation to support mapping interface collection field types.
 * Added support for stream (un)marshalling of List<..> instances.
 * Minor additions to JSONObjectMappings to support List<..> (un)marshalling.
 * Unit tests and bug fix to JSONObjectMappings/JSONObjectMapping/JSONObjectFieldMapping toString().

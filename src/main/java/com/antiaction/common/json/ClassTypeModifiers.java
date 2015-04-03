@@ -249,6 +249,21 @@ public class ClassTypeModifiers {
 	public static final int COLTYPE_MAP = 2;
 	public static final int COLTYPE_SET = 3;
 
+	public static String colTypeToString(int colType) {
+		switch ( colType ) {
+		case COLTYPE_LIST:
+			return "List";
+		case COLTYPE_SET:
+			return "Set";
+		case COLTYPE_MAP:
+			return "Map";
+		case COLTYPE_OTHER:
+			return "Other";
+		default:
+			return "Unknown";
+		}
+	}
+
 	public static int getCollectionInterfaceType(Class<?> clazz) {
 		String clazzName = clazz.getName();
 		int colType = COLTYPE_OTHER;

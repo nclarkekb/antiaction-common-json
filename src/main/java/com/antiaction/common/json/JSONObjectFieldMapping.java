@@ -45,6 +45,9 @@ public class JSONObjectFieldMapping {
 	/** Field class. */
 	public Class<?> clazz;
 
+	/** @JSONInstanceType class. */
+	public Class<?> instanceClazz;
+
 	/** Field object mapping, if object type. */
 	public JSONObjectMapping objectMapping;
 

@@ -282,7 +282,8 @@ public class JSONStreamUnmarshaller {
 							break;
 						case JSONObjectMappingConstants.T_LIST:
 							//curArr = new ArrayList();
-							curArr = (Collection)fieldMapping.clazz.newInstance();
+							//curArr = (Collection)fieldMapping.clazz.newInstance();
+							curArr = (Collection)fieldMapping.instanceClazz.newInstance();
 							state = S_LIST;
 							break;
 						case JSONObjectMappingConstants.T_SET:

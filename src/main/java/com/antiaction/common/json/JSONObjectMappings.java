@@ -24,10 +24,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import com.antiaction.common.json.annotation.JSON;
@@ -36,6 +34,7 @@ import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONName;
 import com.antiaction.common.json.annotation.JSONNullValues;
 import com.antiaction.common.json.annotation.JSONNullable;
+import com.antiaction.common.json.annotation.JSONTypeInstance;
 import com.antiaction.common.json.representation.JSONStructureMarshaller;
 import com.antiaction.common.json.representation.JSONStructureUnmarshaller;
 import com.antiaction.common.json.representation.JSONTextMarshaller;
@@ -243,6 +242,9 @@ public class JSONObjectMappings {
 		boolean bNullValues;
 		JSONConverter converter;
 		JSONName jsonName;
+		JSONTypeInstance jsonTypeInstance;
+		Class<?> fieldTypeInstance;
+		Boolean bInterfaceInstance;
 		try {
 			for ( int i=0; i<fields.length; ++i ) {
 				field = fields[ i ];
@@ -267,50 +269,83 @@ public class JSONObjectMappings {
 					classTypeMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldType );
 					// debug
 					//System.out.println( fieldTypeName + " " + ClassTypeModifiers.toString( classTypeMask ) );
-
 					type = JSONObjectMappingConstants.primitiveTypeMappings.get( fieldTypeName );
 					fieldObjectMapping = null;
 					parametrizedObjectTypes = null;
 					parametrizedObjectMappings = null;
+					fieldTypeInstance = null;
+					bInterfaceInstance = false;
 					if ( type == null ) {
+						jsonTypeInstance = field.getAnnotation( JSONTypeInstance.class );
+						if ( jsonTypeInstance != null ) {
+							fieldTypeInstance = jsonTypeInstance.value();
+							if ( fieldTypeInstance == null ) {
+								throw new JSONException( "JSONTypeInstance annotation with null value is not allowed." );
+							}
+							int typeInstanceMask = ClassTypeModifiers.getClassTypeModifiersMask( fieldTypeInstance );
+							if ( (typeInstanceMask & JSONObjectMappingConstants.FIELD_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
+								throw new JSONException( "Unsupported field instance type modifier(s) [" + ClassTypeModifiers.toString( typeInstanceMask ) + "] for class: " + fieldTypeInstance.getName() );
+							}
+						}
 						if ( (classTypeMask & JSONObjectMappingConstants.FIELD_INVALID_TYPE_MODIFIERS_MASK) != 0 ) {
-							// Check the interface itself.
-							int colType = ClassTypeModifiers.getCollectionInterfaceType( fieldType );
-							switch ( colType ) {
-							case ClassTypeModifiers.COLTYPE_LIST:
-								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
-							case ClassTypeModifiers.COLTYPE_MAP:
-								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
-							case ClassTypeModifiers.COLTYPE_SET:
-								throw new JSONException( "Unsupported collection interface field type. (" + fieldType.getName() + ")" );
-							default:
-								// Check extended interfaces.
-								colType = ClassTypeModifiers.getCollectionType( fieldType );
+							if ( (classTypeMask & ClassTypeModifiers.CT_INTERFACE) == 0 ) {
+								// debug
+								//System.out.println( "Unsupported field modifier(s) [" + ClassTypeModifiers.toString( classTypeMask ) + "] for class: " + fieldTypeName );
+								throw new JSONException( "Unsupported field modifier(s) [" + ClassTypeModifiers.toString( classTypeMask ) + "] for class: " + fieldTypeName );
+							}
+							else {
+								// Check the interface itself.
+								int colType = ClassTypeModifiers.getCollectionInterfaceType( fieldType );
+								if ( colType == ClassTypeModifiers.COLTYPE_OTHER ) {
+									colType = ClassTypeModifiers.getCollectionType( fieldType );
+								}
+								if ( colType != ClassTypeModifiers.COLTYPE_OTHER ) {
+									if ( fieldTypeInstance == null ) {
+										throw new JSONException( "Missing @JSONTypeInstance annotation on collection interface field of type: " + fieldTypeName );
+									}
+									int instanceColType = ClassTypeModifiers.getCollectionType( fieldTypeInstance );
+									if ( colType != instanceColType ) {
+										throw new JSONException( "Field interface type(" + ClassTypeModifiers.colTypeToString( colType ) + ") and instance type(" + ClassTypeModifiers.colTypeToString( instanceColType ) + ") are not compatible." );
+									}
+									bInterfaceInstance = true;
+								}
+								/*
 								switch ( colType ) {
 								case ClassTypeModifiers.COLTYPE_LIST:
-									throw new JSONException( "Unsupported collection interface field type. (" + List.class.getName() + " .. " + fieldType.getName() + ")" );
+									throw new JSONException( "Unsupported collection interface field type. (" + fieldTypeName + ")" );
 								case ClassTypeModifiers.COLTYPE_MAP:
-									throw new JSONException( "Unsupported collection interface field type. (" + Map.class.getName() + " .. " + fieldType.getName() + ")" );
+									throw new JSONException( "Unsupported collection interface field type. (" + fieldTypeName + ")" );
 								case ClassTypeModifiers.COLTYPE_SET:
-									throw new JSONException( "Unsupported collection interface field type. (" + Set.class.getName() + " .. " + fieldType.getName() + ")" );
+									throw new JSONException( "Unsupported collection interface field type. (" + fieldTypeName + ")" );
 								default:
-									throw new JSONException( "Unsupported field class type." );
+									// Check extended interfaces.
+									colType = ClassTypeModifiers.getCollectionType( fieldType );
+									switch ( colType ) {
+									case ClassTypeModifiers.COLTYPE_LIST:
+										throw new JSONException( "Unsupported collection interface field type. (" + List.class.getName() + " .. " + fieldTypeName + ")" );
+									case ClassTypeModifiers.COLTYPE_MAP:
+										throw new JSONException( "Unsupported collection interface field type. (" + Map.class.getName() + " .. " + fieldTypeName + ")" );
+									case ClassTypeModifiers.COLTYPE_SET:
+										throw new JSONException( "Unsupported collection interface field type. (" + Set.class.getName() + " .. " + fieldTypeName + ")" );
+									default:
+										throw new JSONException( "Unsupported field class type." );
+									}
 								}
+								*/
 							}
 						}
 						classTypeMask &= JSONObjectMappingConstants.FIELD_VALID_TYPE_MODIFIERS_MASK;
-						if ( (classTypeMask == JSONObjectMappingConstants.VALID_CLASS) || (classTypeMask == JSONObjectMappingConstants.VALID_MEMBER_CLASS) ) {
+						if ( (classTypeMask == JSONObjectMappingConstants.VALID_CLASS) || (classTypeMask == JSONObjectMappingConstants.VALID_MEMBER_CLASS || bInterfaceInstance) ) {
 							Type genericType = field.getGenericType();
 							// debug - uncomment
 							//System.out.println( "GT: " + genericType + " * " + genericType.getClass() );
-
 							if ( genericType instanceof Class ) {
 								int colType = ClassTypeModifiers.getCollectionType( (Class<?>)genericType );
 								switch ( colType ) {
 								case ClassTypeModifiers.COLTYPE_LIST:
 								case ClassTypeModifiers.COLTYPE_MAP:
 								case ClassTypeModifiers.COLTYPE_SET:
-									throw new JSONException( "Collection must have parametrized type(s). (" + fieldType.getName() + ")" );
+									throw new JSONException( "Collection must have parametrized type(s). (" + fieldTypeName + ")" );
 								default:
 									type = JSONObjectMappingConstants.T_OBJECT;
 									// Cache
@@ -410,12 +445,16 @@ public class JSONObjectMappings {
 					//System.out.println( type );
 
 					if ( type != null ) {
+						if ( fieldTypeInstance == null ) {
+							fieldTypeInstance = fieldType;
+						}
 						json_fm = new JSONObjectFieldMapping();
 						json_fm.fieldName = field.getName();
 						json_fm.type = type;
 						json_fm.arrayType = arrayType;
 						json_fm.className = fieldTypeName;
 						json_fm.clazz = fieldType;
+						json_fm.instanceClazz = fieldTypeInstance;
 						json_fm.objectMapping = fieldObjectMapping;
 						json_fm.parametrizedObjectTypes = parametrizedObjectTypes;
 						json_fm.parametrizedObjectMappings = parametrizedObjectMappings;

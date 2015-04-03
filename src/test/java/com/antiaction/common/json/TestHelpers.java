@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Assert;
 
@@ -99,6 +102,38 @@ public class TestHelpers {
 		raf.setLength( 0L );
 		raf.write( bytes );
 		raf.close();
+	}
+
+	public static<T> LinkedList<T> arrayToLinkedList(T[] arr) {
+		//return (ArrayList<T>)Arrays.asList( arr );
+		LinkedList<T> list = new LinkedList<T>();
+		for ( int i=0; i<arr.length; ++i ) {
+			list.add( arr[ i ] );
+		}
+		return list;
+	}
+
+	public static<T> ArrayList<T> arrayToArrayList(T[] arr) {
+		//return (ArrayList<T>)Arrays.asList( arr );
+		ArrayList<T> list = new ArrayList<T>();
+		for ( int i=0; i<arr.length; ++i ) {
+			list.add( arr[ i ] );
+		}
+		return list;
+	}
+
+	public static<T> void assertListEquals(List<T> expecteds, List<T> actuals) {
+		if (expecteds == null) {
+			if (actuals != null) {
+				Assert.fail( "Expected 'null' but got: " + actuals );
+			}
+		}
+		else {
+			Assert.assertEquals( "Sizes do not match, expected + " + expecteds.size() + " got " + actuals.size(), expecteds.size(), actuals.size() );
+			for ( int i=0; i<expecteds.size(); ++i ) {
+				Assert.assertEquals( "Elements at index: " + i + " do not match!", expecteds.get( i ), actuals.get( i ) );
+			}
+		}
 	}
 
 }

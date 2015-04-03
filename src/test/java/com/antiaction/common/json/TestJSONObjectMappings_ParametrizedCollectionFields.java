@@ -17,6 +17,9 @@
 
 package com.antiaction.common.json;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +34,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.antiaction.common.json.annotation.JSONTypeInstance;
 
 /**
  * TODO javadoc
@@ -69,6 +74,18 @@ public class TestJSONObjectMappings_ParametrizedCollectionFields {
 
 	}
 
+	public static String missing(String className) {
+		return "Missing @JSONTypeInstance annotation on collection interface field of type: " + className;
+	}
+
+	public static String parametrized(String className) {
+		return "Collection must have parametrized type(s). (" + className + ")";
+	}
+
+	public static String unsupported() {
+		return "Unsupported use of wildcard parameterized types.";
+	}
+
 	@Test
 	public void test_jsonobjectmappings_parametrizedcollectionfields() {
 		JSONObjectMappings json_om = new JSONObjectMappings();
@@ -78,36 +95,36 @@ public class TestJSONObjectMappings_ParametrizedCollectionFields {
 		 */
 
 		Object[][] testClassesInvalid = new Object[][] {
-			{ TestJSONMapInvalidList1.class, "Unsupported collection interface field type. (java.util.List)" },
-			{ TestJSONMapInvalidList2.class, "Collection must have parametrized type(s). (java.util.ArrayList)" },
-			{ TestJSONMapInvalidList3.class, "Collection must have parametrized type(s). (java.util.LinkedList)" },
-			{ TestJSONMapInvalidList4.class, "Unsupported collection interface field type. (java.util.List)" },
-			{ TestJSONMapInvalidList5.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidList6.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidList7.class, "Unsupported collection interface field type. (java.util.List)" },
-			{ TestJSONMapInvalidList8.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidList9.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidList10.class, "Unsupported collection interface field type. (java.util.List .." },
-			{ TestJSONMapInvalidMap1.class, "Unsupported collection interface field type. (java.util.Map)" },
-			{ TestJSONMapInvalidMap2.class, "Collection must have parametrized type(s). (java.util.HashMap)" },
-			{ TestJSONMapInvalidMap3.class, "Collection must have parametrized type(s). (java.util.TreeMap)" },
-			{ TestJSONMapInvalidMap4.class, "Unsupported collection interface field type. (java.util.Map)" },
-			{ TestJSONMapInvalidMap5.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidMap6.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidMap7.class, "Unsupported collection interface field type. (java.util.Map)" },
-			{ TestJSONMapInvalidMap8.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidMap9.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidMap10.class, "Unsupported collection interface field type. (java.util.Map .." },
-			{ TestJSONMapInvalidSet1.class, "Unsupported collection interface field type. (java.util.Set)" },
-			{ TestJSONMapInvalidSet2.class, "Collection must have parametrized type(s). (java.util.HashSet)" },
-			{ TestJSONMapInvalidSet3.class, "Collection must have parametrized type(s). (java.util.TreeSet)" },
-			{ TestJSONMapInvalidSet4.class, "Unsupported collection interface field type. (java.util.Set)" },
-			{ TestJSONMapInvalidSet5.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidSet6.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidSet7.class, "Unsupported collection interface field type. (java.util.Set)" },
-			{ TestJSONMapInvalidSet8.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidSet9.class, "Unsupported use of wildcard parameterized types." },
-			{ TestJSONMapInvalidSet10.class, "Unsupported collection interface field type. (java.util.Set .."}
+			{ TestJSONMapInvalidList1.class, missing( "java.util.List" ) },
+			{ TestJSONMapInvalidList2.class, parametrized( "java.util.ArrayList" ) },
+			{ TestJSONMapInvalidList3.class, parametrized( "java.util.LinkedList" ) },
+			{ TestJSONMapInvalidList4.class, missing( "java.util.List" ) },
+			{ TestJSONMapInvalidList5.class, unsupported() },
+			{ TestJSONMapInvalidList6.class, unsupported() },
+			{ TestJSONMapInvalidList7.class, missing( "java.util.List" ) },
+			{ TestJSONMapInvalidList8.class, unsupported() },
+			{ TestJSONMapInvalidList9.class, unsupported() },
+			{ TestJSONMapInvalidList10.class, missing( "com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields$List3" ) },
+			{ TestJSONMapInvalidMap1.class, missing( "java.util.Map" ) },
+			{ TestJSONMapInvalidMap2.class, parametrized( "java.util.HashMap" ) },
+			{ TestJSONMapInvalidMap3.class, parametrized( "java.util.TreeMap" ) },
+			{ TestJSONMapInvalidMap4.class, missing( "java.util.Map" ) },
+			{ TestJSONMapInvalidMap5.class, unsupported() },
+			{ TestJSONMapInvalidMap6.class, unsupported() },
+			{ TestJSONMapInvalidMap7.class, missing( "java.util.Map" ) },
+			{ TestJSONMapInvalidMap8.class, unsupported() },
+			{ TestJSONMapInvalidMap9.class, unsupported() },
+			{ TestJSONMapInvalidMap10.class, missing( "com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields$Map3" ) },
+			{ TestJSONMapInvalidSet1.class, missing( "java.util.Set" ) },
+			{ TestJSONMapInvalidSet2.class, parametrized( "java.util.HashSet" ) },
+			{ TestJSONMapInvalidSet3.class, parametrized( "java.util.TreeSet" ) },
+			{ TestJSONMapInvalidSet4.class, missing( "java.util.Set" ) },
+			{ TestJSONMapInvalidSet5.class, unsupported() },
+			{ TestJSONMapInvalidSet6.class, unsupported() },
+			{ TestJSONMapInvalidSet7.class, missing( "java.util.Set" ) },
+			{ TestJSONMapInvalidSet8.class, unsupported() },
+			{ TestJSONMapInvalidSet9.class, unsupported() },
+			{ TestJSONMapInvalidSet10.class, missing( "com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields$Set3" ) }
 		};
 
 		Class<?> clazz;
@@ -123,6 +140,7 @@ public class TestJSONObjectMappings_ParametrizedCollectionFields {
 			catch (JSONException e) {
 				// debug
 				//e.printStackTrace();
+				//System.out.println( i );
 				//System.out.println( e.getMessage() );
 				//System.out.println( msg );
 				Assert.assertTrue( e.getMessage().startsWith( msg ) );
@@ -325,6 +343,64 @@ public class TestJSONObjectMappings_ParametrizedCollectionFields {
 	public static class TestJSONMapValidSet {
 		public HashSet<String> set1;
 		public TreeSet<Integer> set2;
+	}
+
+	@Test
+	public void test_jsonobjectmapping_typeinstance() {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
+
+		TypeInstance ti1 = new TypeInstance();
+		ti1.list1 = TestHelpers.arrayToLinkedList( new Integer[] { 1, 2 } );
+		ti1.list2 = TestHelpers.arrayToArrayList( new Integer[] { 3, 4 } );
+		ti1.list3 = TestHelpers.arrayToLinkedList( new Integer[] { 5, 6 } );
+		ti1.list4 = TestHelpers.arrayToArrayList( new Integer[] { 7, 8 } );
+
+		JSONObjectMappings json_om = new JSONObjectMappings();
+		JSONEncoding json_encoding = JSONEncoding.getJSONEncoding();
+		JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );
+		JSONDecoder json_decoder = json_encoding.getJSONDecoder( JSONEncoding.E_UTF8 );
+
+		try {
+			json_om.register( TypeInstance.class );
+
+			out.reset();
+			json_om.getStreamMarshaller().toJSONText( ti1, json_encoder, false, out);
+
+			// debug
+			//System.out.println( new String( out.toByteArray() ) );
+
+			in = new ByteArrayInputStream( out.toByteArray() );
+			TypeInstance ti2 = json_om.getStreamUnmarshaller().toObject( in, json_decoder, TypeInstance.class );
+
+			Assert.assertNotNull( ti2 );
+			TestHelpers.assertListEquals( ti1.list1, ti2.list1 );
+			TestHelpers.assertListEquals( ti1.list2, ti2.list2 );
+			TestHelpers.assertListEquals( ti1.list3, ti2.list3 );
+			TestHelpers.assertListEquals( ti1.list4, ti2.list4 );
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
+		}
+	}
+
+	public static class TypeInstance {
+
+		protected LinkedList<Integer> list1;
+
+		protected ArrayList<Integer> list2;
+
+		@JSONTypeInstance(LinkedList.class)
+		protected List<Integer> list3;
+
+		@JSONTypeInstance(ArrayList.class)
+		protected List<Integer> list4;
+
 	}
 
 }
