@@ -28,6 +28,7 @@ Converting directly between streams and objects is the fastest.
 
 ### version 0.7.0-SNAPSHOT ###
 
+* Added support for overriding ignore annotations directly in the JSONObjectMappings class.
 * Added support for mapping interface collection field types.
 * Added @JSONInstanceType annotation to support mapping interface collection field types.
 * Added support for stream (un)marshalling of List<..> instances.

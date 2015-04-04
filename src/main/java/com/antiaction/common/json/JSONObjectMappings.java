@@ -23,9 +23,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.antiaction.common.json.annotation.JSON;
@@ -54,6 +56,8 @@ public class JSONObjectMappings {
 	protected final Map<String, Integer> converterNameIdMap = new TreeMap<String, Integer>();
 
 	protected int converterIds = 0;
+
+	public Map<String, Set<String>> overrideIgnoreMapSet = new HashMap<String, Set<String>>();
 
 	protected final JSONTextMarshaller textMarshaller;
 
@@ -256,6 +260,12 @@ public class JSONObjectMappings {
 					// debug
 					//System.out.println( "ignore" );
 					bIgnore = true;
+				}
+				Set<String> overrideFieldIgnoreSet = overrideIgnoreMapSet.get( objectMapping.className );
+				if ( bIgnore ) {
+					if ( overrideFieldIgnoreSet != null && overrideFieldIgnoreSet.contains( field.getName() ) ) {
+						bIgnore = false;
+					}
 				}
 				if ( !bIgnore ) {
 					fieldModsMask = ClassTypeModifiers.getFieldModifiersMask( field );
