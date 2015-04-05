@@ -59,6 +59,8 @@ public class JSONObjectMappings {
 
 	public Map<String, Set<String>> overrideIgnoreMapSet = new HashMap<String, Set<String>>();
 
+	public Map<String, Set<String>> forceNullableMapSet = new HashMap<String, Set<String>>();
+
 	protected final JSONTextMarshaller textMarshaller;
 
 	protected final JSONTextUnmarshaller textUnmarshaller;
@@ -476,6 +478,12 @@ public class JSONObjectMappings {
 							nullable = field.getAnnotation( JSONNullable.class );
 							if ( nullable != null ) {
 								bNullable = nullable.value();
+							}
+						}
+						Set<String> forceNullableSet = forceNullableMapSet.get( objectMapping.className );
+						if ( !bNullable ) {
+							if ( forceNullableSet != null && forceNullableSet.contains( field.getName() ) ) {
+								bNullable = true;
 							}
 						}
 						if ( bNullable ) {
