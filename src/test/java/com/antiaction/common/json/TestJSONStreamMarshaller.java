@@ -27,9 +27,10 @@ import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,9 +38,6 @@ import org.junit.runners.JUnit4;
 import com.antiaction.common.json.annotation.JSON;
 import com.antiaction.common.json.annotation.JSONIgnore;
 import com.antiaction.common.json.annotation.JSONNullable;
-import com.antiaction.common.json.representation.JSONArray;
-import com.antiaction.common.json.representation.JSONNumber;
-import com.antiaction.common.json.representation.JSONObject;
 
 /**
  * TODO javadoc
@@ -198,10 +196,14 @@ public class TestJSONStreamMarshaller {
 
 			text = "{"
 					+ "\"b1\":true, \"b2\":false,"
+					+ "\"bb1\":-128, \"bb2\":127,"
+					+ "\"c1\":72, \"c2\":1234,"
 					+ "\"i1\":1234, \"i2\":42,"
 					+ "\"l1\":12345678901234, \"l2\":43210987654321,"
 					+ "\"f1\":" + new Float( 1.0F / 3.0F ).toString() + ", \"f2\":" + new Float( 3.0F ).toString() + ","
 					+ "\"d1\":" + new Double( 1.0 / 3.0 ).toString() + ", \"d2\":" + new Double( 3.0 ).toString() + ","
+					+ "\"dt\":" + ctm + ","
+					+ "\"ts\":" + ctm + ","
 					+ "\"bi\":" + new BigInteger( "123456789012345678901234567890123456789012" ).toString() + ","
 					+ "\"bd\":" + new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).toString() + ","
 					+ "\"s\":\"mapping\","
@@ -218,6 +220,10 @@ public class TestJSONStreamMarshaller {
 			testTypes = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, TestTypesClass.class );
 			Assert.assertTrue( testTypes.b1 );
 			Assert.assertFalse( testTypes.b2 );
+			Assert.assertEquals( -128, testTypes.bb1 );
+			Assert.assertEquals( new Byte( (byte)127 ), testTypes.bb2 );
+			Assert.assertEquals( 72, testTypes.c1 );
+			Assert.assertEquals( new Character( (char)1234 ), testTypes.c2 );
 			Assert.assertEquals( 1234, testTypes.i1 );
 			Assert.assertEquals( new Integer( 42 ), testTypes.i2 );
 			Assert.assertEquals( 12345678901234L, testTypes.l1 );
@@ -226,6 +232,8 @@ public class TestJSONStreamMarshaller {
 			Assert.assertEquals( new Float( 3.0F ), testTypes.f2 );
 			Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)testTypes.d1 );
 			Assert.assertEquals( new Double( 3.0 ), testTypes.d2 );
+			Assert.assertEquals( new Date( ctm ), testTypes.dt );
+			Assert.assertEquals( new Timestamp( ctm ), testTypes.ts );
 			Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), testTypes.bi );
 			Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), testTypes.bd );
 			Assert.assertEquals( "mapping", testTypes.s );
@@ -296,6 +304,10 @@ public class TestJSONStreamMarshaller {
 
 		private boolean b1;
 
+		private byte bb1;
+
+		private char c1;
+
 		private int i1;
 
 		private long l1;
@@ -306,6 +318,12 @@ public class TestJSONStreamMarshaller {
 
 		@JSONNullable
 		private Boolean b2;
+
+		@JSONNullable
+		private Byte bb2;
+
+		@JSONNullable
+		private Character c2;
 
 		@JSONNullable
 		private Integer i2;
@@ -320,6 +338,12 @@ public class TestJSONStreamMarshaller {
 		private Double d2;
 
 		@JSONNullable
+		private Date dt;
+
+		@JSONNullable
+		private Timestamp ts;
+
+		@JSONNullable
 		private BigInteger bi;
 
 		@JSONNullable
@@ -332,6 +356,8 @@ public class TestJSONStreamMarshaller {
 		private byte[] b;
 
 	}
+
+	public final long ctm = System.currentTimeMillis();
 
 	@Test
 	public void test_jsonobjectmapper_tojson() {
@@ -355,12 +381,18 @@ public class TestJSONStreamMarshaller {
 			TestJSONMapObject obj = new TestJSONMapObject();
 			obj.b1 = true;
 			obj.b2 = false;
+			obj.bb1 = 0;
+			obj.bb2 = 1;
+			obj.c1 = 0;
+			obj.c2 = 'A';
 			obj.i1 = 42;
 			obj.i2 = 1234;
 			obj.l1 = 12345678901234L;
 			obj.l2 = 43210987654321L;
 			obj.f1 = 1.0F / 3.0F;
 			obj.f2 = 3.0F;
+			obj.dt = new Date( ctm );
+			obj.ts = new Timestamp( ctm );
 			obj.d1 = 1.0 / 3.0;
 			obj.d2 = 3.0;
 			obj.bi = new BigInteger( "123456789012345678901234567890123456789012" );
@@ -371,6 +403,10 @@ public class TestJSONStreamMarshaller {
 			obj.obj = obj2;
 			obj2.b1 = false;
 			obj2.b2 = true;
+			obj2.bb1 = -128;
+			obj2.bb2 = 127;
+			obj2.c1 = 'H';
+			obj2.c2 = 1234;
 			obj2.i1 = 4213;
 			obj2.i2 = 4321;
 			obj2.l1 = 12345678901234L * 2L;
@@ -379,6 +415,8 @@ public class TestJSONStreamMarshaller {
 			obj2.f2 = 5.0F;
 			obj2.d1 = 1.0 / 5.0;
 			obj2.d2 = 5.0;
+			obj2.dt = new Date( 1000 );
+			obj2.ts = new Timestamp( 1000 );
 			obj2.bi = new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) );
 			obj2.bd = new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) );
 			obj2.s = "JSON";
@@ -387,6 +425,10 @@ public class TestJSONStreamMarshaller {
 			obj2.obj = obj3;
 			obj3.b1 = false;
 			obj3.b2 = null;
+			obj3.bb1 = 0;
+			obj3.bb2 = null;
+			obj3.c1 = 0;
+			obj3.c2 = null;
 			obj3.i1 = 4213;
 			obj3.i2 = null;
 			obj3.l1 = 12345678901234L * 2L;
@@ -395,6 +437,8 @@ public class TestJSONStreamMarshaller {
 			obj3.f2 = null;
 			obj3.d1 = 1.0 / 5.0;
 			obj3.d2 = null;
+			obj3.dt = null;
+			obj3.ts = null;
 			obj3.bi = null;
 			obj3.bd = null;
 			obj3.s = null;
@@ -406,7 +450,7 @@ public class TestJSONStreamMarshaller {
 
 			byte[] json_compact = out.toByteArray();
 			// debug
-			//System.out.println( new String( json_compact ) );
+			System.out.println( new String( json_compact ) );
 
 			in = new ByteArrayInputStream( json_compact );
 
@@ -418,7 +462,7 @@ public class TestJSONStreamMarshaller {
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
-			//System.out.println( new String( json_pretty ) );
+			System.out.println( new String( json_pretty ) );
 
 			in = new ByteArrayInputStream( json_pretty );
 
@@ -450,6 +494,10 @@ public class TestJSONStreamMarshaller {
 		Assert.assertNotNull( result );
 		Assert.assertEquals( true, result.b1 );
 		Assert.assertEquals( false, result.b2 );
+		Assert.assertEquals( 0, result.bb1 );
+		Assert.assertEquals( new Byte( (byte)1 ), result.bb2 );
+		Assert.assertEquals( 0, result.c1 );
+		Assert.assertEquals( new Character( 'A' ), result.c2 );
 		Assert.assertEquals( 42, result.i1 );
 		Assert.assertEquals( new Integer( 1234 ), result.i2 );
 		Assert.assertEquals( 12345678901234L, result.l1 );
@@ -458,6 +506,8 @@ public class TestJSONStreamMarshaller {
 		Assert.assertEquals( new Float( 3.0F ), result.f2 );
 		Assert.assertEquals( new Double( 1.0 / 3.0 ), (Double)result.d1 );
 		Assert.assertEquals( new Double( 3.0 ), result.d2 );
+		Assert.assertEquals( new Date( ctm ), result.dt );
+		Assert.assertEquals( new Timestamp( ctm ), result.ts );
 		Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ), result.bi );
 		Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ), result.bd );
 		Assert.assertEquals( "json", result.s );
@@ -465,6 +515,10 @@ public class TestJSONStreamMarshaller {
 		Assert.assertNotNull( result.obj );
 		Assert.assertEquals( false, result.obj.b1 );
 		Assert.assertEquals( true, result.obj.b2 );
+		Assert.assertEquals( -128, result.obj.bb1 );
+		Assert.assertEquals( new Byte( (byte)127 ), result.obj.bb2 );
+		Assert.assertEquals( 'H', result.obj.c1 );
+		Assert.assertEquals( new Character( (char)1234 ), result.obj.c2 );
 		Assert.assertEquals( 4213, result.obj.i1 );
 		Assert.assertEquals( new Integer( 4321 ), result.obj.i2 );
 		Assert.assertEquals( 12345678901234L * 2L, result.obj.l1 );
@@ -473,6 +527,8 @@ public class TestJSONStreamMarshaller {
 		Assert.assertEquals( new Float( 5.0F ), result.obj.f2 );
 		Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result.obj.d1 );
 		Assert.assertEquals( new Double( 5.0 ), result.obj.d2 );
+		Assert.assertEquals( new Date( 1000 ), result.obj.dt );
+		Assert.assertEquals( new Timestamp( 1000 ), result.obj.ts );
 		Assert.assertEquals( new BigInteger( "123456789012345678901234567890123456789012" ).multiply( new BigInteger( "2" ) ), result.obj.bi );
 		Assert.assertEquals( new BigDecimal( "3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825" ).multiply( new BigDecimal( "2" ) ), result.obj.bd );
 		Assert.assertEquals( "JSON", result.obj.s );
@@ -480,6 +536,10 @@ public class TestJSONStreamMarshaller {
 		Assert.assertNotNull( result.obj.obj );
 		Assert.assertEquals( false, result.obj.obj.b1 );
 		Assert.assertNull( result.obj.obj.b2 );
+		Assert.assertEquals( 0, result.obj.obj.bb1 );
+		Assert.assertNull( result.obj.obj.bb2 );
+		Assert.assertEquals( 0, result.obj.obj.c1 );
+		Assert.assertNull( result.obj.obj.c2 );
 		Assert.assertEquals( 4213, result.obj.obj.i1 );
 		Assert.assertNull( result.obj.obj.i2 );
 		Assert.assertEquals( 12345678901234L * 2L, result.obj.obj.l1 );
@@ -488,6 +548,8 @@ public class TestJSONStreamMarshaller {
 		Assert.assertNull( result.obj.obj.f2 );
 		Assert.assertEquals( new Double( 1.0 / 5.0 ), (Double)result.obj.obj.d1 );
 		Assert.assertNull( result.obj.obj.d2 );
+		Assert.assertNull( result.obj.obj.dt );
+		Assert.assertNull( result.obj.obj.ts );
 		Assert.assertNull( result.obj.obj.bi );
 		Assert.assertNull( result.obj.obj.bd );
 		Assert.assertNull( result.obj.obj.s );
@@ -501,6 +563,16 @@ public class TestJSONStreamMarshaller {
 
 		@JSONNullable
 		private Boolean b2;
+
+		private byte bb1;
+
+		@JSONNullable
+		private Byte bb2;
+
+		private char c1;
+
+		@JSONNullable
+		private Character c2;
 
 		private int i1;
 
@@ -523,6 +595,12 @@ public class TestJSONStreamMarshaller {
 		private Double d2;
 
 		@JSONNullable
+		private Date dt;
+
+		@JSONNullable
+		private Timestamp ts;
+
+		@JSONNullable
 		private BigInteger bi;
 
 		@JSONNullable
@@ -539,6 +617,7 @@ public class TestJSONStreamMarshaller {
 
 	}
 
+	/*
 	@Test
 	@Ignore
 	public void test_jsonom_toarray() {
@@ -584,5 +663,6 @@ public class TestJSONStreamMarshaller {
 	public static class TestJSONMapArrayField {
 		public Integer[] list;
 	}
+	*/
 
 }

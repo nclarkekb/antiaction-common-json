@@ -15,6 +15,21 @@ A compact library to un/-marshall JSON streams to/from objects/representations.
 Using JSON structures is more flexible depending on ones requirements.
 Converting directly between streams and objects is the fastest.
 
+## Support ##
+
+Java types supported:
+* Null
+* Boolean
+* Integer
+* Long
+* Float
+* Double
+* BigInteger
+* BigDecimal
+* String
+
+... in progress.
+
 ## Roadmap ##
 
 * Check how json values not mapped are handled.
@@ -28,6 +43,7 @@ Converting directly between streams and objects is the fastest.
 
 ### version 0.7.0-SNAPSHOT ###
 
+* Added support for byte, Byte, char, Character, java.util.Date and java.sql.Timestamp fields in stream (un)marshaller.
 * Added support for forcing nullable of fields directly in the JSONObjectMappings class.
 * Added support for overriding ignore annotations directly in the JSONObjectMappings class.
 * Added support for mapping interface collection field types.
@@ -35,7 +51,7 @@ Converting directly between streams and objects is the fastest.
 * Added support for stream (un)marshalling of List<..> instances.
 * Minor additions to JSONObjectMappings to support List<..> (un)marshalling.
 * Unit tests and bug fix to JSONObjectMappings/JSONObjectMapping/JSONObjectFieldMapping toString().
-* Code coverage at 86.1%.
+* Code coverage at 86.1% -> 82.6%.
 
 ### version 0.6.0 ###
 Released: 2015-01-24
@@ -93,14 +109,3 @@ Released: 2012-11-20
 
 Main focus on JSON text decoding/encoding.
 Comprehensive unit testing of core functionality.
-
-Java types supported:
-* Null
-* Boolean
-* Integer
-* Long
-* Float
-* Double
-* BigInteger
-* BigDecimal
-* String

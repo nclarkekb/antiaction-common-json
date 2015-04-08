@@ -321,6 +321,12 @@ public class TestClassTypeModifiers {
 				| ClassTypeModifiers.CM_TRANSIENT
 				| ClassTypeModifiers.CM_VOLATILE
 		) );
+
+		Assert.assertEquals( "List", ClassTypeModifiers.colTypeToString( ClassTypeModifiers.COLTYPE_LIST ) );
+		Assert.assertEquals( "Set", ClassTypeModifiers.colTypeToString( ClassTypeModifiers.COLTYPE_SET ) );
+		Assert.assertEquals( "Map", ClassTypeModifiers.colTypeToString( ClassTypeModifiers.COLTYPE_MAP ) );
+		Assert.assertEquals( "Other", ClassTypeModifiers.colTypeToString( ClassTypeModifiers.COLTYPE_OTHER ) );
+		Assert.assertEquals( "Unknown", ClassTypeModifiers.colTypeToString( 4 ) );
 	}
 
 }

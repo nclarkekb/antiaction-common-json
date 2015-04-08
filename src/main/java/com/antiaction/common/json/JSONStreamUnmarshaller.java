@@ -23,8 +23,10 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.CharBuffer;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -104,10 +106,14 @@ public class JSONStreamUnmarshaller {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T> T toObject(InputStream in, JSONDecoder decoder, Class<T> clazz, JSONConverterAbstract[] converters) throws IOException, JSONException {
 		Boolean booleanVal = null;
+		Byte byteVal = null;
+		Character charVal = null;
 		Integer intVal = null;
 		Long longVal = null;
 		Float floatVal = null;
 		Double doubleVal = null;
+		Date dateVal = null;
+		Timestamp timestampVal = null;
 		BigInteger bigIntegerVal = null;
 		BigDecimal bigDecimalVal = null;
 		String stringVal = null;
@@ -487,6 +493,32 @@ public class JSONStreamUnmarshaller {
 								}
 								fieldMapping.field.set( curObj, booleanVal );
 								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_BYTE:
+								if ( fieldMapping.converterId == -1 ) {
+									byteVal = Byte.parseByte( stringVal );
+								}
+								else {
+									// TODO
+									//byteVal = converters[ fieldMapping.converterId ].getByte( fieldMapping.fieldName, json_value );
+								}
+								if ( byteVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								fieldMapping.field.setByte( curObj, byteVal );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_CHAR:
+								if ( fieldMapping.converterId == -1 ) {
+									charVal = (char)Integer.parseInt( stringVal );
+								}
+								else {
+									// TODO
+									//charVal = converters[ fieldMapping.converterId ].getChar( fieldMapping.fieldName, json_value );
+								}
+								if ( charVal == null ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+								}
+								fieldMapping.field.setChar( curObj, charVal );
+								break;
 							case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
 								if ( fieldMapping.converterId == -1 ) {
 									intVal = Integer.parseInt( stringVal );
@@ -539,6 +571,32 @@ public class JSONStreamUnmarshaller {
 								}
 								fieldMapping.field.setDouble( curObj, doubleVal );
 								break;
+							case JSONObjectMappingConstants.T_BYTE:
+								if ( fieldMapping.converterId == -1 ) {
+									byteVal = Byte.parseByte( stringVal );
+								}
+								else {
+									// TODO
+									//byteVal = converters[ fieldMapping.converterId ].getByte( fieldMapping.fieldName, json_value );
+								}
+								if ( byteVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, byteVal );
+								break;
+							case JSONObjectMappingConstants.T_CHARACTER:
+								if ( fieldMapping.converterId == -1 ) {
+									charVal = (char)Integer.parseInt( stringVal );
+								}
+								else {
+									// TODO
+									//charVal = converters[ fieldMapping.converterId ].getChar( fieldMapping.fieldName, json_value );
+								}
+								if ( charVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, charVal );
+								break;
 							case JSONObjectMappingConstants.T_INTEGER:
 								if ( fieldMapping.converterId == -1 ) {
 									intVal = Integer.parseInt( stringVal );
@@ -590,6 +648,32 @@ public class JSONStreamUnmarshaller {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
 								}
 								fieldMapping.field.set( curObj, doubleVal );
+								break;
+							case JSONObjectMappingConstants.T_DATE:
+								if ( fieldMapping.converterId == -1 ) {
+									dateVal = new Date( Long.parseLong( stringVal ) );
+								}
+								else {
+									// TODO
+									//dateVal = converters[ fieldMapping.converterId ].getDate( fieldMapping.fieldName, json_value );
+								}
+								if ( dateVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, dateVal );
+								break;
+							case JSONObjectMappingConstants.T_TIMESTAMP:
+								if ( fieldMapping.converterId == -1 ) {
+									timestampVal = new Timestamp( Long.parseLong( stringVal ) );
+								}
+								else {
+									// TODO
+									//timestampVal = converters[ fieldMapping.converterId ].getTimestamp( fieldMapping.fieldName, json_value );
+								}
+								if ( timestampVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								fieldMapping.field.set( curObj, timestampVal );
 								break;
 							case JSONObjectMappingConstants.T_BIGINTEGER:
 								if ( fieldMapping.converterId == -1 ) {

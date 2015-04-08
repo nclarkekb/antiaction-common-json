@@ -22,7 +22,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,10 +92,14 @@ public class JSONStreamMarshaller {
 	@SuppressWarnings("unchecked")
 	public <T> void toJSONText(T srcObj, JSONConverterAbstract[] converters, JSONEncoder encoder, boolean bPretty, OutputStream out) throws IOException, JSONException {
 		Boolean booleanVal;
+		Byte byteVal;
+		Character charVal;
 		Integer intVal;
 		Long longVal;
 		Float floatVal;
 		Double doubleVal;
+		Date dateVal;
+		Timestamp timestampVal;
 		BigInteger bigIntegerVal;
 		BigDecimal bigDecimalVal;
 		String stringVal;
@@ -346,6 +352,29 @@ public class JSONStreamMarshaller {
 									encoder.write( falseBytes );
 								}
 								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_BYTE:
+								byteVal = fieldMapping.field.getByte( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//byteVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteVal );
+									if ( byteVal == null ) {
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+									}
+								}
+								encoder.write( byteVal.toString().getBytes() );
+								break;
+							case JSONObjectMappingConstants.T_PRIMITIVE_CHAR:
+								charVal = fieldMapping.field.getChar( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//charVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, charVal );
+									if ( charVal == null ) {
+										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
+									}
+								}
+								encoder.write( Integer.toString( charVal ).getBytes() );
+								break;
+
 							case JSONObjectMappingConstants.T_PRIMITIVE_INTEGER:
 								intVal = fieldMapping.field.getInt( object );
 								if ( fieldMapping.converterId != -1 ) {
@@ -411,6 +440,38 @@ public class JSONStreamMarshaller {
 									encoder.write( nullBytes );
 								}
 								break;
+							case JSONObjectMappingConstants.T_BYTE:
+								byteVal = (Byte)fieldMapping.field.get( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//byteVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteVal );
+								}
+								if ( byteVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								if ( byteVal != null) {
+									encoder.write( byteVal.toString().getBytes() );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
+							case JSONObjectMappingConstants.T_CHARACTER:
+								charVal = (Character)fieldMapping.field.get( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//charVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, charVal );
+								}
+								if ( charVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								if ( charVal != null) {
+									encoder.write( Integer.toString( charVal ).getBytes() );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
 							case JSONObjectMappingConstants.T_INTEGER:
 								intVal = (Integer)fieldMapping.field.get( object );
 								if ( fieldMapping.converterId != -1 ) {
@@ -470,6 +531,38 @@ public class JSONStreamMarshaller {
 								}
 								if ( doubleVal != null ) {
 									encoder.write( doubleVal.toString().getBytes() );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
+							case JSONObjectMappingConstants.T_DATE:
+								dateVal = (Date)fieldMapping.field.get( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//dateVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, dateVal );
+								}
+								if ( dateVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								if ( dateVal != null ) {
+									encoder.write( Long.toString( dateVal.getTime() ).getBytes() );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
+							case JSONObjectMappingConstants.T_TIMESTAMP:
+								timestampVal = (Timestamp)fieldMapping.field.get( object );
+								if ( fieldMapping.converterId != -1 ) {
+									// TODO
+									//timestampVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, timestampVal );
+								}
+								if ( timestampVal == null && !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								if ( timestampVal != null ) {
+									encoder.write( Long.toString( timestampVal.getTime() ).getBytes() );
 								}
 								else {
 									encoder.write( nullBytes );
@@ -641,6 +734,8 @@ public class JSONStreamMarshaller {
 							case JSONObjectMappingConstants.T_SET:
 							case JSONObjectMappingConstants.T_MAP:
 								throw new UnsupportedOperationException();
+							default:
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported object type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 						}
 						else {
@@ -1100,7 +1195,7 @@ public class JSONStreamMarshaller {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 					}
 					break;
 				case S_LIST:
@@ -1427,7 +1522,7 @@ public class JSONStreamMarshaller {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
 					}
 					break;
 				}
