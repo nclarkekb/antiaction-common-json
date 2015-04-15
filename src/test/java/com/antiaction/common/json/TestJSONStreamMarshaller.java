@@ -174,6 +174,7 @@ public class TestJSONStreamMarshaller {
 				Assert.fail( "Exception expected!" );
 			}
 			catch (JSONException e) {
+				Assert.assertEquals( "Unsupported class type.", e.getMessage() );
 			}
 
 			json_objectmappings.register( TestClass.class );
@@ -188,8 +189,10 @@ public class TestJSONStreamMarshaller {
 
 			try {
 				testTypes = json_objectmappings.getStreamUnmarshaller().toObject( pbin, json_decoder, TestTypesClass.class );
+				Assert.fail( "Exception expected!" );
 			}
-			catch (IllegalArgumentException e) {
+			catch (JSONException e) {
+				Assert.assertEquals( "Class '" + TestTypesClass.class.getName() + "' not registered.", e.getMessage() );
 			}
 
 			json_objectmappings.register( TestTypesClass.class );
@@ -370,7 +373,8 @@ public class TestJSONStreamMarshaller {
 				json_objectmappings.getStructureMarshaller().toJSONStructure( new TestJSONMapObject() );
 				Assert.fail( "Exception expected!" );
 			}
-			catch (IllegalArgumentException e) {
+			catch (JSONException e) {
+				Assert.assertEquals( "Class '" + TestJSONMapObject.class.getName() + "' not registered.", e.getMessage() );
 			}
 
 			JSONEncoder json_encoder = json_encoding.getJSONEncoder( JSONEncoding.E_UTF8 );

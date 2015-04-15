@@ -41,6 +41,7 @@ import com.antiaction.common.json.representation.PackageAccess;
  * TODO javadoc
  * @author Nicholas
  * Created on 06/11/2013
+ * FIXME Support byte/char/Byte/Character tests
  */
 @RunWith(JUnit4.class)
 public class TestJSONStreamMarshaller_Nullable {

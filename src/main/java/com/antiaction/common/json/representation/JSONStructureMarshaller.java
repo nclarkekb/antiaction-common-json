@@ -108,7 +108,7 @@ public class JSONStructureMarshaller {
 
 		JSONObjectMapping objectMapping = classMappings.get( object.getClass().getName() );
 		if ( objectMapping == null ) {
-			throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+			throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 		}
 		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -146,7 +146,7 @@ public class JSONStructureMarshaller {
 						state = S_ARRAY_BEGIN;
 						break;
 					default:
-						throw new IllegalArgumentException( "Invalid object mapping class!" );
+						throw new JSONException( "Invalid object mapping type: " + objectMapping.type );
 					}
 					break;
 				case S_OBJECT_BEGIN:
@@ -493,7 +493,7 @@ public class JSONStructureMarshaller {
 									object = tmpObject;
 									objectMapping = classMappings.get( object.getClass().getName() );
 									if ( objectMapping == null ) {
-										throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+										throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 									}
 									if ( objectMapping.converters == true && converters == null ) {
 										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -544,6 +544,9 @@ public class JSONStructureMarshaller {
 									json_value = JSONNull.Null;
 									json_struct.put( fieldMapping.jsonName, json_value );
 								}
+								break;
+							default:
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 						}
 						else {
@@ -880,7 +883,7 @@ public class JSONStructureMarshaller {
 								object = tmpObject;
 								objectMapping = classMappings.get( object.getClass().getName() );
 								if ( objectMapping == null ) {
-									throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+									throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 								}
 								if ( objectMapping.converters == true && converters == null ) {
 									throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -900,7 +903,7 @@ public class JSONStructureMarshaller {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 					}
 					break;
 				}

@@ -140,7 +140,7 @@ public class JSONStreamUnmarshaller {
 
 		JSONObjectMapping objectMapping = classMappings.get( clazz.getName() );
 		if ( objectMapping == null ) {
-			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
+			throw new JSONException( "Class '" + clazz.getName() + "' not registered." );
 		}
 		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + clazz.getName() + "' may required converters!" );
@@ -246,7 +246,7 @@ public class JSONStreamUnmarshaller {
 							throw new UnsupportedOperationException( "Unexpected type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 						}
 						if ( objectMapping == null ) {
-							throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
+							throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
 						}
 						if ( objectMapping.converters == true && converters == null ) {
 							throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' may required converters!" );
@@ -774,7 +774,7 @@ public class JSONStreamUnmarshaller {
 							}
 							break;
 						default:
-							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
+							throw new JSONException( "Unknown json value type: " + typeString( json_value_type ) );
 						}
 						// TODO
 						//current.put( json_name, json_value );
@@ -1168,7 +1168,7 @@ public class JSONStreamUnmarshaller {
 							}
 							break;
 						default:
-							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
+							throw new JSONException( "Unknown json value type: " + typeString( json_value_type ) );
 						}
 						state = S_ARRAY_NEXT;
 						// debug
@@ -1539,7 +1539,7 @@ public class JSONStreamUnmarshaller {
 							}
 							break;
 						default:
-							throw new IllegalStateException( "Unknown json value type: " + typeString( json_value_type ) );
+							throw new JSONException( "Unknown json value type: " + typeString( json_value_type ) );
 						}
 						state = S_LIST_NEXT;
 						// debug

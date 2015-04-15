@@ -43,6 +43,8 @@ Java types supported:
 
 ### version 0.7.0-SNAPSHOT ###
 
+* Improve code coverage in com.antiaction.common.json.representation package.
+* Throws JSONException those places where IllegalStateException were thrown.
 * Added support for byte, Byte, char, Character, java.util.Date and java.sql.Timestamp fields in stream (un)marshaller.
 * Added support for forcing nullable of fields directly in the JSONObjectMappings class.
 * Added support for overriding ignore annotations directly in the JSONObjectMappings class.

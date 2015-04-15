@@ -27,6 +27,10 @@ import com.antiaction.common.json.representation.JSONStructureMarshaller;
 import com.antiaction.common.json.representation.JSONTextMarshaller;
 import com.antiaction.common.json.representation.PackageAccess;
 
+/**
+ * FIXME Support byte/char/Byte/Character array tests
+ * @author nicl
+ */
 @RunWith(JUnit4.class)
 public class TestJSONStreamMarshaller_ArrayFields {
 

@@ -18,6 +18,10 @@ import org.junit.runners.JUnit4;
 
 import com.antiaction.common.json.annotation.JSONNullable;
 
+/**
+ * FIXME Support byte/char/Byte/Character collection tests
+ * @author nicl
+ */
 @RunWith(JUnit4.class)
 public class TestJSONStreamMarshaller_ParametrizedCollectionFields {
 

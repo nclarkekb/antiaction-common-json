@@ -29,6 +29,7 @@ import com.antiaction.common.json.annotation.JSONNullable;
  * TODO javadoc
  * @author Nicholas
  * Created on 25/10/2013
+ * FIXME Support byte/char/Byte/Character array tests
  */
 @RunWith(JUnit4.class)
 public class TestJSONObjectMappings_Nullable {
@@ -62,6 +63,18 @@ public class TestJSONObjectMappings_Nullable {
 		}
 		try {
 			json_om.register( TestNullableField5Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField6Class.class );
+			Assert.fail( "Exception expected!" );
+		}
+		catch (JSONException e) {
+		}
+		try {
+			json_om.register( TestNullableField7Class.class );
 			Assert.fail( "Exception expected!" );
 		}
 		catch (JSONException e) {
@@ -105,20 +118,30 @@ public class TestJSONObjectMappings_Nullable {
 
 	public static class TestNullableField2Class {
 		@JSONNullable
-		int i1;
+		byte bb1;
 	}
 
 	public static class TestNullableField3Class {
 		@JSONNullable
-		long l1;
+		char c1;
 	}
 
 	public static class TestNullableField4Class {
 		@JSONNullable
-		float f1;
+		int i1;
 	}
 
 	public static class TestNullableField5Class {
+		@JSONNullable
+		long l1;
+	}
+
+	public static class TestNullableField6Class {
+		@JSONNullable
+		float f1;
+	}
+
+	public static class TestNullableField7Class {
 		@JSONNullable
 		double d1;
 	}

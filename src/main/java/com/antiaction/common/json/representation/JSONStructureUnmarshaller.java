@@ -113,7 +113,7 @@ public class JSONStructureUnmarshaller {
 
 		JSONObjectMapping objectMapping = classMappings.get( clazz.getName() );
 		if ( objectMapping == null ) {
-			throw new IllegalArgumentException( "Class '" + clazz.getName() + "' not registered." );
+			throw new JSONException( "Class '" + clazz.getName() + "' not registered." );
 		}
 		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + clazz.getName() + "' may required converters!" );
@@ -141,7 +141,7 @@ public class JSONStructureUnmarshaller {
 					switch ( json_struct.type ) {
 					case JSONConstants.VT_OBJECT:
 						if ( objectMapping.type != JSONObjectMapping.OMT_OBJECT ) {
-							throw new IllegalArgumentException( "Destination is not an object!" );
+							throw new JSONException( "Destination is not an object!" );
 						}
 						jsonObject = json_struct.getObject();
 						dstObj = clazz.newInstance();
@@ -151,7 +151,7 @@ public class JSONStructureUnmarshaller {
 						break;
 					case JSONConstants.VT_ARRAY:
 						if ( objectMapping.type != JSONObjectMapping.OMT_ARRAY ) {
-							throw new IllegalArgumentException( "Destination is not an array!" );
+							throw new JSONException( "Destination is not an array!" );
 						}
 						jsonArrayVal = json_struct.getArray();
 						jsonValues = jsonArrayVal.values;
@@ -160,7 +160,7 @@ public class JSONStructureUnmarshaller {
 						state = S_ARRAY;
 						break;
 					default:
-						throw new IllegalArgumentException( "Invalid json structure representation!" );
+						throw new JSONException( "Invalid json structure representation!" );
 					}
 					break;
 				case S_OBJECT_BEGIN:
@@ -180,7 +180,7 @@ public class JSONStructureUnmarshaller {
 					curObj = fieldMapping.clazz.newInstance();
 					objectMapping = classMappings.get( fieldMapping.clazz.getName() );
 					if ( objectMapping == null ) {
-						throw new IllegalArgumentException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
+						throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' not registered." );
 					}
 					if ( objectMapping.converters == true && converters == null ) {
 						throw new JSONException( "Class '" + fieldMapping.clazz.getName() + "' may required converters!" );
@@ -446,6 +446,9 @@ public class JSONStructureUnmarshaller {
 									object = null;
 									fieldMapping.field.set( curObj, object );
 								}
+								break;
+							default:
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
 							}
 						}
 						else {
@@ -714,7 +717,7 @@ public class JSONStructureUnmarshaller {
 						state = S_ARRAY_OBJECT;
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type: " + JSONObjectMappingConstants.typeString( fieldMapping.arrayType ) );
 					}
 					break;
 				case S_ARRAY_OBJECT_VALUE:

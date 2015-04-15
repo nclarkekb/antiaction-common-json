@@ -131,7 +131,7 @@ public class JSONStreamMarshaller {
 
 		JSONObjectMapping objectMapping = classMappings.get( object.getClass().getName() );
 		if ( objectMapping == null ) {
-			throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+			throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 		}
 		if ( objectMapping.converters == true && converters == null ) {
 			throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -168,7 +168,7 @@ public class JSONStreamMarshaller {
 						state = S_ARRAY_BEGIN;
 						break;
 					default:
-						throw new IllegalArgumentException( "Invalid object mapping class!" );
+						throw new JSONException( "Invalid object mapping class!" );
 					}
 					break;
 				case S_OBJECT_BEGIN:
@@ -650,7 +650,7 @@ public class JSONStreamMarshaller {
 									object = tmpObject;
 									objectMapping = classMappings.get( object.getClass().getName() );
 									if ( objectMapping == null ) {
-										throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+										throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 									}
 									if ( objectMapping.converters == true && converters == null ) {
 										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -682,7 +682,7 @@ public class JSONStreamMarshaller {
 									/*
 									objectMapping = classMappings.get( object.getClass().getName() );
 									if ( objectMapping == null ) {
-										throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+										throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 									}
 									if ( objectMapping.converters == true && converters == null ) {
 										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -715,7 +715,7 @@ public class JSONStreamMarshaller {
 									/*
 									objectMapping = classMappings.get( object.getClass().getName() );
 									if ( objectMapping == null ) {
-										throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+										throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 									}
 									if ( objectMapping.converters == true && converters == null ) {
 										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -1166,7 +1166,7 @@ public class JSONStreamMarshaller {
 								object = tmpObject;
 								objectMapping = classMappings.get( object.getClass().getName() );
 								if ( objectMapping == null ) {
-									throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+									throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 								}
 								if ( objectMapping.converters == true && converters == null ) {
 									throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
@@ -1493,7 +1493,7 @@ public class JSONStreamMarshaller {
 								object = tmpObject;
 								objectMapping = classMappings.get( object.getClass().getName() );
 								if ( objectMapping == null ) {
-									throw new IllegalArgumentException( "Class '" + object.getClass().getName() + "' not registered." );
+									throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
 								}
 								if ( objectMapping.converters == true && converters == null ) {
 									throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
