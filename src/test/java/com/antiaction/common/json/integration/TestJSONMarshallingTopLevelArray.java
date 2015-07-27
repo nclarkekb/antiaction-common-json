@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.antiaction.common.json;
+package com.antiaction.common.json.integration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,6 +29,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.antiaction.common.json.JSONDecoder;
+import com.antiaction.common.json.JSONEncoder;
+import com.antiaction.common.json.JSONEncoding;
+import com.antiaction.common.json.JSONException;
+import com.antiaction.common.json.JSONObjectMapping;
+import com.antiaction.common.json.JSONObjectMappings;
+import com.antiaction.common.json.TestHelpers;
 import com.antiaction.common.json.annotation.JSONNullable;
 import com.antiaction.common.json.representation.JSONCollection;
 import com.antiaction.common.json.representation.JSONTextUnmarshaller;
@@ -146,9 +153,11 @@ public class TestJSONMarshallingTopLevelArray {
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+			Assert.fail( "Unexpected exception!" );
 		}
 		finally {
 			if ( fis != null ) {

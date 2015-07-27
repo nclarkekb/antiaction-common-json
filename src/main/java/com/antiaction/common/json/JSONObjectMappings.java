@@ -473,6 +473,8 @@ public class JSONObjectMappings {
 						json_fm.field = clazz.getDeclaredField( json_fm.fieldName );
 						json_fm.field.setAccessible( true );
 
+						objectMapping.fieldMapping = json_fm;
+
 						bNullable = objectMapping.nullableSet.contains( json_fm.fieldName );
 						if ( !bNullable ) {
 							nullable = field.getAnnotation( JSONNullable.class );

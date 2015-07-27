@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -46,9 +47,12 @@ public class JSONStreamMarshaller {
 	private static final int S_ARRAY_END = 4;
 	private static final int S_LIST_BEGIN = 5;
 	private static final int S_LIST_END = 6;
-	private static final int S_OBJECT = 7;
-	private static final int S_ARRAY = 8;
-	private static final int S_LIST = 9;
+	private static final int S_MAP_BEGIN = 7;
+	private static final int S_MAP_END = 8;
+	private static final int S_OBJECT = 9;
+	private static final int S_ARRAY = 10;
+	private static final int S_LIST = 11;
+	private static final int S_MAP = 12;
 
 	/** Null string cached as bytes. */
 	protected static final byte[] nullBytes = "null".getBytes();
@@ -106,6 +110,8 @@ public class JSONStreamMarshaller {
 		byte[] byteArray;
 		Object tmpObject;
 		List<?> tmpList;
+		Map<String, ?> tmpMap;
+		Entry<String, ?> tmpEntry;
 
 		Object tmpArray;
 		boolean[] arrayOf_boolean;
@@ -293,6 +299,47 @@ public class JSONStreamMarshaller {
 						}
 					}
 					encoder.write( ']' );
+					if ( stack.size() > 0 ) {
+						stackEntry = stack.removeLast();
+						state = stackEntry.state;
+						object = stackEntry.object;
+						objectMapping = stackEntry.objectMapping;
+						fieldMappingsArr = stackEntry.fieldMappingsArr;
+						fieldMappingIdx = stackEntry.fieldMappingIdx;
+						fieldMapping = stackEntry.fieldMapping;
+						array = stackEntry.array;
+						iterator = stackEntry.iterator;
+						arrayIdx = stackEntry.arrayIdx;
+						arrayLen = stackEntry.arrayLen;
+					}
+					else {
+						bLoop = false;
+					}
+					break;
+				case S_MAP_BEGIN:
+					if ( bPretty ) {
+						encoder.write( "{\n" );
+						indentation += 2;
+						if ( indentation > indentationArr.length ) {
+							byte[] newIndentationArr = new byte[ indentationArr.length * 2 ];
+							Arrays.fill( newIndentationArr, (byte)' ' );
+							indentationArr = newIndentationArr;
+						}
+					}
+					else {
+						encoder.write( '{' );
+					}
+					//fieldMappingsArr = objectMapping.fieldMappingsArr;
+					//fieldMappingIdx = 0;
+					state = S_MAP;
+					break;
+				case S_MAP_END:
+					if ( bPretty ) {
+						indentation -= 2;
+						encoder.write( '\n' );
+						encoder.write( indentationArr, 0, indentation );
+					}
+					encoder.write( '}' );
 					if ( stack.size() > 0 ) {
 						stackEntry = stack.removeLast();
 						state = stackEntry.state;
@@ -731,8 +778,40 @@ public class JSONStreamMarshaller {
 									encoder.write( nullBytes );
 								}
 								break;
-							case JSONObjectMappingConstants.T_SET:
 							case JSONObjectMappingConstants.T_MAP:
+								tmpMap = (Map<String, ?>)fieldMapping.field.get( object );
+								if ( tmpMap != null ) {
+									stackEntry = new StackEntry();
+									stackEntry.state = state;
+									stackEntry.object = object;
+									stackEntry.objectMapping = objectMapping;
+									stackEntry.fieldMappingsArr = fieldMappingsArr;
+									stackEntry.fieldMappingIdx = fieldMappingIdx;
+									stackEntry.fieldMapping = fieldMapping;
+									stack.add( stackEntry );
+									iterator = tmpMap.entrySet().iterator();
+									arrayIdx = 0;
+									arrayLen = tmpMap.size();
+									/*
+									objectMapping = classMappings.get( object.getClass().getName() );
+									if ( objectMapping == null ) {
+										throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
+									}
+									if ( objectMapping.converters == true && converters == null ) {
+										throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
+									}
+									*/
+									state = S_MAP_BEGIN;
+									bFieldLoop = false;
+								}
+								else if ( !fieldMapping.nullable ) {
+									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
+								}
+								else {
+									encoder.write( nullBytes );
+								}
+								break;
+							case JSONObjectMappingConstants.T_SET:
 								throw new UnsupportedOperationException();
 							default:
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported object type: " + JSONObjectMappingConstants.typeString( fieldMapping.type ) );
@@ -1525,6 +1604,79 @@ public class JSONStreamMarshaller {
 						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
 					}
 					break;
+				case S_MAP:
+					switch ( fieldMapping.parametrizedObjectTypes[ 1 ] ) {
+					case JSONObjectMappingConstants.T_OBJECT:
+						if ( iterator.hasNext() ) {
+							++arrayIdx;
+							tmpEntry = (Entry<String, ?>)iterator.next();
+							if ( bPretty ) {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ",\n" );
+								}
+								encoder.write( indentationArr, 0, indentation );
+							}
+							else {
+								if ( arrayIdx > 1 ) {
+									encoder.write( ',' );
+								}
+							}
+							// TODO Is this string escaped correctly?
+							encoder.write( '"' );
+							encoder.write( tmpEntry.getKey() );
+							encoder.write( '"' );
+							encoder.write( ":" );
+							if ( bPretty ) {
+								encoder.write( " " );
+							}
+							tmpObject = tmpEntry.getValue();
+							if ( tmpObject != null ) {
+								stackEntry = new StackEntry();
+								stackEntry.state = state;
+								stackEntry.object = object;
+								stackEntry.objectMapping = objectMapping;
+								stackEntry.fieldMappingsArr = fieldMappingsArr;
+								stackEntry.fieldMappingIdx = fieldMappingIdx;
+								stackEntry.fieldMapping = fieldMapping;
+								stackEntry.iterator = iterator;
+								stackEntry.arrayIdx = arrayIdx;
+								stackEntry.arrayLen = arrayLen;
+								stack.add( stackEntry );
+								object = tmpObject;
+								objectMapping = classMappings.get( object.getClass().getName() );
+								if ( objectMapping == null ) {
+									throw new JSONException( "Class '" + object.getClass().getName() + "' not registered." );
+								}
+								if ( objectMapping.converters == true && converters == null ) {
+									throw new JSONException( "Class '" + object.getClass().getName() + "' may required converters!" );
+								}
+								state = S_OBJECT_BEGIN;
+							}
+							else if ( !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							else {
+								encoder.write( nullBytes );
+							}
+							/*
+							objectVal = arrayOf_Object[ arrayIdx ];
+							if ( objectVal != null ) {
+								objectVal = toJSON( objectVal, converters );
+							}
+							else if ( !fieldMapping.nullValues ) {
+								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
+							}
+							json_array.add( json_value );
+							*/
+						}
+						else {
+							state = S_MAP_END;
+						}
+						break;
+					default:
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
+					}
+					break;
 				}
 			}
 		}
@@ -1545,9 +1697,12 @@ public class JSONStreamMarshaller {
 		stateStr.put( S_ARRAY_END, "S_ARRAY_END" );
 		stateStr.put( S_LIST_BEGIN, "S_LIST_BEGIN" );
 		stateStr.put( S_LIST_END, "S_LIST_END" );
+		stateStr.put( S_MAP_BEGIN, "S_MAP_BEGIN" );
+		stateStr.put( S_MAP_END, "S_MAP_END" );
 		stateStr.put( S_OBJECT, "S_OBJECT" );
 		stateStr.put( S_ARRAY, "S_ARRAY" );
 		stateStr.put( S_LIST, "S_LIST" );
+		stateStr.put( S_MAP, "S_MAP" );
 	}
 
 }

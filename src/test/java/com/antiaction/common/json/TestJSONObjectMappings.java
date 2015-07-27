@@ -26,13 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.antiaction.common.json.TestJSONMarshallingTopLevelArray.Book;
 import com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields.TestJSONMapValidList;
 import com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields.TestJSONMapValidMap;
 import com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionFields.TestJSONMapValidSet;
 import com.antiaction.common.json.TestJSONStreamMarshaller.SFSResult;
 import com.antiaction.common.json.TestJSONStreamMarshaller.TestJSONMapObject;
 import com.antiaction.common.json.TestJSONStreamMarshaller.TestTypesClass;
+import com.antiaction.common.json.integration.TestJSONMarshallingTopLevelArray.Book;
 import com.antiaction.common.json.representation.TestJSONStructureMarshaller_Name.TestZeroConstructor;
 
 /**
