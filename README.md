@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/nclarkekb/antiaction-common-json.png?branch=master)](https://travis-ci.org/nclarkekb/antiaction-common-json)
+[![codecov.io](http://codecov.io/github/nclarkekb/antiaction-common-json/coverage.svg?branch=master)](http://codecov.io/github/nclarkekb/antiaction-common-json?branch=master)
 
 antiaction-common-json
 ======================
