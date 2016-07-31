@@ -143,7 +143,7 @@ public class TestJSONObjectMappings_ParametrizedCollectionFields {
 				//System.out.println( i );
 				//System.out.println( e.getMessage() );
 				//System.out.println( msg );
-				Assert.assertTrue( e.getMessage().startsWith( msg ) );
+				Assert.assertTrue( e.getMessage().endsWith( msg ) );
 			}
 		}
 

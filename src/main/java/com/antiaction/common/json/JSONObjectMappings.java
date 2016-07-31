@@ -313,7 +313,7 @@ public class JSONObjectMappings {
 								}
 								if ( colType != ClassTypeModifiers.COLTYPE_OTHER ) {
 									if ( fieldTypeInstance == null ) {
-										throw new JSONException( "Missing @JSONTypeInstance annotation on collection interface field of type: " + fieldTypeName );
+										throw new JSONException( "[" + objectMapping.className + "] Missing @JSONTypeInstance annotation on collection interface field of type: " + fieldTypeName );
 									}
 									int instanceColType = ClassTypeModifiers.getCollectionType( fieldTypeInstance );
 									if ( colType != instanceColType ) {
