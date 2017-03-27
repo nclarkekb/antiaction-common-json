@@ -387,10 +387,13 @@ public class JSONStreamMarshaller {
 								booleanVal = fieldMapping.field.getBoolean( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+									/*
+									booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
 									if ( booleanVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( booleanVal ) {
 									encoder.write( trueBytes );
@@ -403,10 +406,13 @@ public class JSONStreamMarshaller {
 								byteVal = fieldMapping.field.getByte( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//byteVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteVal );
+									/*
+									byteVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteVal );
 									if ( byteVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( byteVal.toString().getBytes() );
 								break;
@@ -414,10 +420,13 @@ public class JSONStreamMarshaller {
 								charVal = fieldMapping.field.getChar( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//charVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, charVal );
+									/*
+									charVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, charVal );
 									if ( charVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( Integer.toString( charVal ).getBytes() );
 								break;
@@ -426,10 +435,13 @@ public class JSONStreamMarshaller {
 								intVal = fieldMapping.field.getInt( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+									/*
+									intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
 									if ( intVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( intVal.toString().getBytes() );
 								break;
@@ -437,10 +449,13 @@ public class JSONStreamMarshaller {
 								longVal = fieldMapping.field.getLong( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+									/*
+									longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
 									if ( longVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( longVal.toString().getBytes() );
 								break;
@@ -448,10 +463,13 @@ public class JSONStreamMarshaller {
 								floatVal = fieldMapping.field.getFloat( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+									/*
+									floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
 									if ( floatVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( floatVal.toString().getBytes() );
 								break;
@@ -459,10 +477,13 @@ public class JSONStreamMarshaller {
 								doubleVal = fieldMapping.field.getDouble( object );
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
-									//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+									/*
+									doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
 									if ( doubleVal == null ) {
 										throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not be null." );
 									}
+									*/
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								encoder.write( doubleVal.toString().getBytes() );
 								break;
@@ -471,6 +492,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( booleanVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -492,6 +514,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//byteVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( byteVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -508,6 +531,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//charVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, charVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( charVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -524,6 +548,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( intVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -540,6 +565,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( longVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -556,6 +582,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( floatVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -572,6 +599,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( doubleVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -588,6 +616,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//dateVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, dateVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( dateVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -604,6 +633,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//timestampVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, timestampVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( timestampVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -620,6 +650,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//bigIntegerVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigIntegerVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( bigIntegerVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -636,6 +667,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//bigDecimalVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigDecimalVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( bigDecimalVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -652,6 +684,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( stringVal == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -670,6 +703,7 @@ public class JSONStreamMarshaller {
 								if ( fieldMapping.converterId != -1 ) {
 									// TODO
 									//byteArray = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, byteArray );
+									throw new JSONException( "Converter unsupported in stream marshaller." );
 								}
 								if ( byteArray == null && !fieldMapping.nullable ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is not nullable." );
@@ -831,10 +865,13 @@ public class JSONStreamMarshaller {
 							booleanVal = arrayOf_boolean[ arrayIdx++ ];
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
-								//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+								/*
+								booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
 								if ( booleanVal == null ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 								}
+								*/
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bPretty ) {
 								if ( arrayIdx > 1 ) {
@@ -862,10 +899,13 @@ public class JSONStreamMarshaller {
 							intVal = arrayOf_int[ arrayIdx++ ];
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
-								//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+								/*
+								intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
 								if ( intVal == null ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 								}
+								*/
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bPretty ) {
 								if ( arrayIdx > 1 ) {
@@ -888,10 +928,13 @@ public class JSONStreamMarshaller {
 							longVal = arrayOf_long[ arrayIdx++ ];
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
-								//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+								/*
+								longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
 								if ( longVal == null ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 								}
+								*/
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bPretty ) {
 								if ( arrayIdx > 1 ) {
@@ -914,10 +957,13 @@ public class JSONStreamMarshaller {
 							floatVal = arrayOf_float[ arrayIdx++ ];
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
-								//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+								/*
+								floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
 								if ( floatVal == null ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 								}
+								*/
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bPretty ) {
 								if ( arrayIdx > 1 ) {
@@ -940,10 +986,13 @@ public class JSONStreamMarshaller {
 							doubleVal = arrayOf_double[ arrayIdx++ ];
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
-								//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+								/*
+								doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
 								if ( doubleVal == null ) {
 									throw new JSONException( "Field '" + fieldMapping.fieldName + "' is primitive and can not have null values." );
 								}
+								*/
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bPretty ) {
 								if ( arrayIdx > 1 ) {
@@ -967,6 +1016,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( booleanVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1003,6 +1053,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( intVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1034,6 +1085,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( longVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1065,6 +1117,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( floatVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1096,6 +1149,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( doubleVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1127,6 +1181,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//bigIntegerVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigIntegerVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1158,6 +1213,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//bigDecimalVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigDecimalVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1189,6 +1245,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( stringVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1287,6 +1344,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//booleanVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, booleanVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( booleanVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1324,6 +1382,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//intVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, intVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( intVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1356,6 +1415,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//longVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, longVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( longVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1388,6 +1448,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//floatVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, floatVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( floatVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1420,6 +1481,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//doubleVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, doubleVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( doubleVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1452,6 +1514,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//bigIntegerVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigIntegerVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bigIntegerVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1484,6 +1547,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//bigDecimalVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, bigDecimalVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( bigDecimalVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );
@@ -1516,6 +1580,7 @@ public class JSONStreamMarshaller {
 							if ( fieldMapping.converterId != -1 ) {
 								// TODO
 								//strVal = converters[ fieldMapping.converterId ].getJSONValue( fieldMapping.fieldName, strVal );
+								throw new JSONException( "Converter unsupported in stream marshaller." );
 							}
 							if ( stringVal == null && !fieldMapping.nullValues ) {
 								throw new JSONException( "Field '" + fieldMapping.fieldName + "' does not allow null values." );

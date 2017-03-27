@@ -454,7 +454,7 @@ public class TestJSONStreamMarshaller {
 
 			byte[] json_compact = out.toByteArray();
 			// debug
-			System.out.println( new String( json_compact ) );
+			//System.out.println( new String( json_compact ) );
 
 			in = new ByteArrayInputStream( json_compact );
 
@@ -466,7 +466,7 @@ public class TestJSONStreamMarshaller {
 
 			byte[] json_pretty = out.toByteArray();
 			// debug
-			System.out.println( new String( json_pretty ) );
+			//System.out.println( new String( json_pretty ) );
 
 			in = new ByteArrayInputStream( json_pretty );
 

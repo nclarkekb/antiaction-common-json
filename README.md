@@ -44,6 +44,8 @@ Java types supported:
 
 ### version 0.7.0-SNAPSHOT ###
 
+More work on improving object to/from stream marshaller/unmarshaller.
+
 * Improve code coverage in com.antiaction.common.json.representation package.
 * Throws JSONException those places where IllegalStateException were thrown.
 * Added support for byte, Byte, char, Character, java.util.Date and java.sql.Timestamp fields in stream (un)marshaller.

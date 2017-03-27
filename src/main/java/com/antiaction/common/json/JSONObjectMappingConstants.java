@@ -42,26 +42,28 @@ public class JSONObjectMappingConstants {
 	 */
 
 	public static final int T_PRIMITIVE_BOOLEAN = 1;
-	public static final int T_PRIMITIVE_BYTE = 2;
-	public static final int T_PRIMITIVE_CHAR = 3;
-	public static final int T_PRIMITIVE_INTEGER = 4;
-	public static final int T_PRIMITIVE_LONG = 5;
-	public static final int T_PRIMITIVE_FLOAT = 6;
-	public static final int T_PRIMITIVE_DOUBLE = 7;
+	public static final int T_PRIMITIVE_CHAR = 2;
+	public static final int T_PRIMITIVE_BYTE = 3;
+	public static final int T_PRIMITIVE_SHORT = 4;
+	public static final int T_PRIMITIVE_INTEGER = 5;
+	public static final int T_PRIMITIVE_LONG = 6;
+	public static final int T_PRIMITIVE_FLOAT = 7;
+	public static final int T_PRIMITIVE_DOUBLE = 8;
 	public static final int T_OBJECT = 100;
 	public static final int T_BOOLEAN = 101;
-	public static final int T_BYTE = 102;
-	public static final int T_CHARACTER = 103;
-	public static final int T_INTEGER = 104;
-	public static final int T_LONG = 105;
-	public static final int T_FLOAT = 106;
-	public static final int T_DOUBLE = 107;
-	public static final int T_DATE = 108;
-	public static final int T_TIMESTAMP = 109;
-	public static final int T_BIGINTEGER = 110;
-	public static final int T_BIGDECIMAL = 111;
-	public static final int T_STRING = 112;
-	public static final int T_BYTEARRAY = 113;
+	public static final int T_CHARACTER = 102;
+	public static final int T_BYTE = 103;
+	public static final int T_SHORT = 104;
+	public static final int T_INTEGER = 105;
+	public static final int T_LONG = 106;
+	public static final int T_FLOAT = 107;
+	public static final int T_DOUBLE = 108;
+	public static final int T_DATE = 109;
+	public static final int T_TIMESTAMP = 110;
+	public static final int T_BIGINTEGER = 111;
+	public static final int T_BIGDECIMAL = 112;
+	public static final int T_STRING = 113;
+	public static final int T_BYTEARRAY = 114;
 	public static final int T_ARRAY = 200;
 	public static final int T_LIST = 201;
 	public static final int T_MAP = 202;
@@ -73,15 +75,17 @@ public class JSONObjectMappingConstants {
 
 	static {
 		primitiveTypeMappings.put( boolean.class.getName(), T_PRIMITIVE_BOOLEAN );
-		primitiveTypeMappings.put( byte.class.getName(), T_PRIMITIVE_BYTE );
 		primitiveTypeMappings.put( char.class.getName(), T_PRIMITIVE_CHAR );
+		primitiveTypeMappings.put( byte.class.getName(), T_PRIMITIVE_BYTE );
+		primitiveTypeMappings.put( short.class.getName(), T_PRIMITIVE_SHORT );
 		primitiveTypeMappings.put( int.class.getName(), T_PRIMITIVE_INTEGER );
 		primitiveTypeMappings.put( long.class.getName(), T_PRIMITIVE_LONG );
 		primitiveTypeMappings.put( float.class.getName(), T_PRIMITIVE_FLOAT );
 		primitiveTypeMappings.put( double.class.getName(), T_PRIMITIVE_DOUBLE );
 		primitiveTypeMappings.put( Boolean.class.getName(), T_BOOLEAN );
-		primitiveTypeMappings.put( Byte.class.getName(), T_BYTE );
 		primitiveTypeMappings.put( Character.class.getName(), T_CHARACTER );
+		primitiveTypeMappings.put( Byte.class.getName(), T_BYTE );
+		primitiveTypeMappings.put( Short.class.getName(), T_SHORT );
 		primitiveTypeMappings.put( Integer.class.getName(), T_INTEGER );
 		primitiveTypeMappings.put( Long.class.getName(), T_LONG );
 		primitiveTypeMappings.put( Float.class.getName(), T_FLOAT );
@@ -94,15 +98,15 @@ public class JSONObjectMappingConstants {
 		primitiveTypeMappings.put( byte[].class.getName(), T_BYTEARRAY );
 
 		arrayPrimitiveTypeMappings.put( boolean[].class.getName(), T_PRIMITIVE_BOOLEAN );
-		//arrayPrimitiveTypeMappings.put( byte[].class.getName(), T_PRIMITIVE_BYTE );
 		//arrayPrimitiveTypeMappings.put( char[].class.getName(), T_PRIMITIVE_CHAR );
+		//arrayPrimitiveTypeMappings.put( byte[].class.getName(), T_PRIMITIVE_BYTE );
 		arrayPrimitiveTypeMappings.put( int[].class.getName(), T_PRIMITIVE_INTEGER );
 		arrayPrimitiveTypeMappings.put( long[].class.getName(), T_PRIMITIVE_LONG );
 		arrayPrimitiveTypeMappings.put( float[].class.getName(), T_PRIMITIVE_FLOAT );
 		arrayPrimitiveTypeMappings.put( double[].class.getName(), T_PRIMITIVE_DOUBLE );
 		arrayPrimitiveTypeMappings.put( Boolean[].class.getName(), T_BOOLEAN );
-		//arrayPrimitiveTypeMappings.put( Byte[].class.getName(), T_BYTE );
 		//arrayPrimitiveTypeMappings.put( Character[].class.getName(), T_CHARACTER );
+		//arrayPrimitiveTypeMappings.put( Byte[].class.getName(), T_BYTE );
 		arrayPrimitiveTypeMappings.put( Integer[].class.getName(), T_INTEGER );
 		arrayPrimitiveTypeMappings.put( Long[].class.getName(), T_LONG );
 		arrayPrimitiveTypeMappings.put( Float[].class.getName(), T_FLOAT );
