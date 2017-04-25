@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.CharBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,11 +102,31 @@ public class JSONStreamUnmarshaller {
 	}
 
 	public <T> T toObject(InputStream in, JSONDecoder decoder, Class<T> clazz) throws IOException, JSONException {
-		return toObject( in, decoder, clazz, null );
+		JSONDecoderContext decoderContext = new JSONDecoderContext( decoder, 8192 );
+		decoderContext.init( in );
+		return toObject( in, decoderContext, false, clazz, null );
+	}
+
+	public <T> T toObject(InputStream in, JSONDecoder decoder, Class<T> clazz, JSONConverterAbstract[] converters) throws IOException, JSONException {
+		JSONDecoderContext decoderContext = new JSONDecoderContext( decoder, 8192 );
+		decoderContext.init( in );
+		return toObject( in, decoderContext,false, clazz, converters );
+	}
+
+	public <T> T toObject(InputStream in, JSONDecoder decoder, boolean bExitAfterEnd, Class<T> clazz) throws IOException, JSONException {
+		JSONDecoderContext decoderContext = new JSONDecoderContext( decoder, 8192 );
+		decoderContext.init( in );
+		return toObject( in, decoderContext, bExitAfterEnd, clazz, null );
+	}
+
+	public <T> T toObject(InputStream in, JSONDecoder decoder, boolean bExitAfterEnd, Class<T> clazz, JSONConverterAbstract[] converters) throws IOException, JSONException {
+		JSONDecoderContext decoderContext = new JSONDecoderContext( decoder, 8192 );
+		decoderContext.init( in );
+		return toObject( in, decoderContext, bExitAfterEnd, clazz, converters );
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T> T toObject(InputStream in, JSONDecoder decoder, Class<T> clazz, JSONConverterAbstract[] converters) throws IOException, JSONException {
+	public <T> T toObject(InputStream in, JSONDecoderContext decoderContext, boolean bExitAfterEnd, Class<T> clazz, JSONConverterAbstract[] converters) throws IOException, JSONException {
 		Boolean booleanVal = null;
 		Byte byteVal = null;
 		Character charVal = null;
@@ -154,25 +173,16 @@ public class JSONStreamUnmarshaller {
 		LinkedList<StackEntry> stack = new LinkedList<StackEntry>();
 		StackEntry stackEntry = null;
 
-		char[] charArray = new char[ 1024 ];
-		CharBuffer charBuffer = CharBuffer.wrap( charArray );
-
-		decoder.init( in );
-		decoder.fill( charBuffer );
-
-		// Switch buffer to read mode.
-		charBuffer.flip();
-
-		int pos = charBuffer.position();
-		int limit = charBuffer.limit();
+		char[] charArray = decoderContext.charArray;
+		int pos = decoderContext.pos;
+		int limit = decoderContext.limit;
+		int y = decoderContext.y;
+		int x = decoderContext.x;
 
 		int hexValue = 0;
 		int hexCount = 0;
 		int i;
 		String constant;
-
-		int y = 1;
-		int x = 1;
 
 		int json_value_type = 0;
 
@@ -188,10 +198,11 @@ public class JSONStreamUnmarshaller {
 		int state = S_START;
 		int rstate = -1;
 		boolean bLoop = true;
+		boolean bExit = false;
 		char c;
 		try {
 			while ( bLoop ) {
-				while ( pos < limit ) {
+				while ( pos < limit && !bExit ) {
 					c = charArray[ pos ];
 					// debug
 					//System.out.println( stateStr.get( state ) + " (" + state + ")" );
@@ -2176,33 +2187,36 @@ s								if ( dateVal == null && !fieldMapping.nullable ) {
 						}
 						break;
 					case S_EOF:
-						++x;
-						switch ( c ) {
-						case 0x20:
-						case 0x09:
-						case 0x0D:
-							// Whitespace.
-							break;
-						case 0x0A:
-							++y;
-							x = 1;
-							break;
-						default:
-							throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
+						if ( !bExitAfterEnd ) {
+							++x;
+							switch ( c ) {
+							case 0x20:
+							case 0x09:
+							case 0x0D:
+								// Whitespace.
+								break;
+							case 0x0A:
+								++y;
+								x = 1;
+								break;
+							default:
+								throw new JSONException( "Invalid JSON structure at (" + y + ":" + x + ")!" );
+							}
+							++pos;
 						}
-						++pos;
+						else {
+							bExit = true;
+							bLoop = false;
+						}
 					}
 				}
-				// Switch buffer to write mode.
-				charBuffer.clear();
-				decoder.fill( charBuffer );
-				// Switch buffer to read mode.
-				charBuffer.flip();
-
-				pos = charBuffer.position();
-				limit = charBuffer.limit();
-
-				bLoop = !(pos == limit);
+				decoderContext.position( pos, y, x );
+				if ( !bExit ) {
+					decoderContext.buffer();
+					pos = decoderContext.pos;
+					limit = decoderContext.limit;
+					bLoop = !(pos == limit);
+				}
 			}
 		}
 		catch (InstantiationException e) {
@@ -2264,7 +2278,7 @@ s								if ( dateVal == null && !fieldMapping.nullable ) {
 				break;
 			}
 		}
-		if ( (curObj == null && curArr == null) || stack.size() > 0) {
+		if ( (!bExitAfterEnd && curObj == null && curArr == null) || stack.size() > 0 ) {
 			throw new JSONException( "Invalid JSON structure!" );
 		}
 		return rootObj;

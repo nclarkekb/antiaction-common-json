@@ -54,16 +54,25 @@ public class JSONEncoderCharset implements JSONEncoder {
 	protected OutputStream out;
 
 	/**
-	 * Construct a reusable JSON Encoder using the provided <code>Charset</code>.
+	 * Construct a reusable JSON Encoder using the provided <code>Charset</code> using the default buffer size.
 	 * @param charset <code>charset</code> to use when encoding text
 	 */
 	public JSONEncoderCharset(Charset charset) {
+		this( charset, 8192 );
+	}
+
+	/**
+	 * Construct a reusable JSON Encoder using the provided <code>Charset</code> and buffer size.
+	 * @param charset <code>charset</code> to use when encoding text
+	 * @param bufferSize size of the internal buffers used for converting
+	 */
+	public JSONEncoderCharset(Charset charset, int bufferSize) {
 		encoder = charset.newEncoder();
 		encoder.onMalformedInput( CodingErrorAction.REPORT );
 		encoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-		charArray = new char[ 1024 ];
+		charArray = new char[ bufferSize ];
 		charBuffer = CharBuffer.wrap( charArray );
-		byteArray = new byte[ 1024 ];
+		byteArray = new byte[ bufferSize ];
 		byteBuffer = ByteBuffer.wrap( byteArray );
 	}
 

@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.antiaction.common.json.representation.JSONString;
+
 /**
  * Serialize Java Object(s) into a JSON data stream.
  *
@@ -691,7 +693,7 @@ public class JSONStreamMarshaller {
 								}
 								if ( stringVal != null ) {
 									encoder.write( '"' );
-									encoder.write( stringVal );
+									JSONString.escape( encoder, stringVal );
 									encoder.write( '"' );
 								}
 								else {
@@ -710,7 +712,7 @@ public class JSONStreamMarshaller {
 								}
 								if ( byteArray != null ) {
 									encoder.write( '"' );
-									encoder.write( byteArray );
+									JSONString.escape( encoder, byteArray );
 									encoder.write( '"' );
 								}
 								else {
@@ -1263,7 +1265,7 @@ public class JSONStreamMarshaller {
 							}
 							if ( stringVal != null ) {
 								encoder.write( '"' );
-								encoder.write( stringVal );
+								JSONString.escape( encoder, stringVal );
 								encoder.write( '"' );
 							}
 							else {
@@ -1598,7 +1600,7 @@ public class JSONStreamMarshaller {
 							}
 							if ( stringVal != null ) {
 								encoder.write( '"' );
-								encoder.write( stringVal );
+								JSONString.escape( encoder, stringVal );
 								encoder.write( '"' );
 							}
 							else {

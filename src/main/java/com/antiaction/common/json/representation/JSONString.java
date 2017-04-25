@@ -252,4 +252,45 @@ public class JSONString extends JSONValue {
 		return str.hashCode();
 	}
 
+	public static void escape(JSONEncoder encoder, String stringValue) throws IOException {
+		int idx = 0;
+		int pIdx = 0;
+		char[] charArr = stringValue.toCharArray();
+		int len = charArr.length;
+		int c;
+		while ( idx < len ) {
+			c = charArr[ idx++ ];
+			if ( c < 128 && escapeTable[ c ] != null ) {
+				if (pIdx < idx ) {
+					encoder.write( charArr, pIdx, idx - 1 - pIdx );
+				}
+				encoder.write( escapeTable[ c ].chars );
+				pIdx = idx;
+			}
+		}
+		if (pIdx < len ) {
+			encoder.write( charArr, pIdx, len - pIdx );
+		}
+	}
+
+	public static void escape(JSONEncoder encoder, byte[] byteArr) throws IOException {
+		int idx = 0;
+		int pIdx = 0;
+		int len = byteArr.length;
+		int c;
+		while ( idx < len ) {
+			c = byteArr[ idx++ ] & 255;
+			if ( c < 128 && escapeTable[ c ] != null ) {
+				if (pIdx < idx ) {
+					encoder.write( byteArr, pIdx, idx - 1 - pIdx );
+				}
+				encoder.write( escapeTable[ c ].chars );
+				pIdx = idx;
+			}
+		}
+		if (pIdx < len ) {
+			encoder.write( byteArr, pIdx, len - pIdx );
+		}
+	}
+
 }

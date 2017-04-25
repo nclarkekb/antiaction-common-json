@@ -64,14 +64,22 @@ public class JSONDecoderCharset implements JSONDecoder {
 	protected int replacementLength;
 
 	/**
-	 * Construct a reusable JSON Decoder using the provided <code>Charset</code>.
+	 * Construct a reusable JSON Decoder using the provided <code>Charset</code> using the default buffer size.
 	 * @param charset <code>charset</code> to use when decoding text
 	 */
 	public JSONDecoderCharset(Charset charset) {
+		this( charset, 8192 );
+	}
+
+	/**
+	 * Construct a reusable JSON Decoder using the provided <code>Charset</code> and buffer size.
+	 * @param charset <code>charset</code> to use when decoding text
+	 */
+	public JSONDecoderCharset(Charset charset, int bufferSize) {
 		decoder = charset.newDecoder();
 		decoder.onMalformedInput( CodingErrorAction.REPORT );
 		decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
-		byteArray = new byte[ 1024 ];
+		byteArray = new byte[ bufferSize ];
 		byteBuffer = ByteBuffer.wrap( byteArray );
 	}
 

@@ -29,7 +29,7 @@ import com.antiaction.common.json.representation.JSONCollection;
 import com.antiaction.common.json.representation.JSONTextUnmarshaller;
 
 @RunWith(JUnit4.class)
-public class TestJSONMarshallingMap {
+public class TestJSONMarshalling_Map {
 
 	@Test
 	public void test_marshalling_map() {

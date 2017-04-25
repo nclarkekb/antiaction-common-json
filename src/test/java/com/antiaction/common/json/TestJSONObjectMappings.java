@@ -32,7 +32,7 @@ import com.antiaction.common.json.TestJSONObjectMappings_ParametrizedCollectionF
 import com.antiaction.common.json.TestJSONStreamMarshaller.SFSResult;
 import com.antiaction.common.json.TestJSONStreamMarshaller.TestJSONMapObject;
 import com.antiaction.common.json.TestJSONStreamMarshaller.TestTypesClass;
-import com.antiaction.common.json.integration.TestJSONMarshallingTopLevelArray.Book;
+import com.antiaction.common.json.integration.TestJSONMarshalling_TopLevelArray.Book;
 import com.antiaction.common.json.representation.TestJSONStructureMarshaller_Name.TestZeroConstructor;
 
 /**

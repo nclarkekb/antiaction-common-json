@@ -46,7 +46,7 @@ import com.antiaction.common.json.representation.JSONTextUnmarshaller;
  * Created on 22/01/2013
  */
 @RunWith(JUnit4.class)
-public class TestJSONMarshallingTopLevelArray {
+public class TestJSONMarshalling_TopLevelArray {
 
 	@Test
 	public void test_json_solr_top_level_array() {
