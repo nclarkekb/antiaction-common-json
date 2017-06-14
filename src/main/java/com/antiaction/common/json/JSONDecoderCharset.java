@@ -74,6 +74,7 @@ public class JSONDecoderCharset implements JSONDecoder {
 	/**
 	 * Construct a reusable JSON Decoder using the provided <code>Charset</code> and buffer size.
 	 * @param charset <code>charset</code> to use when decoding text
+	 * @param bufferSize size of the internal buffers used for converting
 	 */
 	public JSONDecoderCharset(Charset charset, int bufferSize) {
 		decoder = charset.newDecoder();

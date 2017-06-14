@@ -46,7 +46,7 @@ public interface JSONDecoder {
 
 	/**
 	 * Has <code>InputStream</code> reached EOF.
-	 * @return
+	 * @return true is the end of the stream has been reached, false otherwise
 	 */
 	public boolean isEof();
 

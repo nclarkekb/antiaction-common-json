@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Small reflection helper class to convert all those useless is<x> class type
+ * Small reflection helper class to convert all those useless is&lt;x&gt; class type
  * and modifier methods into an integer bit field.
  *
  * @author Nicholas
