@@ -20,24 +20,33 @@ Converting directly between streams and objects is the fastest.
 
 Java types supported:
 * Null
-* Boolean
-* Integer
-* Long
-* Float
-* Double
+* Boolean/boolean
+* Integer/int
+* Long/long
+* Float/float
+* Double/double
 * BigInteger
 * BigDecimal
 * String
+* Byte[]/byte[]
+* Array[<..>]
 
-... in progress.
+And partial support for
+* Byte/byte
+* Character/char
+* java.util.Date
+* java.sql.Timestamp
+* List<..>
+* Map<String, ..>
+* Set<..>
 
 ## Roadmap ##
 
 * Check how json values not mapped are handled.
 * Omit null values from json output.
-* Add support for Set<..>, Map<..> and List<..>.
+* Add full support for Set<..>, Map<..> and List<..>.
 * Add support for converters in JSON stream <> Java objects (un)marshalling.
-* Add support for more primitive types and their object counterparts.
+* Add full support for more primitive types and their object counterparts.
 * Improve code coverage.
 
 ## History ##
@@ -56,7 +65,7 @@ More work on improving object to/from stream marshaller/unmarshaller.
 * Added support for stream (un)marshalling of List<..> instances.
 * Minor additions to JSONObjectMappings to support List<..> (un)marshalling.
 * Unit tests and bug fix to JSONObjectMappings/JSONObjectMapping/JSONObjectFieldMapping toString().
-* Code coverage at 86.1% -> 82.6%.
+* Code coverage at 84.09%.
 
 ### version 0.6.0 ###
 Released: 2015-01-24

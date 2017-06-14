@@ -1668,7 +1668,7 @@ public class JSONStreamMarshaller {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported list type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
 					}
 					break;
 				case S_MAP:
@@ -1741,7 +1741,7 @@ public class JSONStreamMarshaller {
 						}
 						break;
 					default:
-						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported array type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
+						throw new JSONException( "Field '" + fieldMapping.fieldName + "' has an unsupported map type." + JSONObjectMappingConstants.typeString( fieldMapping.parametrizedObjectTypes[ 0 ] ) );
 					}
 					break;
 				}
