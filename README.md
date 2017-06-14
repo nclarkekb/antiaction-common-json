@@ -51,7 +51,7 @@ And partial support for
 
 ## History ##
 
-### version 0.7.0-SNAPSHOT ###
+### version 0.7.0 ###
 
 More work on improving object to/from stream marshaller/unmarshaller.
 
