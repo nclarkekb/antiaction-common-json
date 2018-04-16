@@ -1,10 +1,15 @@
 language: java
+
 notifications:
   email: true
+
 jdk:
-  - oraclejdk7
   - oraclejdk8
+
+sudo: false # faster builds
+
 before_install:
   - pip install --user codecov
+
 after_success:
   - codecov

@@ -40,7 +40,7 @@ public interface JSONDecoder {
 	 * Fill char buffer with as much decoded JSON text as possible.
 	 * @param charBuffer char buffer for decoded JSON text
 	 * @return EOF boolean indication
-	 * @throws IOException if an i/o error was encountered during decoding
+	 * @throws IOException if an I/O error was encountered during decoding
 	 */
 	public boolean fill(CharBuffer charBuffer) throws IOException;
 

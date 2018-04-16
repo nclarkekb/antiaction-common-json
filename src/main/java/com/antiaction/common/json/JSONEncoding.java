@@ -71,7 +71,7 @@ public class JSONEncoding {
 	 * Determine the UTF encoding used based of the first 4 bytes of the JSON text.
 	 * @param in JSON text <code>InputStream</code>
 	 * @return identified encoding or error
-	 * @throws IOException if an i/o error occurs while determining the encoding used
+	 * @throws IOException if an I/O error occurs while determining the encoding used
 	 */
 	public static int encoding(PushbackInputStream in) throws IOException {
 		int encoding = E_UNKNOWN;

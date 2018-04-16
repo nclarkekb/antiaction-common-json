@@ -90,7 +90,7 @@ public class JSONEncoderCharset implements JSONEncoder {
 	 * Encode as much of the char buffer as possible and write the byte buffer
 	 * to the output stream, if the byte buffer is full.
 	 * @param endOfInput boolean indicating not to expect more input data
-	 * @throws IOException if an i/o error occurs while encoding
+	 * @throws IOException if an I/O error occurs while encoding
 	 */
 	protected void encode_buffer(boolean endOfInput) throws IOException {
 		// Switch buffer to read mode.

@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/nclarkekb/antiaction-common-json.png?branch=master)](https://travis-ci.org/nclarkekb/antiaction-common-json)
-[![codecov.io](http://codecov.io/github/nclarkekb/antiaction-common-json/coverage.svg?branch=master)](http://codecov.io/github/nclarkekb/antiaction-common-json?branch=master)
+[![Build Status](https://travis-ci.org/antiaction/common-json.png?branch=master)](https://travis-ci.org/antiaction/common-json)
+[![codecov](https://codecov.io/gh/antiaction/common-json/branch/master/graph/badge.svg)](https://codecov.io/gh/antiaction/common-json)
 
 antiaction-common-json
 ======================
@@ -52,6 +52,7 @@ And partial support for
 ## History ##
 
 ### version 0.7.0 ###
+Released: 2015-06-14
 
 More work on improving object to/from stream marshaller/unmarshaller.
 

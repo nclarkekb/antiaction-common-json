@@ -38,7 +38,7 @@ public abstract class JSONValue {
 	/**
 	 * Output the JSON value to the given Encoder.
 	 * @param encoder output encoder
-	 * @throws IOException if an i/o error occurs while encoding
+	 * @throws IOException if an I/O error occurs while encoding
 	 */
 	public void encode(JSONEncoder encoder) throws IOException {
 		throw new UnsupportedOperationException("Unimplemented");
@@ -49,7 +49,7 @@ public abstract class JSONValue {
 	 * @param encoder output encoder
 	 * @param indentation indentation to use before output text
 	 * @param indent indentation to use for each level
-	 * @throws IOException if an i/o error occurs while encoding
+	 * @throws IOException if an I/O error occurs while encoding
 	 */
 	public void encode(JSONEncoder encoder, String indentation, String indent) throws IOException {
 		throw new UnsupportedOperationException("Unimplemented");
