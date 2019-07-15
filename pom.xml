@@ -11,7 +11,7 @@
 
 	<groupId>com.antiaction</groupId>
 	<artifactId>common-json</artifactId>
-	<version>0.7.0</version>
+	<version>0.7.1-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
